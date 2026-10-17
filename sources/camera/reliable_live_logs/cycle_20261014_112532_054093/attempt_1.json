@@ -1,0 +1,11 @@
+{
+  "attempt": 1,
+  "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs/cycle_20261014_112532_054093/attempt_1.jpg",
+  "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs/cycle_20261014_112532_054093/attempt_1_annotated.jpg",
+  "timestamp": "2026-10-14T03:25:32.054792+00:00",
+  "log_path": "/home/centrabus/camera_calibration/reliable_live_logs/cycle_20261014_112532_054093/attempt_1.log",
+  "outcome": "rejected",
+  "error": "RuntimeError: rpicam-still failed with exit 255: ce_enumerator_sysfs.cpp:70 Device node /dev/media2 should exist but doesn't\n[1:05:47.371798442] [8]  WARN DeviceEnumerator device_enumerator_sysfs.cpp:70 Device node /dev/media0 should exist but doesn't\n[1:05:47.371812830] [8]  WARN DeviceEnumerator device_enumerator_sysfs.cpp:70 Device node /dev/media3 should exist but doesn't\n[1:05:47.371827126] [8]  WARN DeviceEnumerator device_enumerator_sysfs.cpp:70 Device node /dev/media1 should exist but doesn't\n[1:05:47.371945046] [8] ERROR DmaBufAllocator dma_buf_allocator.cpp:119 Could not open any dma-buf provider\nERROR: *** no cameras available ***",
+  "error_category": "capture_failure",
+  "duration_seconds": 0.124
+}

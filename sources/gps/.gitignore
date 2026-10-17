@@ -1,0 +1,45 @@
+# Python caches and local environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Environment files and credentials
+.env
+.env.*
+*.env
+*.env.*
+*credentials*
+*secret*
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Runtime output, queues, databases, and recorded trips
+latest_gps*.json
+trip-*.csv
+*.sqlite*
+*.db
+*.db-*
+*.log
+*.pid
+*.lock
+logs/
+runtime/
+data/
+
+# Historical copies and backups
+*.bak
+*.backup*
+*.before-*
+*.pre-*
+*.pi1-original
+*.migration-candidate.py
+*.offline-queue.py
+*~
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+.DS_Store

@@ -1,0 +1,30 @@
+{
+  "camera": "Picamera2",
+  "main_size": [
+    1920,
+    1080
+  ],
+  "main_format": "RGB888",
+  "saved_format": "JPEG",
+  "sensor_output_size": [
+    2304,
+    1296
+  ],
+  "sensor_bit_depth": 10,
+  "buffer_count": 3,
+  "queue": false,
+  "autofocus_mode": "Continuous",
+  "ae_enabled": true,
+  "awb_enabled": true,
+  "transform": "identity",
+  "crop": null,
+  "startup_seconds": 2.407,
+  "startup_metadata": {
+    "AeState": "2",
+    "AfState": "2",
+    "ExposureTime": "18010",
+    "ColourGains": "(2.447159767150879, 1.5879106521606445)",
+    "LensPosition": "5.790106773376465"
+  },
+  "started_at": "2026-10-14T06:15:18.520089+00:00"
+}

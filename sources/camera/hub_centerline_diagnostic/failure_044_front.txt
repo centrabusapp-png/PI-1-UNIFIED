@@ -1,0 +1,21 @@
+Image: Screenshot 2026-10-11 181737.png
+Baseline error: RuntimeError: front red candidate is too short to be a needle.
+Reproduced error: RuntimeError: front red candidate is too short to be a needle.
+Gauge: FRONT
+Current scale: 0.57523
+Transformed crop hub: (105.47, 112.50)
+Detector console: (none)
+Strict red pixels, entire crop: 82
+Strict red pixels, inner band: 82
+Relaxed red pixels, entire crop: 1675
+Relaxed red pixels, inner band: 491
+inner radius: 20.13 to 69.03
+minimum selected pixels: 30
+minimum fitted span: 14.38
+Relaxed connected-component candidate: none
+Pre-fit selected pixels: 82, fitted span: 13.94
+strict connected components with >=3 pixels: 1
+ 1. area=81 bbox=(107, 62, 7, 17) Huber_span_p95-p5=13.98 Huber_p90_cross_error=2.91 Huber_hub_error=4.19 mean_y=70.10 relaxed_component_limits: span>=28.76, p90<=5.18, hub_error<=20.13, mean_y<107.90
+relaxed connected components with >=3 pixels: 2
+ 1. area=879 bbox=(102, 7, 19, 77) Huber_span_p95-p5=66.47 Huber_p90_cross_error=5.38 Huber_hub_error=0.71 mean_y=47.45 relaxed_component_limits: span>=28.76, p90<=5.18, hub_error<=20.13, mean_y<107.90
+ 2. area=796 bbox=(26, 11, 60, 44) Huber_span_p95-p5=58.52 Huber_p90_cross_error=7.20 Huber_hub_error=98.93 mean_y=27.83 relaxed_component_limits: span>=28.76, p90<=5.18, hub_error<=20.13, mean_y<107.90

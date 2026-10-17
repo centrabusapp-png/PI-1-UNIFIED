@@ -1,0 +1,15 @@
+{
+  "attempt": 3,
+  "capture_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/replay_logs/cycle_20261014_134309_214265/attempt_3.jpg",
+  "annotated_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/replay_logs/cycle_20261014_134309_214265/attempt_3_annotated.jpg",
+  "timestamp": "2026-10-14T05:43:10.106781+00:00",
+  "log_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/replay_logs/cycle_20261014_134309_214265/attempt_3.log",
+  "timing": {
+    "camera_capture_seconds": 0.000353,
+    "failed_phase_seconds": 0.38897
+  },
+  "outcome": "rejected",
+  "error": "RuntimeError: Could not generate enough ORB descriptors.",
+  "error_category": "orb_registration",
+  "duration_seconds": 0.397
+}

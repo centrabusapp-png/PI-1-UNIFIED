@@ -1,0 +1,55 @@
+CENTRABUS needle angle refinement — 2026-10-13
+
+Source images: /home/centrabus/camera_calibration/new_50_dataset
+Frozen baseline: /home/centrabus/camera_calibration/new_50_validation_BASELINE_20261012_182448
+Updated batch: /home/centrabus/camera_calibration/new_50_validation_ANGLE_FIX_20261013_131722
+Original production reader backup: /home/centrabus/camera_calibration/needle_angle_fix_backup_20261013
+
+Visual review of the 50 baseline annotations
+  FUEL image 035 failed on a visible needle; 036, 038, 039, 042, and 044
+  followed the red E marker or a marker/needle mixture at the wrong angle.
+  FRONT image 044 failed on a short strict-mask fragment; 034, 043, and 045
+  had the clearest wrong-angle overlays. Some smaller FRONT differences were
+  visible in 035, 038, 039, and 041. BATTERY image 013 is partly obscured
+  by glare and its angle remains uncertain without a manual mark.
+  The other annotated angles appeared aligned at display resolution.
+  These observations are qualitative, not angle ground truth.
+
+Change
+  FUEL: In small-screen crops, replace the original component fit only when
+  its cross-line residual is poor and a dominant hub-guided red line passes
+  length and hub checks. A Hough shaft segment refines the angle when present.
+  FRONT/REAR: Accept a slightly wider robust-fit and hub tolerance for the
+  relaxed connected-line candidate. Flag live_component and fuel_radial
+  modes for CHECK_IMAGE review.
+
+Batch result
+  Baseline: 298/300 detections, 48/50 complete dashboards.
+  Updated: 300/300 detections, 50/50 complete dashboards.
+  FUEL 035: failed -> 130.54 degrees.
+  FRONT 044: failed -> 84.78 degrees.
+  FUEL 036, 038, 039, 042, 044: changed from 142-146 degrees to 130-134
+  degrees, following the visible needle more closely.
+  FRONT 034, 043, 045: 81.32 -> 88.59, 78.81 -> 88.95,
+  69.50 -> 80.34 degrees, respectively.
+  FUEL 045 and 047 remain at their original angles after a trial showed
+  that a broad radial override would worsen an intact needle fit.
+  Full case comparison: comparison_to_baseline.csv
+
+Verification
+  Actual updated production reader matches the isolated combined trial for
+  every detected angle and result status in all 300 cases.
+  Earlier validated 30-image FUEL set: 30/30 original angles unchanged.
+  Earlier validated 30-image FRONT/REAR set: 60/60 detections; pressure
+  refinement branch was not entered and no angle change was attributable to
+  the patch.
+  python3 -m unittest discover -s tests -v: 10 tests passed.
+
+Accuracy limit
+  No human reference angles have yet been marked for this 50-image set.
+  Returning 300 numbers cannot establish degree-level accuracy. Use the
+  unannotated crops in new_50_angle_review/angle_review.html to mark each
+  visible hub and needle tip, then export CSV and run
+  evaluate_new_50_manual_angles.py --manual <exported.csv>.
+  Glare-obscured needles should be marked OCCLUDED or UNCERTAIN.
+  Numeric gauge value calibration remains unverified.

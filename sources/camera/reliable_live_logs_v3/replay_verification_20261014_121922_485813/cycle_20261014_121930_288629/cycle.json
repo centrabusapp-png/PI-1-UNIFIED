@@ -1,0 +1,49 @@
+{
+  "cycle_id": "cycle_20261014_121930_288629",
+  "status": "retry_failed",
+  "attempts_used": 3,
+  "accepted_attempt": null,
+  "confirmation_pair": [
+    1,
+    2
+  ],
+  "duration_seconds": 1.805,
+  "orb_retries": 3,
+  "gauge_exception_retries": 0,
+  "capture_retries": 0,
+  "consensus_retries": 0,
+  "pair_comparisons": [],
+  "attempts": [
+    {
+      "attempt": 1,
+      "outcome": "rejected",
+      "error": "RuntimeError: Not enough good ORB matches. Found 2, need at least 12.",
+      "error_category": "orb_registration",
+      "quality_warnings": null,
+      "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121930_288629/attempt_1.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121930_288629/attempt_1_annotated.jpg",
+      "duration_seconds": 0.589
+    },
+    {
+      "attempt": 2,
+      "outcome": "rejected",
+      "error": "RuntimeError: Not enough good ORB matches. Found 2, need at least 12.",
+      "error_category": "orb_registration",
+      "quality_warnings": null,
+      "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121930_288629/attempt_2.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121930_288629/attempt_2_annotated.jpg",
+      "duration_seconds": 0.585
+    },
+    {
+      "attempt": 3,
+      "outcome": "rejected",
+      "error": "RuntimeError: Not enough good ORB matches. Found 2, need at least 12.",
+      "error_category": "orb_registration",
+      "quality_warnings": null,
+      "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121930_288629/attempt_3.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121930_288629/attempt_3_annotated.jpg",
+      "duration_seconds": 0.584
+    }
+  ],
+  "state_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/latest_gauges_replay.json"
+}

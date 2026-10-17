@@ -1,0 +1,59 @@
+attempt: 2
+timestamp: 2026-10-14T04:32:17.114964+00:00
+capture_command: rpicam-still --nopreview --autofocus-mode auto --width 1920 --height 1080 -o /home/centrabus/camera_calibration/reliable_live_logs_v3/cycle_20261014_123210_877337/attempt_2.jpg
+capture_returncode: 0
+capture_stdout:
+
+capture_stderr:
+[2:12:32.419428366] [9338]  INFO Camera camera_manager.cpp:340 libcamera v0.7.1+rpt20260609
+[2:12:32.439857567] [9341]  INFO RPI pipeline_base.cpp:1133 Using configuration file '/usr/share/libcamera/pipeline/rpi/vc4/rpi_apps.yaml'
+[2:12:32.468560145] [9341]  INFO IPAProxy ipa_proxy.cpp:184 Using tuning file /usr/share/libcamera/ipa/rpi/vc4/imx708.json
+[2:12:32.474091292] [9341]  INFO Camera camera_manager.cpp:223 Adding camera '/base/soc/i2c0mux/i2c@1/imx708@1a' for pipeline handler rpi/vc4
+[2:12:32.474147791] [9341]  INFO RPI vc4.cpp:445 Registered camera /base/soc/i2c0mux/i2c@1/imx708@1a to Unicam device /dev/media1 and ISP device /dev/media2
+Mode selection for 2304:1296:12:P
+    SRGGB10_CSI2P,1536x864/0 - Score: 3400
+    SRGGB10_CSI2P,2304x1296/0 - Score: 1000
+    SRGGB10_CSI2P,4608x2592/0 - Score: 1900
+[2:12:32.512678506] [9338]  INFO Camera camera.cpp:1216 configuring streams: (0) 2304x1296-YUV420/sYCC (1) 2304x1296-SBGGR10_CSI2P/RAW
+[2:12:32.513078275] [9341]  INFO RPI vc4.cpp:620 Sensor: /base/soc/i2c0mux/i2c@1/imx708@1a - Selected sensor format: 2304x1296-SBGGR10_1X10/RAW - Selected unicam format: 2304x1296-pBAA/RAW
+Mode selection for 1920:1080:12:P
+    SRGGB10_CSI2P,1536x864/0 - Score: 2200
+    SRGGB10_CSI2P,2304x1296/0 - Score: 1150
+    SRGGB10_CSI2P,4608x2592/0 - Score: 2050
+[2:12:37.595078311] [9338]  INFO Camera camera.cpp:1216 configuring streams: (0) 1920x1080-YUV420/sYCC (1) 2304x1296-SBGGR10_CSI2P/RAW
+[2:12:37.596436816] [9341]  INFO RPI vc4.cpp:620 Sensor: /base/soc/i2c0mux/i2c@1/imx708@1a - Selected sensor format: 2304x1296-SBGGR10_1X10/RAW - Selected unicam format: 2304x1296-pBAA/RAW
+Still capture image received
+
+detector_stdout:
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/camera_calibration/reliable_live_logs_v3/cycle_20261014_123210_877337/attempt_2.jpg
+
+ORB good matches: 169
+ORB inliers: 40
+Inlier ratio: 0.237
+Current scale: 1.05766
+Rotation: -2.076 deg
+Registration quality: review
+
+FUEL      angle= 119.673 deg     16.1% EMPTY  [VALUE UNVERIFIED] [CHECK IMAGE]
+COOLANT   angle= 142.342 deg      0.0% COLD  [VALUE UNVERIFIED] [CHECK IMAGE]
+FRONT strict inner-red pixels=0; trying radial live fallback.
+FRONT relaxed inner-red pixels=1725
+FRONT connected needle candidate=82.4 deg, span=110.5
+FRONT     angle=  82.400 deg     8.94 kg/cm2  [VALUE UNVERIFIED] [CHECK IMAGE]
+REAR      angle=  57.006 deg    12.88 kg/cm2  [VALUE UNVERIFIED] [CHECK IMAGE]
+BATTERY   angle=  83.116 deg     54.6% NORMAL  [VALUE UNVERIFIED] [CHECK IMAGE]
+OIL       angle= 106.710 deg     29.8% NORMAL  [VALUE UNVERIFIED] [CHECK IMAGE]
+
+Annotated image:
+/home/centrabus/camera_calibration/reliable_live_logs_v3/cycle_20261014_123210_877337/attempt_2_annotated.jpg
+
+DETECTION COMPLETE: 6 / 6 gauge candidates processed; numeric calibration is unverified.
+================================================================================
+
+outcome: success
+duration_seconds: 6.204

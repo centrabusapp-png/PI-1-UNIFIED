@@ -1,0 +1,70 @@
+{
+  "cycle_id": "cycle_20261014_112701_928444",
+  "status": "accepted",
+  "attempts_used": 2,
+  "accepted_attempt": 2,
+  "confirmation_pair": [
+    1,
+    2
+  ],
+  "duration_seconds": 1.586,
+  "orb_retries": 0,
+  "gauge_exception_retries": 0,
+  "capture_retries": 0,
+  "consensus_retries": 0,
+  "pair_comparisons": [
+    {
+      "attempts": [
+        1,
+        2
+      ],
+      "agrees": true,
+      "angle_differences": {
+        "fuel": 0.101,
+        "coolant": 3.556,
+        "front": 0.784,
+        "rear": 0.41,
+        "battery": 0.465,
+        "oil": 1.165
+      }
+    }
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "outcome": "success",
+      "error": null,
+      "error_category": null,
+      "quality_warnings": [
+        "front:CHECK IMAGE",
+        "front:pressure fallback live_component",
+        "rear:CHECK IMAGE",
+        "rear:pressure fallback live_component"
+      ],
+      "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/cycle_20261014_112701_928444/attempt_1.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/cycle_20261014_112701_928444/attempt_1_annotated.jpg",
+      "duration_seconds": 0.766
+    },
+    {
+      "attempt": 2,
+      "outcome": "success",
+      "error": null,
+      "error_category": null,
+      "quality_warnings": [
+        "registration:review",
+        "fuel:CHECK IMAGE",
+        "coolant:CHECK IMAGE",
+        "front:CHECK IMAGE",
+        "front:pressure fallback live_component",
+        "rear:CHECK IMAGE",
+        "rear:pressure fallback live_component",
+        "battery:CHECK IMAGE",
+        "oil:CHECK IMAGE"
+      ],
+      "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/cycle_20261014_112701_928444/attempt_2.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/cycle_20261014_112701_928444/attempt_2_annotated.jpg",
+      "duration_seconds": 0.786
+    }
+  ],
+  "state_path": "/home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/latest_gauges_test.json"
+}

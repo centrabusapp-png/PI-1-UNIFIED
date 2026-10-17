@@ -1,0 +1,102 @@
+{
+  "attempt": 2,
+  "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/cycle_20261014_123248_340869/attempt_2.jpg",
+  "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/cycle_20261014_123248_340869/attempt_2_annotated.jpg",
+  "timestamp": "2026-10-14T04:32:54.592204+00:00",
+  "log_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/cycle_20261014_123248_340869/attempt_2.log",
+  "outcome": "success",
+  "registration": {
+    "status": "review",
+    "quality": "review",
+    "matches": 154,
+    "inliers": 37,
+    "inlier_ratio": 0.24,
+    "scale": 1.05492,
+    "rotation": -2.793
+  },
+  "gauges": {
+    "fuel": {
+      "angle": 119.77949964351774,
+      "value": 16.021579322612908,
+      "unit": "%",
+      "status": "ok",
+      "reading_status": "EMPTY",
+      "quality_status": "review",
+      "detection_quality": "good",
+      "mask_mode": "strict",
+      "check_image": true,
+      "value_validated": false
+    },
+    "coolant": {
+      "angle": 141.9669539455756,
+      "value": 0.0,
+      "unit": "%",
+      "status": "ok",
+      "reading_status": "COLD",
+      "quality_status": "review",
+      "detection_quality": "good",
+      "mask_mode": "strict",
+      "check_image": true,
+      "value_validated": false
+    },
+    "front": {
+      "angle": 80.8255490822936,
+      "value": 9.167778702529485,
+      "unit": "kg/cm2",
+      "status": "ok",
+      "reading_status": null,
+      "quality_status": "review",
+      "detection_quality": "review",
+      "mask_mode": "live_component",
+      "check_image": true,
+      "value_validated": false
+    },
+    "rear": {
+      "angle": 83.29639038442389,
+      "value": 8.814801373653731,
+      "unit": "kg/cm2",
+      "status": "ok",
+      "reading_status": null,
+      "quality_status": "review",
+      "detection_quality": "good",
+      "mask_mode": "strict",
+      "check_image": true,
+      "value_validated": false
+    },
+    "battery": {
+      "angle": 82.7634170855829,
+      "value": 54.985876752018,
+      "unit": "%",
+      "status": "ok",
+      "reading_status": "NORMAL",
+      "quality_status": "review",
+      "detection_quality": "good",
+      "mask_mode": "strict",
+      "check_image": true,
+      "value_validated": false
+    },
+    "oil": {
+      "angle": 107.81738601603726,
+      "value": 28.613277877855513,
+      "unit": "%",
+      "status": "ok",
+      "reading_status": "NORMAL",
+      "quality_status": "review",
+      "detection_quality": "good",
+      "mask_mode": "strict",
+      "check_image": true,
+      "value_validated": false
+    }
+  },
+  "quality_warnings": [
+    "registration:review",
+    "fuel:CHECK IMAGE",
+    "coolant:CHECK IMAGE",
+    "front:CHECK IMAGE",
+    "front:pressure fallback live_component",
+    "rear:CHECK IMAGE",
+    "battery:CHECK IMAGE",
+    "oil:CHECK IMAGE"
+  ],
+  "duration_seconds": 6.272
+}

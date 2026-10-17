@@ -1,0 +1,129 @@
+{
+  "cycle_id": "cycle_20261014_130838_650866",
+  "status": "accepted",
+  "attempts_used": 3,
+  "accepted_attempt": 3,
+  "confirmation_pair": [
+    2,
+    3
+  ],
+  "duration_seconds": 21.77,
+  "orb_retries": 0,
+  "gauge_exception_retries": 0,
+  "capture_retries": 0,
+  "consensus_retries": 1,
+  "pair_comparisons": [
+    {
+      "attempts": [
+        1,
+        2
+      ],
+      "agrees": false,
+      "angle_differences": {
+        "fuel": 0.002,
+        "coolant": 0.027,
+        "front": 18.84,
+        "rear": 0.022,
+        "battery": 0.384,
+        "oil": 0.005
+      }
+    },
+    {
+      "attempts": [
+        1,
+        3
+      ],
+      "agrees": false,
+      "angle_differences": {
+        "fuel": 0.093,
+        "coolant": 0.019,
+        "front": 18.656,
+        "rear": 0.073,
+        "battery": 0.398,
+        "oil": 0.018
+      }
+    },
+    {
+      "attempts": [
+        2,
+        3
+      ],
+      "agrees": true,
+      "angle_differences": {
+        "fuel": 0.096,
+        "coolant": 0.008,
+        "front": 0.184,
+        "rear": 0.094,
+        "battery": 0.781,
+        "oil": 0.014
+      }
+    }
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "outcome": "success",
+      "error": null,
+      "error_category": null,
+      "quality_warnings": [
+        "registration:review",
+        "fuel:CHECK IMAGE",
+        "coolant:CHECK IMAGE",
+        "front:CHECK IMAGE",
+        "front:pressure fallback live_radial",
+        "rear:CHECK IMAGE",
+        "rear:pressure fallback coherent_relaxed",
+        "battery:CHECK IMAGE",
+        "battery:fallback local_arc_strict",
+        "oil:CHECK IMAGE",
+        "oil:fallback coherent_relaxed"
+      ],
+      "capture_path": "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/real_camera_logs/cycle_20261014_130838_650866/attempt_1.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/real_camera_logs/cycle_20261014_130838_650866/attempt_1_annotated.jpg",
+      "duration_seconds": 9.269
+    },
+    {
+      "attempt": 2,
+      "outcome": "success",
+      "error": null,
+      "error_category": null,
+      "quality_warnings": [
+        "registration:review",
+        "fuel:CHECK IMAGE",
+        "coolant:CHECK IMAGE",
+        "front:CHECK IMAGE",
+        "front:pressure fallback live_component",
+        "rear:CHECK IMAGE",
+        "rear:pressure fallback coherent_relaxed",
+        "battery:CHECK IMAGE",
+        "oil:CHECK IMAGE",
+        "oil:fallback coherent_relaxed"
+      ],
+      "capture_path": "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/real_camera_logs/cycle_20261014_130838_650866/attempt_2.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/real_camera_logs/cycle_20261014_130838_650866/attempt_2_annotated.jpg",
+      "duration_seconds": 6.133
+    },
+    {
+      "attempt": 3,
+      "outcome": "success",
+      "error": null,
+      "error_category": null,
+      "quality_warnings": [
+        "registration:review",
+        "fuel:CHECK IMAGE",
+        "coolant:CHECK IMAGE",
+        "front:CHECK IMAGE",
+        "front:pressure fallback live_component",
+        "rear:CHECK IMAGE",
+        "rear:pressure fallback coherent_relaxed",
+        "battery:CHECK IMAGE",
+        "oil:CHECK IMAGE",
+        "oil:fallback coherent_relaxed"
+      ],
+      "capture_path": "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/real_camera_logs/cycle_20261014_130838_650866/attempt_3.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/real_camera_logs/cycle_20261014_130838_650866/attempt_3_annotated.jpg",
+      "duration_seconds": 6.271
+    }
+  ],
+  "state_path": "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/latest_gauges_v4_dev.json"
+}

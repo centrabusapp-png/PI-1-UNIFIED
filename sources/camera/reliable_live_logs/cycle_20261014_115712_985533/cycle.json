@@ -1,0 +1,56 @@
+{
+  "cycle_id": "cycle_20261014_115712_985533",
+  "status": "retry_failed",
+  "attempts_used": 3,
+  "accepted_attempt": null,
+  "confirmation_pair": null,
+  "duration_seconds": 21.04,
+  "orb_retries": 0,
+  "gauge_exception_retries": 2,
+  "capture_retries": 0,
+  "consensus_retries": 0,
+  "pair_comparisons": [],
+  "attempts": [
+    {
+      "attempt": 1,
+      "outcome": "success",
+      "error": null,
+      "error_category": null,
+      "quality_warnings": [
+        "registration:review",
+        "fuel:CHECK IMAGE",
+        "coolant:CHECK IMAGE",
+        "front:CHECK IMAGE",
+        "front:pressure fallback live_component",
+        "rear:CHECK IMAGE",
+        "battery:CHECK IMAGE",
+        "battery:fallback relaxed",
+        "oil:CHECK IMAGE"
+      ],
+      "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs/cycle_20261014_115712_985533/attempt_1.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs/cycle_20261014_115712_985533/attempt_1_annotated.jpg",
+      "duration_seconds": 8.461
+    },
+    {
+      "attempt": 2,
+      "outcome": "rejected",
+      "error": "RuntimeError: battery red component misses the gauge hub.",
+      "error_category": "gauge_exception",
+      "quality_warnings": null,
+      "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs/cycle_20261014_115712_985533/attempt_2.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs/cycle_20261014_115712_985533/attempt_2_annotated.jpg",
+      "duration_seconds": 6.238
+    },
+    {
+      "attempt": 3,
+      "outcome": "rejected",
+      "error": "RuntimeError: battery red component misses the gauge hub.",
+      "error_category": "gauge_exception",
+      "quality_warnings": null,
+      "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs/cycle_20261014_115712_985533/attempt_3.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs/cycle_20261014_115712_985533/attempt_3_annotated.jpg",
+      "duration_seconds": 6.297
+    }
+  ],
+  "state_path": "/home/centrabus/centrabus_camera/latest_gauges.json"
+}

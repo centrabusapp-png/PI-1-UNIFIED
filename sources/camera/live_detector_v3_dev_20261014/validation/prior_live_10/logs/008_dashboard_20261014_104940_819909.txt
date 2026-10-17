@@ -1,0 +1,158 @@
+FULL SIX-GAUGE ATTEMPT
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/centrabus_camera/captures/dashboard_20261014_104940_819909.jpg
+
+ORB good matches: 98
+ORB inliers: 21
+Inlier ratio: 0.214
+Current scale: 0.90781
+Rotation: 0.722 deg
+Registration quality: review
+
+FUEL      angle= 132.936 deg      2.2% EMPTY  [VALUE UNVERIFIED] [CHECK IMAGE]
+COOLANT   angle= 143.998 deg      0.0% COLD  [VALUE UNVERIFIED] [CHECK IMAGE]
+FRONT strict inner-red pixels=0; trying radial live fallback.
+FRONT relaxed inner-red pixels=1284
+FRONT connected needle candidate=86.4 deg, span=89.2
+FRONT     angle=  86.387 deg     8.37 kg/cm2  [VALUE UNVERIFIED] [CHECK IMAGE]
+
+ERROR: RuntimeError: rear red candidate is too short to be a needle.
+
+ONE-GAUGE RETRY: fuel
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/centrabus_camera/captures/dashboard_20261014_104940_819909.jpg
+
+ORB good matches: 98
+ORB inliers: 21
+Inlier ratio: 0.214
+Current scale: 0.90781
+Rotation: 0.722 deg
+Registration quality: review
+
+FUEL      angle= 132.936 deg      2.2% EMPTY  [VALUE UNVERIFIED] [CHECK IMAGE]
+
+Annotated image:
+/tmp/centrabus_accuracy_61_wyy5c/fuel.jpg
+
+DETECTION COMPLETE: 6 / 6 gauge candidates processed; numeric calibration is unverified.
+================================================================================
+
+ONE-GAUGE RETRY: coolant
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/centrabus_camera/captures/dashboard_20261014_104940_819909.jpg
+
+ORB good matches: 98
+ORB inliers: 21
+Inlier ratio: 0.214
+Current scale: 0.90781
+Rotation: 0.722 deg
+Registration quality: review
+
+COOLANT   angle= 143.998 deg      0.0% COLD  [VALUE UNVERIFIED] [CHECK IMAGE]
+
+Annotated image:
+/tmp/centrabus_accuracy_61_wyy5c/coolant.jpg
+
+DETECTION COMPLETE: 6 / 6 gauge candidates processed; numeric calibration is unverified.
+================================================================================
+
+ONE-GAUGE RETRY: front
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/centrabus_camera/captures/dashboard_20261014_104940_819909.jpg
+
+ORB good matches: 98
+ORB inliers: 21
+Inlier ratio: 0.214
+Current scale: 0.90781
+Rotation: 0.722 deg
+Registration quality: review
+
+FRONT strict inner-red pixels=0; trying radial live fallback.
+FRONT relaxed inner-red pixels=1284
+FRONT connected needle candidate=86.4 deg, span=89.2
+FRONT     angle=  86.387 deg     8.37 kg/cm2  [VALUE UNVERIFIED] [CHECK IMAGE]
+
+Annotated image:
+/tmp/centrabus_accuracy_61_wyy5c/front.jpg
+
+DETECTION COMPLETE: 6 / 6 gauge candidates processed; numeric calibration is unverified.
+================================================================================
+
+ONE-GAUGE RETRY: rear
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/centrabus_camera/captures/dashboard_20261014_104940_819909.jpg
+
+ORB good matches: 98
+ORB inliers: 21
+Inlier ratio: 0.214
+Current scale: 0.90781
+Rotation: 0.722 deg
+Registration quality: review
+
+ERROR: RuntimeError: rear red candidate is too short to be a needle.
+
+ONE-GAUGE RETRY: battery
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/centrabus_camera/captures/dashboard_20261014_104940_819909.jpg
+
+ORB good matches: 98
+ORB inliers: 21
+Inlier ratio: 0.214
+Current scale: 0.90781
+Rotation: 0.722 deg
+Registration quality: review
+
+BATTERY   angle=  85.104 deg     52.5% NORMAL  [VALUE UNVERIFIED] [CHECK IMAGE]
+
+Annotated image:
+/tmp/centrabus_accuracy_61_wyy5c/battery.jpg
+
+DETECTION COMPLETE: 6 / 6 gauge candidates processed; numeric calibration is unverified.
+================================================================================
+
+ONE-GAUGE RETRY: oil
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/centrabus_camera/captures/dashboard_20261014_104940_819909.jpg
+
+ORB good matches: 98
+ORB inliers: 21
+Inlier ratio: 0.214
+Current scale: 0.90781
+Rotation: 0.722 deg
+Registration quality: review
+
+OIL       angle= 106.350 deg     30.2% NORMAL  [VALUE UNVERIFIED] [CHECK IMAGE]
+
+Annotated image:
+/tmp/centrabus_accuracy_61_wyy5c/oil.jpg
+
+DETECTION COMPLETE: 6 / 6 gauge candidates processed; numeric calibration is unverified.
+================================================================================

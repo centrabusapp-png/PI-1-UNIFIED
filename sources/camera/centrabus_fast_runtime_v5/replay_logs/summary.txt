@@ -1,0 +1,18 @@
+CENTRABUS fast V5 reader run summary
+Generated UTC: 2026-10-14T06:36:00.520559+00:00
+State path: /home/centrabus/camera_calibration/centrabus_fast_runtime_v5/replay_state.json
+Total cycles: 1
+Accepted on attempt 1: 1
+Accepted on attempt 2: 0
+Accepted on attempt 3: 0
+Completely rejected cycles: 0
+ORB retries: 0
+Gauge exception retries: 0
+Capture retries: 0
+Consensus retries: 0
+Average time per accepted cycle: 2.27 s
+Maximum cycle time: 2.27 s
+Accepted annotated images visually suspicious: pending manual inspection
+
+Cycles:
+  cycle_20261014_143558_235236: accepted; attempts=1; accepted_attempt=1; duration=2.27s

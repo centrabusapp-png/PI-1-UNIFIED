@@ -1,0 +1,152 @@
+FULL SIX-GAUGE ATTEMPT
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/camera_calibration/new_50_dataset/Screenshot 2026-10-11 181502.png
+
+ORB good matches: 132
+ORB inliers: 24
+Inlier ratio: 0.182
+Current scale: 0.57613
+Rotation: -0.595 deg
+Registration quality: review
+
+
+ERROR: RuntimeError: fuel red component misses the gauge hub.
+
+ONE-GAUGE RETRY: fuel
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/camera_calibration/new_50_dataset/Screenshot 2026-10-11 181502.png
+
+ORB good matches: 132
+ORB inliers: 24
+Inlier ratio: 0.182
+Current scale: 0.57613
+Rotation: -0.595 deg
+Registration quality: review
+
+ERROR: RuntimeError: fuel red component misses the gauge hub.
+
+ONE-GAUGE RETRY: coolant
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/camera_calibration/new_50_dataset/Screenshot 2026-10-11 181502.png
+
+ORB good matches: 132
+ORB inliers: 24
+Inlier ratio: 0.182
+Current scale: 0.57613
+Rotation: -0.595 deg
+Registration quality: review
+
+COOLANT   angle= 142.934 deg      0.0% COLD  [VALUE UNVERIFIED] [CHECK IMAGE]
+
+Annotated image:
+/tmp/centrabus_accuracy_niitfejf/coolant.jpg
+
+DETECTION COMPLETE: 6 / 6 gauge candidates processed; numeric calibration is unverified.
+================================================================================
+
+ONE-GAUGE RETRY: front
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/camera_calibration/new_50_dataset/Screenshot 2026-10-11 181502.png
+
+ORB good matches: 132
+ORB inliers: 24
+Inlier ratio: 0.182
+Current scale: 0.57613
+Rotation: -0.595 deg
+Registration quality: review
+
+FRONT strict inner-red pixels=0; trying radial live fallback.
+FRONT relaxed inner-red pixels=552
+FRONT radial candidate=85.5 deg, pixels=226, bins=5/6, span=35.4
+FRONT     angle=  85.251 deg     8.54 kg/cm2  [VALUE UNVERIFIED] [CHECK IMAGE]
+
+Annotated image:
+/tmp/centrabus_accuracy_niitfejf/front.jpg
+
+DETECTION COMPLETE: 6 / 6 gauge candidates processed; numeric calibration is unverified.
+================================================================================
+
+ONE-GAUGE RETRY: rear
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/camera_calibration/new_50_dataset/Screenshot 2026-10-11 181502.png
+
+ORB good matches: 132
+ORB inliers: 24
+Inlier ratio: 0.182
+Current scale: 0.57613
+Rotation: -0.595 deg
+Registration quality: review
+
+REAR      angle=  91.240 deg     7.68 kg/cm2  [VALUE UNVERIFIED] [CHECK IMAGE]
+
+Annotated image:
+/tmp/centrabus_accuracy_niitfejf/rear.jpg
+
+DETECTION COMPLETE: 6 / 6 gauge candidates processed; numeric calibration is unverified.
+================================================================================
+
+ONE-GAUGE RETRY: battery
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/camera_calibration/new_50_dataset/Screenshot 2026-10-11 181502.png
+
+ORB good matches: 132
+ORB inliers: 24
+Inlier ratio: 0.182
+Current scale: 0.57613
+Rotation: -0.595 deg
+Registration quality: review
+
+BATTERY   angle= 106.579 deg     29.9% NORMAL  [VALUE UNVERIFIED] [CHECK IMAGE]
+
+Annotated image:
+/tmp/centrabus_accuracy_niitfejf/battery.jpg
+
+DETECTION COMPLETE: 6 / 6 gauge candidates processed; numeric calibration is unverified.
+================================================================================
+
+ONE-GAUGE RETRY: oil
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/camera_calibration/new_50_dataset/Screenshot 2026-10-11 181502.png
+
+ORB good matches: 132
+ORB inliers: 24
+Inlier ratio: 0.182
+Current scale: 0.57613
+Rotation: -0.595 deg
+Registration quality: review
+
+OIL       angle= 135.008 deg      0.0% LOW  [VALUE UNVERIFIED] [CHECK IMAGE]
+
+Annotated image:
+/tmp/centrabus_accuracy_niitfejf/oil.jpg
+
+DETECTION COMPLETE: 6 / 6 gauge candidates processed; numeric calibration is unverified.
+================================================================================

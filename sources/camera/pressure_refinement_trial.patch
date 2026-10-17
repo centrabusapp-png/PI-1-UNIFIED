@@ -1,0 +1,25 @@
+--- a/gauge_readers.py
++++ b/gauge_readers.py
+@@ -953,9 +953,9 @@
+             continue
+         if float(np.mean(ys)) >= hub_y - 8.0 * scale:
+             continue
+-        if span < 50.0 * scale or p90_error > max(5.0, 9.0 * scale):
++        if span < 50.0 * scale or p90_error > max(5.0, 9.0 * scale) + 1.0:
+             continue
+-        if hub_error > max(10.0, 35.0 * scale):
++        if hub_error > max(10.0, 35.0 * scale) + 5.0 * scale:
+             continue
+ 
+         score = span - 2.0 * p90_error - 0.2 * hub_error
+--- a/centrabus_dashboard_reader.py
++++ b/centrabus_dashboard_reader.py
+@@ -1086,7 +1086,7 @@
+         result["registration_quality"] = registration_quality
+         mask_mode = result.get("mask_mode", "")
+         detection_review = (
+-            mask_mode in ("relaxed", "live_radial")
++            mask_mode in ("relaxed", "live_radial", "live_component")
+             or (gauge in ("front", "rear") and mask_mode == "strict"
+                 and current_scale < 0.85)
+             or (gauge == "oil" and current_scale < 0.85)

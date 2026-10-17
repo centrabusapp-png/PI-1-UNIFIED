@@ -1,0 +1,27 @@
+ANGLE_FIX regression against frozen 180/180 baseline
+Baseline: /home/centrabus/camera_calibration/CENTRABUS_VALIDATED_180_OF_180_20261006_181417/automatic_full_dashboard_strict_pressure_results.csv
+Baseline SHA-256: 18b807230fae85e434c7467d8577dff53124d99ec48f3110937d55e791a8206d
+Source dashboards: 30
+Gauge cases: 180
+Successful ANGLE_FIX detections: 180
+Failed ANGLE_FIX detections: 0
+Angle differences >1 degree: 0
+Angle differences >2 degrees: 0
+Angle differences >5 degrees: 0
+Maximum angle difference: 0.6938 degrees
+
+Counts by gauge: successful / failed / >1 / >2 / >5 / maximum difference
+FUEL: 30 / 0 / 0 / 0 / 0 / 0.0000
+COOLANT: 30 / 0 / 0 / 0 / 0 / 0.0000
+FRONT: 30 / 0 / 0 / 0 / 0 / 0.0000
+REAR: 30 / 0 / 0 / 0 / 0 / 0.0759
+BATTERY: 30 / 0 / 0 / 0 / 0 / 0.0000
+OIL: 30 / 0 / 0 / 0 / 0 / 0.6938
+
+Exact ANGLE_FIX detector snapshot SHA-256:
+gauge_readers.py: 3f7e349923aaee9ba0c9cb12f1ed3b4d153fd1c52ff16cc790aa5de67fa7f6e2
+centrabus_dashboard_reader.py: ea6de1bcb41886d37952b14d9c2338609bff9cd32cc2f557158077fad9eea2c2
+centrabus_live_reader.py: 2a87ec4cea355b70bbe4568db65169afa7d317b8ee9c4a853a1e1eb9712fd0c2
+fuel_angle_refinement.py: b4bfd546132f29bdb958fba4944839c93f79c06f54044faa74ecf095bd918bce
+
+Visual review: PENDING. Detection counts do not establish line accuracy.

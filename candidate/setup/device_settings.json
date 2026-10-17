@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "device_id": "GPS-001",
+  "expected_account": "centrabus1",
+  "expected_hostname": "centrabus1-pi",
+  "reference_gps_json_path": "/home/centrabus1/latest_gps.json",
+  "reference_queue_path": "/home/centrabus1/centrabus-device/gps_offline_queue.sqlite3",
+  "backend_origin": null,
+  "physical_operations_enabled": false,
+  "wifi_management_enabled": false,
+  "network_manager": "unverified"
+}

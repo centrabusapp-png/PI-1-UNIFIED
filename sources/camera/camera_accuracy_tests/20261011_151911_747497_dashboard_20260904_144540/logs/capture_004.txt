@@ -1,0 +1,8 @@
+RuntimeError: rpicam-still exited 255: [2:47:13.447235842] [12875]  INFO Camera camera_manager.cpp:340 libcamera v0.7.1+rpt20260609
+[2:47:13.467746514] [12878] ERROR V4L2 v4l2_device.cpp:412 'imx708': Unable to set controls: Device or resource busy
+[2:47:13.468438351] [12878]  INFO RPI pipeline_base.cpp:1133 Using configuration file '/usr/share/libcamera/pipeline/rpi/vc4/rpi_apps.yaml'
+[2:47:13.497723040] [12878]  INFO IPAProxy ipa_proxy.cpp:184 Using tuning file /usr/share/libcamera/ipa/rpi/vc4/imx708.json
+[2:47:13.503469991] [12878]  INFO Camera camera_manager.cpp:223 Adding camera '/base/soc/i2c0mux/i2c@1/imx708@1a' for pipeline handler rpi/vc4
+[2:47:13.503520934] [12878]  INFO RPI vc4.cpp:445 Registered camera /base/soc/i2c0mux/i2c@1/imx708@1a to Unicam device /dev/media1 and ISP device /dev/media2
+[2:47:13.547867652] [12875]  INFO Camera camera.cpp:1021 Pipeline handler in use by another process
+ERROR: *** failed to acquire camera /base/soc/i2c0mux/i2c@1/imx708@1a ***

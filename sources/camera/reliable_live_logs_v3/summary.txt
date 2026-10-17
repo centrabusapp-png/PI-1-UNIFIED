@@ -1,0 +1,27 @@
+CENTRABUS reliable live reader run summary
+Generated UTC: 2026-10-14T04:33:07.177883+00:00
+State path: /home/centrabus/centrabus_camera/latest_gauges.json
+Total cycles: 10
+Accepted on attempt 1: 0
+Accepted on attempt 2: 6
+Accepted on attempt 3: 4
+Completely rejected cycles: 0
+ORB retries: 0
+Gauge exception retries: 1
+Capture retries: 0
+Consensus retries: 3
+Average time per accepted cycle: 15.51 s
+Maximum cycle time: 19.61 s
+Accepted annotated images visually suspicious: pending manual inspection
+
+Cycles:
+  cycle_20261014_123031_932694: accepted; attempts=2; accepted_attempt=2; duration=15.45s
+  cycle_20261014_123047_392588: accepted; attempts=2; accepted_attempt=2; duration=13.38s
+  cycle_20261014_123100_785595: accepted; attempts=2; accepted_attempt=2; duration=12.96s
+  cycle_20261014_123113_752756: accepted; attempts=3; accepted_attempt=3; duration=19.61s
+  cycle_20261014_123133_372159: accepted; attempts=2; accepted_attempt=2; duration=12.57s
+  cycle_20261014_123145_950977: accepted; attempts=2; accepted_attempt=2; duration=12.54s
+  cycle_20261014_123158_506464: accepted; attempts=2; accepted_attempt=2; duration=12.36s
+  cycle_20261014_123210_877337: accepted; attempts=3; accepted_attempt=3; duration=18.70s
+  cycle_20261014_123229_587910: accepted; attempts=3; accepted_attempt=3; duration=18.74s
+  cycle_20261014_123248_340869: accepted; attempts=3; accepted_attempt=3; duration=18.83s

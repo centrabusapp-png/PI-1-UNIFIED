@@ -1,0 +1,14 @@
+ANGLE_FIX visual review of original 30 dashboards
+
+Review material: 30 OLD/NEW comparison sheets in review_sheets/.
+Review scope: all 180 gauges across the 30 dashboards, including every changed angle.
+Reviewer: Codex visual inspection (the 30 sheets divided between two reviewers).
+Result: All 180 new yellow lines remain aligned with the visible physical needle shafts. No visual regression was identified.
+
+Largest changes checked visually:
+- centrabus_calibration9.4 OIL: 138.3855 -> 137.6917 degrees (0.6938 difference); aligned.
+- centrabus_calibration9.7 OIL: 138.9069 -> 138.2717 degrees (0.6352 difference); aligned.
+- centrabus_calibration9.9.2 OIL: 138.0209 -> 137.4220 degrees (0.5989 difference); aligned.
+- centrabus_calibration9.4 REAR: 141.2108 -> 141.1349 degrees (0.0759 difference); aligned.
+
+This visual review checks line alignment in the saved images. It does not establish a separate degree-level physical angle ground truth or validate numeric gauge calibration.

@@ -1,0 +1,53 @@
+attempt: 2
+timestamp: 2026-10-14T05:51:08.649549+00:00
+camera: Picamera2 persistent 1920x1080 RGB888 JPEG
+exposure_us: 44143
+lens_position: 4.456148624420166
+detector_stdout:
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/camera_calibration/centrabus_fast_runtime_v4/real_camera_logs/cycle_20261014_135107_500170/attempt_2.jpg
+
+ORB good matches: 187
+ORB inliers: 57
+Inlier ratio: 0.305
+Current scale: 0.99877
+Rotation: -1.813 deg
+Registration quality: good
+
+FUEL      angle= 121.530 deg     14.2% EMPTY  [VALUE UNVERIFIED]
+COOLANT   angle= 143.431 deg      0.0% COLD  [VALUE UNVERIFIED]
+FRONT strict inner-red pixels=0; trying radial live fallback.
+FRONT relaxed inner-red pixels=2070
+FRONT radial candidate=51.0 deg, pixels=376, bins=5/6, span=38.1
+FRONT strict inner-red pixels=0; trying radial live fallback.
+FRONT relaxed inner-red pixels=1257
+FRONT connected needle candidate=86.4 deg, span=98.3
+FRONT     angle=  86.427 deg     8.37 kg/cm2  [VALUE UNVERIFIED] [CHECK IMAGE]
+REAR      angle=  87.784 deg     8.17 kg/cm2  [VALUE UNVERIFIED] [CHECK IMAGE]
+
+exception:
+Traceback (most recent call last):
+  File "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/fast_reader.py", line 342, in run_attempt
+    results, registration, detector_timing = detect_fn(image, annotated, log)
+                                             ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/fast_reader.py", line 314, in detect_image
+    results = read_dashboard(image_path, output_path=annotated_path)
+  File "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/centrabus_dashboard_reader.py", line 1056, in read_dashboard
+    result = reader(
+        crop, scale=current_scale, hub=local_hub
+    )
+  File "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/gauge_readers.py", line 582, in read_battery
+    return _read_simple_linear_gauge(
+        image, gauge_name="battery", scale=scale, hub=hub,
+        statuses=("LOW", "NORMAL", "HIGH")
+    )
+  File "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/gauge_readers.py", line 544, in _read_simple_linear_gauge
+    raise RuntimeError(f"{gauge_name} red component misses the gauge hub.")
+RuntimeError: battery red component misses the gauge hub.
+
+outcome: rejected
+duration_seconds: 1.139

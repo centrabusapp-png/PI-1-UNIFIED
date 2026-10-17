@@ -1,0 +1,11 @@
+# Python caches and local environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local credentials and OS metadata
+.env
+.env.*
+!.env.example
+.DS_Store

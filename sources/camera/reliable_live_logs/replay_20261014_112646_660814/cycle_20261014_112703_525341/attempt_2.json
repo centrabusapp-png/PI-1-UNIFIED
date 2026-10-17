@@ -1,0 +1,11 @@
+{
+  "attempt": 2,
+  "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/cycle_20261014_112703_525341/attempt_2.jpg",
+  "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/cycle_20261014_112703_525341/attempt_2_annotated.jpg",
+  "timestamp": "2026-10-14T03:27:04.300199+00:00",
+  "log_path": "/home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/cycle_20261014_112703_525341/attempt_2.log",
+  "outcome": "rejected",
+  "error": "RuntimeError: rear red candidate is too short to be a needle.",
+  "error_category": "gauge_exception",
+  "duration_seconds": 0.697
+}

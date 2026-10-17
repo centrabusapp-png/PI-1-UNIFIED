@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CENTRABUS 50-image manual angle review</title>
+<style>
+  :root { color-scheme: dark; font-family: system-ui, sans-serif; }
+  body { margin: 1rem auto; max-width: 1250px; padding: 0 1rem; }
+  h1 { margin: .2rem 0; }
+  p { line-height: 1.4; }
+  button, select, textarea { font: inherit; padding: .45rem; }
+  button { margin: .2rem; cursor: pointer; }
+  .controls { display: flex; gap: .4rem; flex-wrap: wrap; align-items: center; }
+  .status button.active { outline: 3px solid #62e0ca; }
+  .viewer { display: inline-block; position: relative; max-width: 100%; margin-top: .7rem; }
+  .viewer img { display: block; width: min(900px, 94vw); height: auto; image-rendering: pixelated; }
+  .viewer svg { position: absolute; inset: 0; width: 100%; height: 100%; cursor: crosshair; }
+  #result { font-size: 1.2rem; font-weight: bold; min-height: 1.5em; }
+  #progress { color: #b8e9e2; }
+  textarea { display: block; width: min(800px, 90vw); min-height: 2.5em; }
+  .hint { color: #ccc; }
+</style>
+<h1>CENTRABUS needle angle review</h1>
+<p>These are <strong>original unannotated crops</strong> from all 50 dashboard images. Select a gauge, click the physical hub center, then click the outer red needle tip. The detector angle appears only after your two clicks. Mark a needle OCCLUDED if its direction cannot be measured; use UNCERTAIN for an approximate label.</p>
+<div class="controls">
+  <button id="previous">Previous dashboard</button>
+  <select id="dashboard" aria-label="Dashboard image"></select>
+  <button id="next">Next dashboard</button>
+  <button id="export-current">Download this dashboard CSV</button>
+  <button id="export-all">Download all 300 cases CSV</button>
+</div>
+<div class="controls" id="gauges"></div>
+<div class="controls status" id="statuses">
+  <button data-status="VISIBLE">VISIBLE</button>
+  <button data-status="OCCLUDED">OCCLUDED</button>
+  <button data-status="UNCERTAIN">UNCERTAIN</button>
+  <button id="reset">Clear this gauge</button>
+</div>
+<p id="progress"></p>
+<p id="instruction" class="hint"></p>
+<div class="viewer">
+  <img id="crop" alt="Unannotated gauge crop">
+  <svg id="overlay" aria-label="Click hub center and needle tip"></svg>
+</div>
+<p id="result"></p>
+<label for="notes">Optional note for this gauge:</label>
+<textarea id="notes"></textarea>
+<p class="hint">Review choices and clicks are saved in this browser after every action. Download the CSV when you finish each dashboard and keep the final CSV as the shared ground truth file. Use the same browser and address when resuming.</p>
+<script>
+"use strict";
+const rows = __REVIEW_ROWS__;
+const gaugeNames = ["FUEL", "COOLANT", "FRONT", "REAR", "BATTERY", "OIL"];
+const storageKey = "centrabus-new50-angle-review-v1";
+const saved = (() => { try { return JSON.parse(localStorage.getItem(storageKey) || "{}"); } catch (_) { return {}; } })();
+const dashboard = document.getElementById("dashboard");
+const crop = document.getElementById("crop");
+const overlay = document.getElementById("overlay");
+const notes = document.getElementById("notes");
+let imageIndex = 0;
+let gaugeIndex = 0;
+let firstClick = null;
+
+function key(row) { return `${row.filename}|${row.gauge}`; }
+function state(row) { return saved[key(row)] || {visibility: "NOT_REVIEWED", hub: null, tip: null, notes: ""}; }
+function persist(row, value) {
+  saved[key(row)] = value;
+  try { localStorage.setItem(storageKey, JSON.stringify(saved)); }
+  catch (_) { document.getElementById("progress").textContent = "Browser storage unavailable. Download the CSV before leaving this page."; }
+}
+function currentRow() { return rows[imageIndex * 6 + gaugeIndex]; }
+function angle(hub, tip) {
+  const raw = (Math.atan2(hub.y - tip.y, tip.x - hub.x) * 180 / Math.PI + 360) % 360;
+  return raw >= 180 ? raw - 180 : raw;
+}
+function reviewed(row) {
+  const s = state(row);
+  return s.visibility === "OCCLUDED" || s.visibility === "UNCERTAIN" ||
+    (s.visibility === "VISIBLE" && s.hub && s.tip);
+}
+function point(event) {
+  const box = overlay.getBoundingClientRect();
+  return {
+    x: Math.max(0, Math.min(crop.naturalWidth - 1, Math.round((event.clientX - box.left) * crop.naturalWidth / box.width))),
+    y: Math.max(0, Math.min(crop.naturalHeight - 1, Math.round((event.clientY - box.top) * crop.naturalHeight / box.height))),
+  };
+}
+function marker(x, y, color) {
+  const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+  dot.setAttribute("cx", x); dot.setAttribute("cy", y); dot.setAttribute("r", 4);
+  dot.setAttribute("fill", color); dot.setAttribute("stroke", "black");
+  overlay.append(dot);
+}
+function draw() {
+  const row = currentRow();
+  const s = state(row);
+  overlay.setAttribute("viewBox", `0 0 ${crop.naturalWidth} ${crop.naturalHeight}`);
+  overlay.replaceChildren();
+  const hub = firstClick || s.hub;
+  const tip = firstClick ? null : s.tip;
+  if (hub && tip) {
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    line.setAttribute("x1", hub.x); line.setAttribute("y1", hub.y);
+    line.setAttribute("x2", tip.x); line.setAttribute("y2", tip.y);
+    line.setAttribute("stroke", "#00ffc0"); line.setAttribute("stroke-width", 3);
+    overlay.append(line);
+  }
+  if (hub) marker(hub.x, hub.y, "magenta");
+  if (tip) marker(tip.x, tip.y, "#00ffc0");
+  document.getElementById("instruction").textContent = firstClick ?
+    "Now click the outer red needle tip." : "First click: physical hub center. Second click: outer red needle tip.";
+  const result = document.getElementById("result");
+  if (s.hub && s.tip) {
+    const measured = angle(s.hub, s.tip);
+    if (row.detected_angle_deg !== "") {
+      const detected = Number(row.detected_angle_deg);
+      const gap = Math.abs(measured - detected);
+      result.textContent = `Manual ${measured.toFixed(2)}° · baseline ${detected.toFixed(2)}° · error ${Math.min(gap, 180 - gap).toFixed(2)}°`;
+    } else result.textContent = `Manual ${measured.toFixed(2)}° · baseline DETECTION_FAILED`;
+  } else result.textContent = "Baseline angle hidden until both clicks are saved.";
+  for (const button of document.querySelectorAll("#statuses button[data-status]")) {
+    button.classList.toggle("active", button.dataset.status === s.visibility);
+  }
+  for (const button of document.querySelectorAll("#gauges button")) {
+    const gaugeRow = rows[imageIndex * 6 + Number(button.dataset.index)];
+    button.textContent = `${gaugeRow.gauge} ${reviewed(gaugeRow) ? "✓" : "·"}`;
+  }
+  const complete = [...Array(50).keys()].filter(i => rows.slice(i * 6, i * 6 + 6).every(reviewed)).length;
+  const labeled = rows.filter(r => state(r).hub && state(r).tip).length;
+  document.getElementById("progress").textContent = `${complete}/50 dashboards reviewed · ${labeled}/300 manual angles · current: ${row.filename} / ${row.gauge} / ${s.visibility}`;
+  for (const option of dashboard.options) {
+    const i = Number(option.value);
+    option.textContent = `${String(i + 1).padStart(2, "0")} ${rows[i * 6].filename}${rows.slice(i * 6, i * 6 + 6).every(reviewed) ? " ✓" : ""}`;
+  }
+}
+function showGauge(index) {
+  gaugeIndex = index;
+  firstClick = null;
+  const row = currentRow();
+  dashboard.value = String(imageIndex);
+  notes.value = state(row).notes || "";
+  crop.onload = draw;
+  crop.src = row.crop_image;
+  if (crop.complete && crop.naturalWidth) draw();
+}
+function showImage(index) {
+  imageIndex = Math.max(0, Math.min(49, index));
+  showGauge(0);
+}
+function csvCell(value) { return `"${String(value ?? "").replaceAll('"', '""')}"`; }
+function downloadCsv(start, end, name) {
+  const fields = ["filename", "gauge", "visibility", "hub_x", "hub_y", "tip_x", "tip_y", "manual_angle_deg", "detector_status", "detected_angle_deg", "absolute_error_deg", "notes", "source_image", "crop_image", "roi_x1", "roi_y1", "roi_x2", "roi_y2"];
+  const lines = [fields.map(csvCell).join(",")];
+  for (const row of rows.slice(start, end)) {
+    const s = state(row);
+    const measured = s.hub && s.tip ? angle(s.hub, s.tip) : "";
+    const detected = row.detected_angle_deg === "" ? "" : Number(row.detected_angle_deg);
+    const gap = measured === "" || detected === "" ? "" : Math.abs(measured - detected);
+    const error = gap === "" ? "" : Math.min(gap, 180 - gap);
+    const values = { ...row, visibility: s.visibility, hub_x: s.hub?.x ?? "", hub_y: s.hub?.y ?? "",
+      tip_x: s.tip?.x ?? "", tip_y: s.tip?.y ?? "", manual_angle_deg: measured === "" ? "" : measured.toFixed(3),
+      absolute_error_deg: error === "" ? "" : error.toFixed(3), notes: s.notes || "" };
+    lines.push(fields.map(field => csvCell(values[field])).join(","));
+  }
+  const url = URL.createObjectURL(new Blob([lines.join("\n") + "\n"], {type: "text/csv"}));
+  const a = document.createElement("a"); a.href = url; a.download = name; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+for (let i = 0; i < 50; i++) dashboard.add(new Option("", String(i)));
+gaugeNames.forEach((gauge, index) => {
+  const button = document.createElement("button");
+  button.dataset.index = String(index);
+  button.onclick = () => showGauge(index);
+  document.getElementById("gauges").append(button);
+});
+overlay.addEventListener("click", event => {
+  const row = currentRow(); const s = { ...state(row) }; const clicked = point(event);
+  if (!firstClick) {
+    firstClick = clicked;
+  } else {
+    s.hub = firstClick; s.tip = clicked;
+    if (s.visibility === "NOT_REVIEWED" || s.visibility === "OCCLUDED") s.visibility = "VISIBLE";
+    firstClick = null; persist(row, s);
+  }
+  draw();
+});
+document.querySelectorAll("#statuses button[data-status]").forEach(button => {
+  button.onclick = () => {
+    const row = currentRow(); const s = { ...state(row), visibility: button.dataset.status };
+    if (s.visibility === "OCCLUDED") { s.hub = null; s.tip = null; firstClick = null; }
+    persist(row, s); draw();
+  };
+});
+document.getElementById("reset").onclick = () => {
+  const row = currentRow();
+  persist(row, {visibility: "NOT_REVIEWED", hub: null, tip: null, notes: state(row).notes || ""});
+  firstClick = null; draw();
+};
+notes.oninput = () => { const row = currentRow(); persist(row, { ...state(row), notes: notes.value }); };
+dashboard.onchange = () => showImage(Number(dashboard.value));
+document.getElementById("previous").onclick = () => showImage(imageIndex - 1);
+document.getElementById("next").onclick = () => showImage(imageIndex + 1);
+document.getElementById("export-current").onclick = () => downloadCsv(imageIndex * 6, imageIndex * 6 + 6, `centrabus_angles_dashboard_${String(imageIndex + 1).padStart(2, "0")}.csv`);
+document.getElementById("export-all").onclick = () => downloadCsv(0, 300, "centrabus_new_50_manual_angles.csv");
+const firstPending = [...Array(50).keys()].find(i => !rows.slice(i * 6, i * 6 + 6).every(reviewed));
+showImage(firstPending ?? 0);
+</script>
+</html>

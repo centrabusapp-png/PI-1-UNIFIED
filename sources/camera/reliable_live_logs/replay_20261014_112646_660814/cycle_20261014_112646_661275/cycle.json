@@ -1,0 +1,75 @@
+{
+  "cycle_id": "cycle_20261014_112646_661275",
+  "status": "accepted",
+  "attempts_used": 3,
+  "accepted_attempt": 3,
+  "confirmation_pair": [
+    2,
+    3
+  ],
+  "duration_seconds": 5.163,
+  "orb_retries": 1,
+  "gauge_exception_retries": 0,
+  "capture_retries": 0,
+  "consensus_retries": 0,
+  "pair_comparisons": [
+    {
+      "attempts": [
+        2,
+        3
+      ],
+      "agrees": true,
+      "angle_differences": {
+        "fuel": 3.094,
+        "coolant": 4.998,
+        "front": 0.716,
+        "rear": 0.07,
+        "battery": 0.41,
+        "oil": 0.124
+      }
+    }
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "outcome": "rejected",
+      "error": "RuntimeError: Not enough good ORB matches. Found 2, need at least 12.",
+      "error_category": "orb_registration",
+      "quality_warnings": null,
+      "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/cycle_20261014_112646_661275/attempt_1.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/cycle_20261014_112646_661275/attempt_1_annotated.jpg",
+      "duration_seconds": 3.223
+    },
+    {
+      "attempt": 2,
+      "outcome": "success",
+      "error": null,
+      "error_category": null,
+      "quality_warnings": [
+        "front:CHECK IMAGE",
+        "front:pressure fallback live_component",
+        "rear:CHECK IMAGE",
+        "rear:pressure fallback live_component"
+      ],
+      "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/cycle_20261014_112646_661275/attempt_2.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/cycle_20261014_112646_661275/attempt_2_annotated.jpg",
+      "duration_seconds": 0.896
+    },
+    {
+      "attempt": 3,
+      "outcome": "success",
+      "error": null,
+      "error_category": null,
+      "quality_warnings": [
+        "front:CHECK IMAGE",
+        "front:pressure fallback live_component",
+        "rear:CHECK IMAGE",
+        "rear:pressure fallback live_component"
+      ],
+      "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/cycle_20261014_112646_661275/attempt_3.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/cycle_20261014_112646_661275/attempt_3_annotated.jpg",
+      "duration_seconds": 0.982
+    }
+  ],
+  "state_path": "/home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/latest_gauges_test.json"
+}

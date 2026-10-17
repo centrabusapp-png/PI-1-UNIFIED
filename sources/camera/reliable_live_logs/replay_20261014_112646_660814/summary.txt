@@ -1,0 +1,27 @@
+CENTRABUS reliable live reader run summary
+Generated UTC: 2026-10-14T03:27:12.333605+00:00
+State path: /home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/latest_gauges_test.json
+Total cycles: 10
+Accepted on attempt 1: 0
+Accepted on attempt 2: 3
+Accepted on attempt 3: 5
+Completely rejected cycles: 2
+ORB retries: 2
+Gauge exception retries: 6
+Capture retries: 0
+Consensus retries: 1
+Average time per accepted cycle: 2.58 s
+Maximum cycle time: 5.16 s
+Accepted annotated images visually suspicious: none identified among 8 accepted replay images
+
+Cycles:
+  cycle_20261014_112646_661275: accepted; attempts=3; accepted_attempt=3; duration=5.16s
+  cycle_20261014_112651_845556: accepted; attempts=3; accepted_attempt=3; duration=3.30s
+  cycle_20261014_112655_163393: accepted; attempts=3; accepted_attempt=3; duration=2.56s
+  cycle_20261014_112657_731870: accepted; attempts=3; accepted_attempt=3; duration=2.46s
+  cycle_20261014_112700_204806: accepted; attempts=2; accepted_attempt=2; duration=1.71s
+  cycle_20261014_112701_928444: accepted; attempts=2; accepted_attempt=2; duration=1.59s
+  cycle_20261014_112703_525341: accepted; attempts=3; accepted_attempt=3; duration=2.28s
+  cycle_20261014_112705_812895: retry_failed; attempts=3; accepted_attempt=None; duration=2.48s
+  cycle_20261014_112708_301873: accepted; attempts=2; accepted_attempt=2; duration=1.60s
+  cycle_20261014_112709_909471: retry_failed; attempts=3; accepted_attempt=None; duration=2.41s

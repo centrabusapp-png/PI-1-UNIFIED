@@ -1,0 +1,7 @@
+gauge,success_count,failure_count,mean_detected_angle,minimum_angle,maximum_angle,standard_deviation,mean_absolute_error,maximum_absolute_error
+fuel,0,10,,,,,,
+coolant,0,10,,,,,,
+front,0,10,,,,,,
+rear,0,10,,,,,,
+battery,0,10,,,,,,
+oil,0,10,,,,,,

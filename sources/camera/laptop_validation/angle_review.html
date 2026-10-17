@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Centrabus needle angle review</title>
+<style>
+  :root { color-scheme: dark; font-family: system-ui, sans-serif; }
+  body { margin: 1.5rem; max-width: 1100px; }
+  h1 { margin-bottom: .4rem; }
+  p { line-height: 1.45; }
+  button, select { font: inherit; padding: .5rem; margin: .25rem .3rem .25rem 0; }
+  .viewer { position: relative; display: inline-block; max-width: 100%; margin-top: 1rem; }
+  .viewer img { display: block; width: min(900px, 94vw); height: auto; image-rendering: auto; }
+  .viewer svg { position: absolute; inset: 0; width: 100%; height: 100%; cursor: crosshair; touch-action: none; }
+  .result { font-size: 1.2rem; font-weight: bold; margin-top: .7rem; }
+  .hint { color: #d4d4d4; }
+  table { border-collapse: collapse; margin-top: .7rem; }
+  th, td { border: 1px solid #777; padding: .4rem .7rem; text-align: right; }
+  th:first-child, td:first-child { text-align: left; }
+</style>
+<h1>Needle angle review</h1>
+<p>Choose a camera photo and gauge. Click the center of the round needle hub, then the outer tip of the red needle. The page compares that angle with the code's result. Use several source dashboard images with visibly different needle positions. These clicks measure angle only; the gauge's numeric reading can remain unknown.</p>
+<div>
+  <button id="previous">Previous</button>
+  <select id="sample" aria-label="Photo and gauge"></select>
+  <button id="next">Next</button>
+  <button id="reset">Reset this angle</button>
+  <button id="export">Export manual angles CSV</button>
+</div>
+<div class="hint" id="instruction"></div>
+<div class="viewer">
+  <img id="crop" alt="Unannotated camera crop of one bus dashboard gauge">
+  <svg id="overlay" aria-label="Click hub center and needle tip"></svg>
+</div>
+<div class="result" id="comparison"></div>
+<p class="hint">Click uncertainty matters: repeat a few labels to see how much your own clicks vary. A small error on one image does not establish accuracy at other needle positions.</p>
+<h2>Reviewed angles</h2>
+<div id="summary">No manual angles yet.</div>
+<script>
+"use strict";
+const rows = [{"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_150616.jpg", "gauge": "fuel", "angle_deg": 121.22738841997615, "crop_image": "crops/0000_fuel.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_150616.jpg", "gauge": "coolant", "angle_deg": 141.48510259889943, "crop_image": "crops/0000_coolant.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_150616.jpg", "gauge": "front", "angle_deg": 91.49095949724739, "crop_image": "crops/0000_front.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_150616.jpg", "gauge": "rear", "angle_deg": 92.11286188574516, "crop_image": "crops/0000_rear.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_150616.jpg", "gauge": "battery", "angle_deg": 83.80046504032988, "crop_image": "crops/0000_battery.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_150616.jpg", "gauge": "oil", "angle_deg": 104.14160349670928, "crop_image": "crops/0000_oil.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_150653.jpg", "gauge": "fuel", "angle_deg": 121.60180674416291, "crop_image": "crops/0001_fuel.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_150653.jpg", "gauge": "coolant", "angle_deg": 141.2176938431332, "crop_image": "crops/0001_coolant.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_150653.jpg", "gauge": "front", "angle_deg": 90.29678969380736, "crop_image": "crops/0001_front.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_150653.jpg", "gauge": "rear", "angle_deg": 92.02988193311498, "crop_image": "crops/0001_rear.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_150653.jpg", "gauge": "battery", "angle_deg": 83.61616629093963, "crop_image": "crops/0001_battery.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_150653.jpg", "gauge": "oil", "angle_deg": 103.94723706731665, "crop_image": "crops/0001_oil.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_151828.jpg", "gauge": "fuel", "angle_deg": 122.49379570283104, "crop_image": "crops/0002_fuel.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_151828.jpg", "gauge": "coolant", "angle_deg": 142.1880627849768, "crop_image": "crops/0002_coolant.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_151828.jpg", "gauge": "front", "angle_deg": 91.37468240279725, "crop_image": "crops/0002_front.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_151828.jpg", "gauge": "rear", "angle_deg": 92.75140937776713, "crop_image": "crops/0002_rear.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_151828.jpg", "gauge": "battery", "angle_deg": 83.8367131882965, "crop_image": "crops/0002_battery.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_151828.jpg", "gauge": "oil", "angle_deg": 104.96706639261161, "crop_image": "crops/0002_oil.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_153424.jpg", "gauge": "fuel", "angle_deg": 120.6957700417315, "crop_image": "crops/0003_fuel.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_153424.jpg", "gauge": "coolant", "angle_deg": 141.0891188851008, "crop_image": "crops/0003_coolant.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_153424.jpg", "gauge": "front", "angle_deg": 93.75037938175517, "crop_image": "crops/0003_front.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_153424.jpg", "gauge": "rear", "angle_deg": 95.54259339481104, "crop_image": "crops/0003_rear.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_153424.jpg", "gauge": "battery", "angle_deg": 83.10723506040624, "crop_image": "crops/0003_battery.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_153424.jpg", "gauge": "oil", "angle_deg": 103.8610126641451, "crop_image": "crops/0003_oil.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_153449.jpg", "gauge": "fuel", "angle_deg": 120.72418769520235, "crop_image": "crops/0004_fuel.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_153449.jpg", "gauge": "coolant", "angle_deg": 141.007589158705, "crop_image": "crops/0004_coolant.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_153449.jpg", "gauge": "front", "angle_deg": 93.91806060362444, "crop_image": "crops/0004_front.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_153449.jpg", "gauge": "rear", "angle_deg": 95.60229619223989, "crop_image": "crops/0004_rear.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_153449.jpg", "gauge": "battery", "angle_deg": 83.24521860456062, "crop_image": "crops/0004_battery.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_153449.jpg", "gauge": "oil", "angle_deg": 103.96929838224574, "crop_image": "crops/0004_oil.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_153612.jpg", "gauge": "fuel", "angle_deg": 120.5867584563351, "crop_image": "crops/0005_fuel.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_153612.jpg", "gauge": "coolant", "angle_deg": 141.35221661381075, "crop_image": "crops/0005_coolant.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_153612.jpg", "gauge": "front", "angle_deg": 94.27245184313259, "crop_image": "crops/0005_front.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_153612.jpg", "gauge": "rear", "angle_deg": 94.21327469228406, "crop_image": "crops/0005_rear.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_153612.jpg", "gauge": "battery", "angle_deg": 84.20680682258515, "crop_image": "crops/0005_battery.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_153612.jpg", "gauge": "oil", "angle_deg": 103.98778150430003, "crop_image": "crops/0005_oil.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_154051.jpg", "gauge": "fuel", "angle_deg": 120.46915791263687, "crop_image": "crops/0006_fuel.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_154051.jpg", "gauge": "coolant", "angle_deg": 140.30770767752801, "crop_image": "crops/0006_coolant.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_154051.jpg", "gauge": "front", "angle_deg": 94.27571629937542, "crop_image": "crops/0006_front.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_154051.jpg", "gauge": "rear", "angle_deg": 91.0351741431895, "crop_image": "crops/0006_rear.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_154051.jpg", "gauge": "battery", "angle_deg": 84.73321648883788, "crop_image": "crops/0006_battery.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_154051.jpg", "gauge": "oil", "angle_deg": 104.20503601048719, "crop_image": "crops/0006_oil.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_154407.jpg", "gauge": "fuel", "angle_deg": 122.2981300579334, "crop_image": "crops/0007_fuel.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_154407.jpg", "gauge": "coolant", "angle_deg": 140.74019555669275, "crop_image": "crops/0007_coolant.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_154407.jpg", "gauge": "front", "angle_deg": 91.36813218147834, "crop_image": "crops/0007_front.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_154407.jpg", "gauge": "rear", "angle_deg": 86.57427343119878, "crop_image": "crops/0007_rear.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_154407.jpg", "gauge": "battery", "angle_deg": 85.2400981084685, "crop_image": "crops/0007_battery.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_154407.jpg", "gauge": "oil", "angle_deg": 104.73048260032579, "crop_image": "crops/0007_oil.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_154702.jpg", "gauge": "fuel", "angle_deg": 121.32627034923118, "crop_image": "crops/0008_fuel.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_154702.jpg", "gauge": "coolant", "angle_deg": 143.63105940304587, "crop_image": "crops/0008_coolant.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_154702.jpg", "gauge": "front", "angle_deg": 90.38371752767507, "crop_image": "crops/0008_front.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_154702.jpg", "gauge": "rear", "angle_deg": 93.69372297392877, "crop_image": "crops/0008_rear.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_154702.jpg", "gauge": "battery", "angle_deg": 86.39546607652204, "crop_image": "crops/0008_battery.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_154702.jpg", "gauge": "oil", "angle_deg": 105.24818263469655, "crop_image": "crops/0008_oil.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_154914.jpg", "gauge": "fuel", "angle_deg": 121.4501019755256, "crop_image": "crops/0009_fuel.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_154914.jpg", "gauge": "coolant", "angle_deg": 143.4966162140392, "crop_image": "crops/0009_coolant.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_154914.jpg", "gauge": "front", "angle_deg": 90.96933791811577, "crop_image": "crops/0009_front.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_154914.jpg", "gauge": "rear", "angle_deg": 93.94687721812691, "crop_image": "crops/0009_rear.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_154914.jpg", "gauge": "battery", "angle_deg": 86.48783726608679, "crop_image": "crops/0009_battery.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_154914.jpg", "gauge": "oil", "angle_deg": 104.96940165085209, "crop_image": "crops/0009_oil.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_155003.jpg", "gauge": "fuel", "angle_deg": 121.50964794220437, "crop_image": "crops/0010_fuel.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_155003.jpg", "gauge": "coolant", "angle_deg": 143.41105852199098, "crop_image": "crops/0010_coolant.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_155003.jpg", "gauge": "front", "angle_deg": 90.31304555456984, "crop_image": "crops/0010_front.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_155003.jpg", "gauge": "rear", "angle_deg": 93.69623649067574, "crop_image": "crops/0010_rear.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_155003.jpg", "gauge": "battery", "angle_deg": 86.75063559901238, "crop_image": "crops/0010_battery.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_155003.jpg", "gauge": "oil", "angle_deg": 105.20983806799347, "crop_image": "crops/0010_oil.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_160218.jpg", "gauge": "fuel", "angle_deg": 122.04608387806756, "crop_image": "crops/0011_fuel.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_160218.jpg", "gauge": "coolant", "angle_deg": 143.8165056757018, "crop_image": "crops/0011_coolant.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_160218.jpg", "gauge": "front", "angle_deg": 91.03393792391135, "crop_image": "crops/0011_front.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_160218.jpg", "gauge": "rear", "angle_deg": 93.79906460472053, "crop_image": "crops/0011_rear.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_160218.jpg", "gauge": "battery", "angle_deg": 85.15728237283368, "crop_image": "crops/0011_battery.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_160218.jpg", "gauge": "oil", "angle_deg": 105.552236221917, "crop_image": "crops/0011_oil.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_160922.jpg", "gauge": "fuel", "angle_deg": 121.79911954020977, "crop_image": "crops/0012_fuel.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_160922.jpg", "gauge": "coolant", "angle_deg": 143.8150124825398, "crop_image": "crops/0012_coolant.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_160922.jpg", "gauge": "front", "angle_deg": 91.05757034801469, "crop_image": "crops/0012_front.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_160922.jpg", "gauge": "rear", "angle_deg": 93.74831640647218, "crop_image": "crops/0012_rear.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_160922.jpg", "gauge": "battery", "angle_deg": 88.01745806615698, "crop_image": "crops/0012_battery.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_160922.jpg", "gauge": "oil", "angle_deg": 105.46133381855935, "crop_image": "crops/0012_oil.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_161857.jpg", "gauge": "fuel", "angle_deg": 121.95635473931921, "crop_image": "crops/0013_fuel.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_161857.jpg", "gauge": "coolant", "angle_deg": 143.82526121938312, "crop_image": "crops/0013_coolant.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_161857.jpg", "gauge": "front", "angle_deg": 90.0885099152497, "crop_image": "crops/0013_front.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_161857.jpg", "gauge": "rear", "angle_deg": 93.90862777495998, "crop_image": "crops/0013_rear.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_161857.jpg", "gauge": "battery", "angle_deg": 88.01199388733548, "crop_image": "crops/0013_battery.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_161857.jpg", "gauge": "oil", "angle_deg": 105.64235281095966, "crop_image": "crops/0013_oil.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_162348.jpg", "gauge": "fuel", "angle_deg": 121.84761901072186, "crop_image": "crops/0014_fuel.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_162348.jpg", "gauge": "coolant", "angle_deg": 143.82503172534214, "crop_image": "crops/0014_coolant.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_162348.jpg", "gauge": "front", "angle_deg": 90.5107180583363, "crop_image": "crops/0014_front.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_162348.jpg", "gauge": "rear", "angle_deg": 93.96442383643388, "crop_image": "crops/0014_rear.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_162348.jpg", "gauge": "battery", "angle_deg": 88.07948319330279, "crop_image": "crops/0014_battery.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_162348.jpg", "gauge": "oil", "angle_deg": 105.72731508624452, "crop_image": "crops/0014_oil.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_170132.jpg", "gauge": "fuel", "angle_deg": 122.0387609943176, "crop_image": "crops/0015_fuel.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_170132.jpg", "gauge": "coolant", "angle_deg": 143.3573952586838, "crop_image": "crops/0015_coolant.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_170132.jpg", "gauge": "front", "angle_deg": 90.3179359661717, "crop_image": "crops/0015_front.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_170132.jpg", "gauge": "rear", "angle_deg": 93.94388516551126, "crop_image": "crops/0015_rear.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_170132.jpg", "gauge": "battery", "angle_deg": 87.49936106469197, "crop_image": "crops/0015_battery.jpg"}, {"image": "/home/centrabus/centrabus_camera/captures/dashboard_20261009_170132.jpg", "gauge": "oil", "angle_deg": 105.85434861205948, "crop_image": "crops/0015_oil.jpg"}];
+const keyPrefix = "centrabus-angle-review-v1:";
+const sample = document.getElementById("sample");
+const crop = document.getElementById("crop");
+const overlay = document.getElementById("overlay");
+const instruction = document.getElementById("instruction");
+const comparison = document.getElementById("comparison");
+const summary = document.getElementById("summary");
+const labels = {};
+let current = 0;
+let firstClick = null;
+
+function rowKey(row) { return `${row.image}|${row.gauge}`; }
+function manualAngle(pointA, pointB) {
+  let angle = Math.atan2(pointA.y - pointB.y, pointB.x - pointA.x) * 180 / Math.PI;
+  angle = (angle + 360) % 360;
+  return angle > 180 ? angle - 180 : angle;
+}
+function loadLabels() {
+  for (const row of rows) {
+    try {
+      const saved = localStorage.getItem(keyPrefix + rowKey(row));
+      if (saved) labels[rowKey(row)] = JSON.parse(saved);
+    } catch (_) { /* Export remains available if local storage is blocked. */ }
+  }
+}
+function saveLabel(row, value) {
+  const key = rowKey(row);
+  if (value) labels[key] = value;
+  else delete labels[key];
+  try {
+    if (value) localStorage.setItem(keyPrefix + key, JSON.stringify(value));
+    else localStorage.removeItem(keyPrefix + key);
+  } catch (_) { /* Keep the current-session label. */ }
+}
+function pointFromEvent(event) {
+  const bounds = overlay.getBoundingClientRect();
+  return {
+    x: Math.round((event.clientX - bounds.left) * crop.naturalWidth / bounds.width),
+    y: Math.round((event.clientY - bounds.top) * crop.naturalHeight / bounds.height),
+  };
+}
+function draw() {
+  const row = rows[current];
+  const saved = labels[rowKey(row)];
+  overlay.setAttribute("viewBox", `0 0 ${crop.naturalWidth} ${crop.naturalHeight}`);
+  overlay.replaceChildren();
+  const hub = firstClick || (saved && saved.hub);
+  const tip = firstClick ? null : (saved && saved.tip);
+  function marker(point, color) {
+    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    circle.setAttribute("cx", point.x); circle.setAttribute("cy", point.y);
+    circle.setAttribute("r", "5"); circle.setAttribute("fill", color);
+    circle.setAttribute("stroke", "black"); circle.setAttribute("stroke-width", "1.5");
+    overlay.append(circle);
+  }
+  if (hub && tip) {
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    line.setAttribute("x1", hub.x); line.setAttribute("y1", hub.y);
+    line.setAttribute("x2", tip.x); line.setAttribute("y2", tip.y);
+    line.setAttribute("stroke", "#00ffbb"); line.setAttribute("stroke-width", "3");
+    overlay.append(line);
+  }
+  if (hub) marker(hub, "#e04cff");
+  if (tip) marker(tip, "#00ffbb");
+  instruction.textContent = firstClick ? "Now click the outer red needle tip." : "First click: round hub center. Second click: outer red needle tip.";
+  if (saved && !firstClick) {
+    const measured = manualAngle(saved.hub, saved.tip);
+    const error = Math.abs(measured - Number(row.angle_deg));
+    comparison.textContent = `Manual ${measured.toFixed(1)}° · code ${Number(row.angle_deg).toFixed(1)}° · difference ${error.toFixed(1)}°`;
+  } else {
+    comparison.textContent = `Code ${Number(row.angle_deg).toFixed(1)}° · manual angle pending`;
+  }
+}
+function show(index) {
+  current = (index + rows.length) % rows.length;
+  firstClick = null;
+  sample.value = String(current);
+  crop.onload = draw;
+  crop.src = rows[current].crop_image;
+  if (crop.complete && crop.naturalWidth) draw();
+}
+function refreshSummary() {
+  const byGauge = {};
+  for (const row of rows) {
+    const saved = labels[rowKey(row)];
+    if (!saved) continue;
+    const error = Math.abs(manualAngle(saved.hub, saved.tip) - Number(row.angle_deg));
+    (byGauge[row.gauge] ||= []).push(error);
+  }
+  const entries = Object.entries(byGauge);
+  if (!entries.length) { summary.textContent = "No manual angles yet."; return; }
+  const body = entries.map(([gauge, errors]) => {
+    const mean = errors.reduce((a, b) => a + b, 0) / errors.length;
+    return `<tr><td>${gauge}</td><td>${errors.length}</td><td>${mean.toFixed(1)}°</td><td>${Math.max(...errors).toFixed(1)}°</td></tr>`;
+  }).join("");
+  summary.innerHTML = `<table><thead><tr><th>Gauge</th><th>Labels</th><th>Mean absolute error</th><th>Largest error</th></tr></thead><tbody>${body}</tbody></table>`;
+  for (const option of sample.options) {
+    const row = rows[Number(option.value)];
+    option.textContent = `${row.image.split("/").pop()} · ${row.gauge}${labels[rowKey(row)] ? " ✓" : ""}`;
+  }
+}
+function csvCell(value) { return `"${String(value).replaceAll('"', '""')}"`; }
+function exportCsv() {
+  const header = ["image", "gauge", "hub_x", "hub_y", "tip_x", "tip_y", "manual_angle_deg", "detected_angle_deg", "absolute_error_deg"];
+  const lines = [header.map(csvCell).join(",")];
+  for (const row of rows) {
+    const saved = labels[rowKey(row)];
+    if (!saved) continue;
+    const measured = manualAngle(saved.hub, saved.tip);
+    const detected = Number(row.angle_deg);
+    lines.push([row.image, row.gauge, saved.hub.x, saved.hub.y, saved.tip.x, saved.tip.y, measured.toFixed(3), detected.toFixed(3), Math.abs(measured - detected).toFixed(3)].map(csvCell).join(","));
+  }
+  const url = URL.createObjectURL(new Blob([lines.join("\n") + "\n"], {type: "text/csv"}));
+  const link = document.createElement("a");
+  link.href = url; link.download = "manual_angles.csv"; link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+if (rows.length) {
+  loadLabels();
+  rows.forEach((_, index) => sample.add(new Option("", String(index))));
+  overlay.addEventListener("click", event => {
+    const point = pointFromEvent(event);
+    if (!firstClick) firstClick = point;
+    else {
+      saveLabel(rows[current], {hub: firstClick, tip: point});
+      firstClick = null;
+      refreshSummary();
+    }
+    draw();
+  });
+  sample.addEventListener("change", () => show(Number(sample.value)));
+  document.getElementById("previous").onclick = () => show(current - 1);
+  document.getElementById("next").onclick = () => show(current + 1);
+  document.getElementById("reset").onclick = () => { firstClick = null; saveLabel(rows[current], null); draw(); refreshSummary(); };
+  document.getElementById("export").onclick = exportCsv;
+  refreshSummary();
+  show(0);
+} else {
+  instruction.textContent = "No successful detections were found.";
+}
+</script>
+</html>

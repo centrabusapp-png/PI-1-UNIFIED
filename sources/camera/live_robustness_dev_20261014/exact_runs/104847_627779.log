@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "/home/centrabus/camera_calibration/v2_live_test_runtime/centrabus_dashboard_reader.py", line 1409, in <module>
+    main()
+    ~~~~^^
+  File "/home/centrabus/camera_calibration/v2_live_test_runtime/centrabus_dashboard_reader.py", line 1400, in main
+    read_dashboard(
+    ~~~~~~~~~~~~~~^
+        args.image,
+        ^^^^^^^^^^^
+        output_path=
+        ^^^^^^^^^^^^
+            args.output
+            ^^^^^^^^^^^
+    )
+    ^
+  File "/home/centrabus/camera_calibration/v2_live_test_runtime/centrabus_dashboard_reader.py", line 563, in read_dashboard
+    raise RuntimeError(
+    ...<4 lines>...
+    )
+RuntimeError: Not enough good ORB matches. Found 2, need at least 12.

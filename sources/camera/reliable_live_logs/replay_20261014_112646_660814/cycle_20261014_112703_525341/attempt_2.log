@@ -1,0 +1,50 @@
+attempt: 2
+timestamp: 2026-10-14T03:27:04.300199+00:00
+REPLAY SOURCE: /home/centrabus/centrabus_camera/captures/dashboard_20261014_104940_819909.jpg
+detector_stdout:
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/cycle_20261014_112703_525341/attempt_2.jpg
+
+ORB good matches: 98
+ORB inliers: 21
+Inlier ratio: 0.214
+Current scale: 0.90781
+Rotation: 0.722 deg
+Registration quality: review
+
+FUEL      angle= 132.936 deg      2.2% EMPTY  [VALUE UNVERIFIED] [CHECK IMAGE]
+COOLANT   angle= 143.998 deg      0.0% COLD  [VALUE UNVERIFIED] [CHECK IMAGE]
+FRONT strict inner-red pixels=0; trying radial live fallback.
+FRONT relaxed inner-red pixels=1284
+FRONT connected needle candidate=86.4 deg, span=89.2
+FRONT     angle=  86.387 deg     8.37 kg/cm2  [VALUE UNVERIFIED] [CHECK IMAGE]
+
+exception:
+Traceback (most recent call last):
+  File "/home/centrabus/camera_calibration/centrabus_reliable_live_reader.py", line 243, in run_attempt
+    results, registration = detect_fn(image, annotated, log)
+                            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/centrabus/camera_calibration/centrabus_reliable_live_reader.py", line 220, in detect_image
+    results = read_dashboard(image_path, output_path=annotated_path)
+  File "/home/centrabus/camera_calibration/v2_live_test_runtime/centrabus_dashboard_reader.py", line 1005, in read_dashboard
+    result = read_rear(
+        crop,
+        config=
+            pressure_config
+    )
+  File "/home/centrabus/camera_calibration/v2_live_test_runtime/gauge_readers.py", line 2109, in read_rear
+    return _read_pressure_gauge(
+        image,
+        gauge_name="rear",
+        config=config
+    )
+  File "/home/centrabus/camera_calibration/v2_live_test_runtime/gauge_readers.py", line 1852, in _read_pressure_gauge
+    raise RuntimeError(f"{gauge_name} red candidate is too short to be a needle.")
+RuntimeError: rear red candidate is too short to be a needle.
+
+outcome: rejected
+duration_seconds: 0.697

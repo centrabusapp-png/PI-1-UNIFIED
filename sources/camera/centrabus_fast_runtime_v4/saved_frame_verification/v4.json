@@ -1,0 +1,1509 @@
+{
+  "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/real_camera_logs/cycle_20261014_130838_650866/attempt_1.jpg": {
+    "gauges": {
+      "fuel": {
+        "angle": 120.21510998567807,
+        "pressure": null,
+        "percent": 15.563042120338874,
+        "percentage": null,
+        "status": "EMPTY",
+        "mask_mode": "strict",
+        "quality_status": "review",
+        "detection_quality": "good",
+        "line_span": 120.06664815842908,
+        "hub_error": 6.298624985369315,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          179,
+          173
+        ],
+        "tip": [
+          119,
+          69
+        ]
+      },
+      "coolant": {
+        "angle": 141.60093856768822,
+        "pressure": null,
+        "percent": 0.0,
+        "percentage": null,
+        "status": "COLD",
+        "mask_mode": "strict",
+        "quality_status": "review",
+        "detection_quality": "good",
+        "line_span": 131.65485179058157,
+        "hub_error": 5.695270008195621,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          173,
+          175
+        ],
+        "tip": [
+          70,
+          93
+        ]
+      },
+      "front": {
+        "angle": 63.970070073839835,
+        "pressure": 11.76761697534618,
+        "percent": null,
+        "percentage": null,
+        "status": null,
+        "mask_mode": "live_radial",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 49.37734249383211,
+        "hub_error": null,
+        "radial_continuity": null,
+        "p90_error": 4.461606760807081,
+        "base": [
+          236,
+          147
+        ],
+        "tip": [
+          258,
+          102
+        ]
+      },
+      "rear": {
+        "angle": 85.3938527892752,
+        "pressure": 8.5151638872464,
+        "percent": null,
+        "percentage": null,
+        "status": null,
+        "mask_mode": "coherent_relaxed",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 112.84383494108914,
+        "hub_error": 10.11521414417814,
+        "radial_continuity": 14,
+        "p90_error": 8.279008047392223,
+        "base": [
+          233,
+          149
+        ],
+        "tip": [
+          242,
+          36
+        ]
+      },
+      "battery": {
+        "angle": 84.79267980181034,
+        "pressure": null,
+        "percent": 52.84981073493648,
+        "percentage": null,
+        "status": "NORMAL",
+        "mask_mode": "local_arc_strict",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 88.36288813749809,
+        "hub_error": 4.723529143972883,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          267,
+          188
+        ],
+        "tip": [
+          275,
+          100
+        ]
+      },
+      "oil": {
+        "angle": 102.02833671931081,
+        "pressure": null,
+        "percent": 34.70701397967282,
+        "percentage": null,
+        "status": "NORMAL",
+        "mask_mode": "coherent_relaxed",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 138.35182005167007,
+        "hub_error": 18.518386839013147,
+        "radial_continuity": 13,
+        "p90_error": null,
+        "base": [
+          219,
+          162
+        ],
+        "tip": [
+          191,
+          27
+        ]
+      }
+    },
+    "annotation_sha256": "8f122e7cca3853b8b344e130a243f123a5bdc5ee9a19551295452fab31c3c613"
+  },
+  "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/real_camera_logs/cycle_20261014_131412_068496/attempt_1.jpg": {
+    "gauges": {
+      "fuel": {
+        "angle": 119.6391393192756,
+        "pressure": null,
+        "percent": 16.169327032341474,
+        "percentage": null,
+        "status": "EMPTY",
+        "mask_mode": "strict",
+        "quality_status": "detected",
+        "detection_quality": "good",
+        "line_span": 104.80935072788114,
+        "hub_error": 2.3299038401478356,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          140,
+          107
+        ],
+        "tip": [
+          88,
+          16
+        ]
+      },
+      "coolant": {
+        "angle": 141.51038659918444,
+        "pressure": null,
+        "percent": 0.0,
+        "percentage": null,
+        "status": "COLD",
+        "mask_mode": "strict",
+        "quality_status": "detected",
+        "detection_quality": "good",
+        "line_span": 116.03878661895772,
+        "hub_error": 16.559752485896297,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          149,
+          121
+        ],
+        "tip": [
+          58,
+          49
+        ]
+      },
+      "front": {
+        "angle": 84.80276138373775,
+        "pressure": 8.599605516608893,
+        "percent": null,
+        "percentage": null,
+        "status": null,
+        "mask_mode": "live_radial",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 56.331395517289636,
+        "hub_error": null,
+        "radial_continuity": null,
+        "p90_error": 3.9900127585769156,
+        "base": [
+          168,
+          126
+        ],
+        "tip": [
+          173,
+          70
+        ]
+      },
+      "rear": {
+        "angle": 86.93843834727292,
+        "pressure": 8.29450880753244,
+        "percent": null,
+        "percentage": null,
+        "status": null,
+        "mask_mode": "coherent_relaxed",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 100.62618512958288,
+        "hub_error": 0.3628005604164173,
+        "radial_continuity": 14,
+        "p90_error": 6.9537084191676515,
+        "base": [
+          187,
+          117
+        ],
+        "tip": [
+          192,
+          16
+        ]
+      },
+      "battery": {
+        "angle": 82.68159142048685,
+        "pressure": null,
+        "percent": 55.07200903106647,
+        "percentage": null,
+        "status": "NORMAL",
+        "mask_mode": "relaxed",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 68.59300255857006,
+        "hub_error": 2.420056292070967,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          180,
+          152
+        ],
+        "tip": [
+          189,
+          84
+        ]
+      },
+      "oil": {
+        "angle": 101.68259204746225,
+        "pressure": null,
+        "percent": 35.07095573951342,
+        "percentage": null,
+        "status": "NORMAL",
+        "mask_mode": null,
+        "quality_status": "detected",
+        "detection_quality": "good",
+        "line_span": null,
+        "hub_error": null,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          162,
+          152
+        ],
+        "tip": [
+          138,
+          36
+        ]
+      }
+    },
+    "annotation_sha256": "7b4d6f11408617c42ee616312c54f305dd27eb12045d75310c4cc988e2ed01ae"
+  },
+  "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/real_camera_logs/cycle_20261014_131427_201754/attempt_1.jpg": {
+    "gauges": {
+      "fuel": {
+        "angle": 120.32786647522228,
+        "pressure": null,
+        "percent": 15.444351078713389,
+        "percentage": null,
+        "status": "EMPTY",
+        "mask_mode": "strict",
+        "quality_status": "review",
+        "detection_quality": "good",
+        "line_span": 104.44615837837216,
+        "hub_error": 5.722158610833503,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          140,
+          102
+        ],
+        "tip": [
+          87,
+          12
+        ]
+      },
+      "coolant": {
+        "angle": 141.72310178526445,
+        "pressure": null,
+        "percent": 0.0,
+        "percentage": null,
+        "status": "COLD",
+        "mask_mode": "strict",
+        "quality_status": "review",
+        "detection_quality": "good",
+        "line_span": 115.42096863222038,
+        "hub_error": 20.879011314544186,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          153,
+          118
+        ],
+        "tip": [
+          62,
+          47
+        ]
+      },
+      "front": {
+        "angle": 85.22713452080839,
+        "pressure": 8.538980782741659,
+        "percent": null,
+        "percentage": null,
+        "status": null,
+        "mask_mode": "live_component",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 98.58201421201228,
+        "hub_error": null,
+        "radial_continuity": null,
+        "p90_error": 8.629181512601098,
+        "base": [
+          174,
+          123
+        ],
+        "tip": [
+          182,
+          24
+        ]
+      },
+      "rear": {
+        "angle": 87.15305676561277,
+        "pressure": 8.26384903348389,
+        "percent": null,
+        "percentage": null,
+        "status": null,
+        "mask_mode": "coherent_relaxed",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 101.68989908099174,
+        "hub_error": 2.9970903470955363,
+        "radial_continuity": 14,
+        "p90_error": 7.065588204714049,
+        "base": [
+          191,
+          117
+        ],
+        "tip": [
+          196,
+          16
+        ]
+      },
+      "battery": {
+        "angle": 81.97607408350478,
+        "pressure": null,
+        "percent": 55.81465885946864,
+        "percentage": null,
+        "status": "NORMAL",
+        "mask_mode": "relaxed",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 77.78174593052023,
+        "hub_error": 1.5074448010617516,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          180,
+          154
+        ],
+        "tip": [
+          191,
+          77
+        ]
+      },
+      "oil": {
+        "angle": 101.80091170619052,
+        "pressure": null,
+        "percent": 34.946408730325764,
+        "percentage": null,
+        "status": "NORMAL",
+        "mask_mode": null,
+        "quality_status": "review",
+        "detection_quality": "good",
+        "line_span": null,
+        "hub_error": null,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          165,
+          154
+        ],
+        "tip": [
+          141,
+          36
+        ]
+      }
+    },
+    "annotation_sha256": "c26bdc2c4a6b040d97dc1399e1e00db1fc52649ed25154ffaaad5cd8f648a24e"
+  },
+  "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/real_camera_logs/cycle_20261014_131439_711072/attempt_1.jpg": {
+    "gauges": {
+      "fuel": {
+        "angle": 119.96320388549735,
+        "pressure": null,
+        "percent": 15.82820643631858,
+        "percentage": null,
+        "status": "EMPTY",
+        "mask_mode": "strict",
+        "quality_status": "review",
+        "detection_quality": "good",
+        "line_span": 107.54068997360952,
+        "hub_error": 6.427115166827434,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          142,
+          102
+        ],
+        "tip": [
+          88,
+          9
+        ]
+      },
+      "coolant": {
+        "angle": 141.42540587900172,
+        "pressure": null,
+        "percent": 0.0,
+        "percentage": null,
+        "status": "COLD",
+        "mask_mode": "strict",
+        "quality_status": "review",
+        "detection_quality": "good",
+        "line_span": 117.44360348695028,
+        "hub_error": 21.298592365189506,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          154,
+          119
+        ],
+        "tip": [
+          62,
+          46
+        ]
+      },
+      "front": {
+        "angle": 84.79311714872772,
+        "pressure": 8.60098326446747,
+        "percent": null,
+        "percentage": null,
+        "status": null,
+        "mask_mode": "live_component",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 100.67445697784424,
+        "hub_error": null,
+        "radial_continuity": null,
+        "p90_error": 8.856848833753611,
+        "base": [
+          176,
+          123
+        ],
+        "tip": [
+          185,
+          23
+        ]
+      },
+      "rear": {
+        "angle": 85.9614142689628,
+        "pressure": 8.434083675862457,
+        "percent": null,
+        "percentage": null,
+        "status": null,
+        "mask_mode": "coherent_relaxed",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 102.76959375962613,
+        "hub_error": 1.7053793660329575,
+        "radial_continuity": 14,
+        "p90_error": 7.060174512845333,
+        "base": [
+          192,
+          118
+        ],
+        "tip": [
+          199,
+          15
+        ]
+      },
+      "battery": {
+        "angle": 79.72412696392625,
+        "pressure": null,
+        "percent": 58.18512951165658,
+        "percentage": null,
+        "status": "NORMAL",
+        "mask_mode": "relaxed",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 81.21576201698781,
+        "hub_error": 1.0641934668419708,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          181,
+          156
+        ],
+        "tip": [
+          195,
+          76
+        ]
+      },
+      "oil": {
+        "angle": 101.4381123290701,
+        "pressure": null,
+        "percent": 35.32830281150516,
+        "percentage": null,
+        "status": "NORMAL",
+        "mask_mode": null,
+        "quality_status": "review",
+        "detection_quality": "good",
+        "line_span": null,
+        "hub_error": null,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          166,
+          155
+        ],
+        "tip": [
+          143,
+          37
+        ]
+      }
+    },
+    "annotation_sha256": "d6e8ed40a4742a2946a3d53af4a06c5cb2369a2e2e5158732f1c957f5c481eb9"
+  },
+  "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/real_camera_logs/cycle_20261014_131452_554656/attempt_1.jpg": {
+    "gauges": {
+      "fuel": {
+        "angle": 120.03582811842185,
+        "pressure": null,
+        "percent": 15.751759875345424,
+        "percentage": null,
+        "status": "EMPTY",
+        "mask_mode": "strict",
+        "quality_status": "review",
+        "detection_quality": "good",
+        "line_span": 108.40664186294121,
+        "hub_error": 2.726580302131879,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          153,
+          136
+        ],
+        "tip": [
+          99,
+          42
+        ]
+      },
+      "coolant": {
+        "angle": 141.80053110335103,
+        "pressure": null,
+        "percent": 0.0,
+        "percentage": null,
+        "status": "COLD",
+        "mask_mode": "strict",
+        "quality_status": "review",
+        "detection_quality": "good",
+        "line_span": 121.82364302548172,
+        "hub_error": 4.648099177017684,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          155,
+          143
+        ],
+        "tip": [
+          59,
+          68
+        ]
+      },
+      "front": {
+        "angle": 72.48120178869836,
+        "pressure": 10.403653559503468,
+        "percent": null,
+        "percentage": null,
+        "status": null,
+        "mask_mode": "live_radial",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 63.04180526286363,
+        "hub_error": null,
+        "radial_continuity": null,
+        "p90_error": 4.136220441097203,
+        "base": [
+          188,
+          140
+        ],
+        "tip": [
+          207,
+          80
+        ]
+      },
+      "rear": {
+        "angle": 86.60326748181068,
+        "pressure": 8.342390359741332,
+        "percent": null,
+        "percentage": null,
+        "status": null,
+        "mask_mode": "coherent_relaxed",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 104.58753691613674,
+        "hub_error": 3.0007394873086923,
+        "radial_continuity": 14,
+        "p90_error": 7.148276474973045,
+        "base": [
+          200,
+          128
+        ],
+        "tip": [
+          206,
+          24
+        ]
+      },
+      "battery": {
+        "angle": 81.6468787134366,
+        "pressure": null,
+        "percent": 56.16118030164567,
+        "percentage": null,
+        "status": "NORMAL",
+        "mask_mode": "relaxed",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 81.88406438373708,
+        "hub_error": 24.41003752708093,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          212,
+          166
+        ],
+        "tip": [
+          224,
+          85
+        ]
+      },
+      "oil": {
+        "angle": 101.81658640376676,
+        "pressure": null,
+        "percent": 34.929909048666566,
+        "percentage": null,
+        "status": "NORMAL",
+        "mask_mode": null,
+        "quality_status": "review",
+        "detection_quality": "good",
+        "line_span": null,
+        "hub_error": null,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          181,
+          153
+        ],
+        "tip": [
+          157,
+          36
+        ]
+      }
+    },
+    "annotation_sha256": "37041565c17659ee14d3d06d436d9984df8e6bb027acb6a90f75422ca6a74110"
+  },
+  "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/real_camera_logs/cycle_20261014_131512_373663/attempt_1.jpg": {
+    "gauges": {
+      "fuel": {
+        "angle": 120.86937997533974,
+        "pressure": null,
+        "percent": 14.87433686806343,
+        "percentage": null,
+        "status": "EMPTY",
+        "mask_mode": "strict",
+        "quality_status": "review",
+        "detection_quality": "good",
+        "line_span": 118.84864324004712,
+        "hub_error": 1.0606166421503076,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          183,
+          172
+        ],
+        "tip": [
+          122,
+          70
+        ]
+      },
+      "coolant": {
+        "angle": 141.78925415866405,
+        "pressure": null,
+        "percent": 0.0,
+        "percentage": null,
+        "status": "COLD",
+        "mask_mode": "strict",
+        "quality_status": "review",
+        "detection_quality": "good",
+        "line_span": 129.63024338479042,
+        "hub_error": 5.0284451903917216,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          172,
+          173
+        ],
+        "tip": [
+          70,
+          93
+        ]
+      },
+      "front": {
+        "angle": 84.41367929077842,
+        "pressure": 8.65518867274594,
+        "percent": null,
+        "percentage": null,
+        "status": null,
+        "mask_mode": "local_arc_component",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 110.11518227048217,
+        "hub_error": null,
+        "radial_continuity": null,
+        "p90_error": 9.935438311684083,
+        "base": [
+          239,
+          171
+        ],
+        "tip": [
+          250,
+          62
+        ]
+      },
+      "rear": {
+        "angle": 86.41097023600422,
+        "pressure": 8.36986139485654,
+        "percent": null,
+        "percentage": null,
+        "status": null,
+        "mask_mode": "coherent_relaxed",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 109.48107294961808,
+        "hub_error": 9.676569001040946,
+        "radial_continuity": 13,
+        "p90_error": 8.095267598921339,
+        "base": [
+          229,
+          145
+        ],
+        "tip": [
+          236,
+          36
+        ]
+      },
+      "battery": {
+        "angle": 82.34418685556327,
+        "pressure": null,
+        "percent": 55.42717173098603,
+        "percentage": null,
+        "status": "NORMAL",
+        "mask_mode": "local_arc_strict",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 121.06196760337245,
+        "hub_error": 3.036204575314514,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          261,
+          184
+        ],
+        "tip": [
+          277,
+          64
+        ]
+      },
+      "oil": {
+        "angle": 102.40931693233696,
+        "pressure": null,
+        "percent": 34.305982176487404,
+        "percentage": null,
+        "status": "NORMAL",
+        "mask_mode": "coherent_relaxed",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 138.3907018005848,
+        "hub_error": 17.430856667547914,
+        "radial_continuity": 14,
+        "p90_error": null,
+        "base": [
+          216,
+          161
+        ],
+        "tip": [
+          186,
+          26
+        ]
+      }
+    },
+    "annotation_sha256": "9684e9684fedc0ab0bef6b5ca073b1ebee9a87dbb28e05ce390568002636dbc9"
+  },
+  "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/real_camera_logs/cycle_20261014_131525_548248/attempt_1.jpg": {
+    "gauges": {
+      "fuel": {
+        "angle": 121.08049922949067,
+        "pressure": null,
+        "percent": 14.652106074220347,
+        "percentage": null,
+        "status": "EMPTY",
+        "mask_mode": "strict",
+        "quality_status": "detected",
+        "detection_quality": "good",
+        "line_span": 118.84864324004712,
+        "hub_error": 1.2120818291336946,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          183,
+          170
+        ],
+        "tip": [
+          122,
+          68
+        ]
+      },
+      "coolant": {
+        "angle": 141.41674536650515,
+        "pressure": null,
+        "percent": 0.0,
+        "percentage": null,
+        "status": "COLD",
+        "mask_mode": "strict",
+        "quality_status": "detected",
+        "detection_quality": "good",
+        "line_span": 133.843191832831,
+        "hub_error": 5.418024298376622,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          175,
+          176
+        ],
+        "tip": [
+          70,
+          93
+        ]
+      },
+      "front": {
+        "angle": 84.2205353436279,
+        "pressure": 8.682780665196015,
+        "percent": null,
+        "percentage": null,
+        "status": null,
+        "mask_mode": "local_arc_component",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 111.13825299590826,
+        "hub_error": null,
+        "radial_continuity": null,
+        "p90_error": 9.737100494688741,
+        "base": [
+          244,
+          174
+        ],
+        "tip": [
+          255,
+          63
+        ]
+      },
+      "rear": {
+        "angle": 86.02059100713319,
+        "pressure": 8.42562985612383,
+        "percent": null,
+        "percentage": null,
+        "status": null,
+        "mask_mode": "coherent_relaxed",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 113.00515469908714,
+        "hub_error": 9.592789402509368,
+        "radial_continuity": 14,
+        "p90_error": 8.219940183499205,
+        "base": [
+          233,
+          148
+        ],
+        "tip": [
+          241,
+          35
+        ]
+      },
+      "battery": {
+        "angle": 83.71864641750214,
+        "pressure": null,
+        "percent": 53.98037219210301,
+        "percentage": null,
+        "status": "NORMAL",
+        "mask_mode": "local_arc_strict",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 114.73883387938018,
+        "hub_error": 0.6434667000056606,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          267,
+          186
+        ],
+        "tip": [
+          280,
+          72
+        ]
+      },
+      "oil": {
+        "angle": 102.53652964895926,
+        "pressure": null,
+        "percent": 34.172074053727094,
+        "percentage": null,
+        "status": "NORMAL",
+        "mask_mode": "coherent_relaxed",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 140.67960947752,
+        "hub_error": 18.570057695471633,
+        "radial_continuity": 13,
+        "p90_error": null,
+        "base": [
+          220,
+          163
+        ],
+        "tip": [
+          190,
+          26
+        ]
+      }
+    },
+    "annotation_sha256": "84ff7f95a38fbe86ab02221e76841e4013d6d4ebf3759851c9db3155725de831"
+  },
+  "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/real_camera_logs/cycle_20261014_131538_669847/attempt_1.jpg": {
+    "gauges": {
+      "fuel": {
+        "angle": 120.47144507981426,
+        "pressure": null,
+        "percent": 15.293215705458675,
+        "percentage": null,
+        "status": "EMPTY",
+        "mask_mode": "strict",
+        "quality_status": "review",
+        "detection_quality": "good",
+        "line_span": 119.20151005754919,
+        "hub_error": 2.8549109916502857,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          148,
+          119
+        ],
+        "tip": [
+          88,
+          16
+        ]
+      },
+      "coolant": {
+        "angle": 141.92100559173068,
+        "pressure": null,
+        "percent": 0.0,
+        "percentage": null,
+        "status": "COLD",
+        "mask_mode": "strict",
+        "quality_status": "review",
+        "detection_quality": "good",
+        "line_span": 132.43866504914644,
+        "hub_error": 15.594278838984792,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          166,
+          140
+        ],
+        "tip": [
+          62,
+          58
+        ]
+      },
+      "front": {
+        "angle": 83.38409680265154,
+        "pressure": 8.802271885335493,
+        "percent": null,
+        "percentage": null,
+        "status": null,
+        "mask_mode": "live_component",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 112.6946322351694,
+        "hub_error": null,
+        "radial_continuity": null,
+        "p90_error": 9.19628714686844,
+        "base": [
+          193,
+          142
+        ],
+        "tip": [
+          206,
+          30
+        ]
+      },
+      "rear": {
+        "angle": 86.06450188965648,
+        "pressure": 8.419356872906217,
+        "percent": null,
+        "percentage": null,
+        "status": null,
+        "mask_mode": "coherent_relaxed",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 114.8592243798077,
+        "hub_error": 1.414280843790948,
+        "radial_continuity": 15,
+        "p90_error": 8.014403668670639,
+        "base": [
+          210,
+          136
+        ],
+        "tip": [
+          218,
+          21
+        ]
+      },
+      "battery": {
+        "angle": 83.67067117786391,
+        "pressure": null,
+        "percent": 54.03087244435378,
+        "percentage": null,
+        "status": "NORMAL",
+        "mask_mode": "strict",
+        "quality_status": "review",
+        "detection_quality": "good",
+        "line_span": 110.65260954898443,
+        "hub_error": 0.23038838190518618,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          199,
+          177
+        ],
+        "tip": [
+          211,
+          67
+        ]
+      },
+      "oil": {
+        "angle": 102.35350802848846,
+        "pressure": null,
+        "percent": 34.36472839106477,
+        "percentage": null,
+        "status": "NORMAL",
+        "mask_mode": "coherent_relaxed",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 141.101985424757,
+        "hub_error": 15.011316005762865,
+        "radial_continuity": 15,
+        "p90_error": null,
+        "base": [
+          181,
+          174
+        ],
+        "tip": [
+          151,
+          36
+        ]
+      }
+    },
+    "annotation_sha256": "f4e61ad1fa363540bebb81fc3b6bcb8d27f5f2c2f9aff4dce46088fd83717566"
+  },
+  "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/real_camera_logs/cycle_20261014_131551_181698/attempt_1.jpg": {
+    "gauges": {
+      "fuel": {
+        "angle": 120.08691135586864,
+        "pressure": null,
+        "percent": 15.697988046454068,
+        "percentage": null,
+        "status": "EMPTY",
+        "mask_mode": "strict",
+        "quality_status": "review",
+        "detection_quality": "good",
+        "line_span": 114.73883387938018,
+        "hub_error": 3.377594443547423,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          181,
+          168
+        ],
+        "tip": [
+          123,
+          69
+        ]
+      },
+      "coolant": {
+        "angle": 141.3657796584216,
+        "pressure": null,
+        "percent": 0.0,
+        "percentage": null,
+        "status": "COLD",
+        "mask_mode": "strict",
+        "quality_status": "review",
+        "detection_quality": "good",
+        "line_span": 132.2800060477773,
+        "hub_error": 5.19805277802152,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          174,
+          175
+        ],
+        "tip": [
+          71,
+          92
+        ]
+      },
+      "front": {
+        "angle": 82.93165835325283,
+        "pressure": 8.86690594953531,
+        "percent": null,
+        "percentage": null,
+        "status": null,
+        "mask_mode": "local_arc_component",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 111.6755484052002,
+        "hub_error": null,
+        "radial_continuity": null,
+        "p90_error": 9.525398930174196,
+        "base": [
+          242,
+          172
+        ],
+        "tip": [
+          255,
+          61
+        ]
+      },
+      "rear": {
+        "angle": 85.54965599977128,
+        "pressure": 8.492906285746962,
+        "percent": null,
+        "percentage": null,
+        "status": null,
+        "mask_mode": "coherent_relaxed",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 112.60838776119047,
+        "hub_error": 9.105088747863704,
+        "radial_continuity": 14,
+        "p90_error": 8.272659666112794,
+        "base": [
+          232,
+          146
+        ],
+        "tip": [
+          241,
+          34
+        ]
+      },
+      "battery": {
+        "angle": 84.8502585992931,
+        "pressure": null,
+        "percent": 52.78920147442832,
+        "percentage": null,
+        "status": "NORMAL",
+        "mask_mode": "local_arc_strict",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 110.45361017187261,
+        "hub_error": 1.3001662493038566,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          266,
+          184
+        ],
+        "tip": [
+          276,
+          74
+        ]
+      },
+      "oil": {
+        "angle": 102.28138769147306,
+        "pressure": null,
+        "percent": 34.44064453529152,
+        "percentage": null,
+        "status": "NORMAL",
+        "mask_mode": "coherent_relaxed",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 139.0164683163166,
+        "hub_error": 17.790136870747006,
+        "radial_continuity": 13,
+        "p90_error": null,
+        "base": [
+          218,
+          160
+        ],
+        "tip": [
+          188,
+          24
+        ]
+      }
+    },
+    "annotation_sha256": "a8d7d9c2b1d8f5fd62e507656b94ef512230c8a95970c705e1250970b4a0a865"
+  },
+  "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/real_camera_logs/cycle_20261014_131604_268223/attempt_1.jpg": {
+    "gauges": {
+      "fuel": {
+        "angle": 120.74270600020387,
+        "pressure": null,
+        "percent": 15.007677894522246,
+        "percentage": null,
+        "status": "EMPTY",
+        "mask_mode": "strict",
+        "quality_status": "review",
+        "detection_quality": "good",
+        "line_span": 119.70797801316336,
+        "hub_error": 4.8357561649427225,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          177,
+          167
+        ],
+        "tip": [
+          116,
+          64
+        ]
+      },
+      "coolant": {
+        "angle": 141.70329707676507,
+        "pressure": null,
+        "percent": 0.0,
+        "percentage": null,
+        "status": "COLD",
+        "mask_mode": "strict",
+        "quality_status": "review",
+        "detection_quality": "good",
+        "line_span": 133.22537295875736,
+        "hub_error": 4.04814985967505,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          173,
+          173
+        ],
+        "tip": [
+          68,
+          91
+        ]
+      },
+      "front": {
+        "angle": 83.04669896566331,
+        "pressure": 8.850471576333813,
+        "percent": null,
+        "percentage": null,
+        "status": null,
+        "mask_mode": "live_component",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 113.10837651714681,
+        "hub_error": null,
+        "radial_continuity": null,
+        "p90_error": 9.38390579955003,
+        "base": [
+          238,
+          173
+        ],
+        "tip": [
+          252,
+          61
+        ]
+      },
+      "rear": {
+        "angle": 85.41999860160337,
+        "pressure": 8.511428771199519,
+        "percent": null,
+        "percentage": null,
+        "status": null,
+        "mask_mode": "coherent_relaxed",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 113.03536240160463,
+        "hub_error": 8.58346471068785,
+        "radial_continuity": 14,
+        "p90_error": 8.301884387904057,
+        "base": [
+          231,
+          149
+        ],
+        "tip": [
+          240,
+          36
+        ]
+      },
+      "battery": {
+        "angle": 84.6629542856143,
+        "pressure": null,
+        "percent": 52.98636390987967,
+        "percentage": null,
+        "status": "NORMAL",
+        "mask_mode": "local_arc_strict",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 106.47065323364932,
+        "hub_error": 3.485816484545012,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          261,
+          186
+        ],
+        "tip": [
+          271,
+          80
+        ]
+      },
+      "oil": {
+        "angle": 102.43816826704631,
+        "pressure": null,
+        "percent": 34.275612350477566,
+        "percentage": null,
+        "status": "NORMAL",
+        "mask_mode": "coherent_relaxed",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 139.03955045342445,
+        "hub_error": 15.67760911680432,
+        "radial_continuity": 14,
+        "p90_error": null,
+        "base": [
+          216,
+          163
+        ],
+        "tip": [
+          186,
+          27
+        ]
+      }
+    },
+    "annotation_sha256": "bd72785f0db277e6298f13fe50d7c49e35e592c7acd779b8ec024ec7edd20ac3"
+  },
+  "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/real_camera_logs/cycle_20261014_131616_890187/attempt_1.jpg": {
+    "gauges": {
+      "fuel": {
+        "angle": 120.6400268219793,
+        "pressure": null,
+        "percent": 15.115761240021786,
+        "percentage": null,
+        "status": "EMPTY",
+        "mask_mode": "strict",
+        "quality_status": "detected",
+        "detection_quality": "good",
+        "line_span": 121.93850909372314,
+        "hub_error": 4.071344235466313,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          180,
+          165
+        ],
+        "tip": [
+          118,
+          60
+        ]
+      },
+      "coolant": {
+        "angle": 141.17537520095686,
+        "pressure": null,
+        "percent": 0.0,
+        "percentage": null,
+        "status": "COLD",
+        "mask_mode": "strict",
+        "quality_status": "detected",
+        "detection_quality": "good",
+        "line_span": 130.87398519186308,
+        "hub_error": 5.178273874962542,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          173,
+          174
+        ],
+        "tip": [
+          71,
+          92
+        ]
+      },
+      "front": {
+        "angle": 81.8833133907673,
+        "pressure": 9.016669515604672,
+        "percent": null,
+        "percentage": null,
+        "status": null,
+        "mask_mode": "local_arc_component",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 111.31948750689628,
+        "hub_error": null,
+        "radial_continuity": null,
+        "p90_error": 9.470969304132723,
+        "base": [
+          241,
+          173
+        ],
+        "tip": [
+          257,
+          62
+        ]
+      },
+      "rear": {
+        "angle": 84.41077020922003,
+        "pressure": 8.65560425582571,
+        "percent": null,
+        "percentage": null,
+        "status": null,
+        "mask_mode": "coherent_relaxed",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 112.9710369259119,
+        "hub_error": 9.981984052010034,
+        "radial_continuity": 14,
+        "p90_error": 8.129763116667505,
+        "base": [
+          232,
+          148
+        ],
+        "tip": [
+          243,
+          36
+        ]
+      },
+      "battery": {
+        "angle": 80.65062096050103,
+        "pressure": null,
+        "percent": 57.209872673156816,
+        "percentage": null,
+        "status": "NORMAL",
+        "mask_mode": "local_arc_relaxed",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 142.86357128393507,
+        "hub_error": 1.435933874742659,
+        "radial_continuity": null,
+        "p90_error": null,
+        "base": [
+          262,
+          189
+        ],
+        "tip": [
+          285,
+          48
+        ]
+      },
+      "oil": {
+        "angle": 101.75581155717057,
+        "pressure": null,
+        "percent": 34.993882571399396,
+        "percentage": null,
+        "status": "NORMAL",
+        "mask_mode": "coherent_relaxed",
+        "quality_status": "review",
+        "detection_quality": "review",
+        "line_span": 137.70904076099396,
+        "hub_error": 17.29428293570993,
+        "radial_continuity": 13,
+        "p90_error": null,
+        "base": [
+          218,
+          161
+        ],
+        "tip": [
+          190,
+          26
+        ]
+      }
+    },
+    "annotation_sha256": "8278257514311e14349aa1d3ae4c8a6d28dfc0980a7f630b9c4ceb749f5853d9"
+  }
+}

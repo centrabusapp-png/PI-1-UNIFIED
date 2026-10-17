@@ -1,0 +1,72 @@
+{
+  "mode": "TEST",
+  "numeric_values_verified": false,
+  "timestamp": "2026-10-13T10:25:12.399096+00:00",
+  "image": "/home/centrabus/centrabus_camera/captures/dashboard_20260904_144540.jpg",
+  "annotated_image": "/home/centrabus/camera_calibration/web_dashboard_test_mode_stage/gauge_annotations/dashboard_20260904_144540_gauges.jpg",
+  "status": "ok",
+  "error": null,
+  "registration": {
+    "status": "good",
+    "matches": 3000,
+    "inliers": 3000,
+    "scale": 1.0,
+    "rotation": 0.0
+  },
+  "gauges": {
+    "fuel": {
+      "angle": 143.7257813850481,
+      "value": 0.0,
+      "unit": "%",
+      "status": "ok",
+      "reading_status": "EMPTY",
+      "quality_status": "detected",
+      "error": null
+    },
+    "coolant": {
+      "angle": 142.14154735655285,
+      "value": 0.0,
+      "unit": "%",
+      "status": "ok",
+      "reading_status": "COLD",
+      "quality_status": "detected",
+      "error": null
+    },
+    "front": {
+      "angle": 139.38931152891024,
+      "value": 0.0,
+      "unit": "kg/cm2",
+      "status": "ok",
+      "reading_status": null,
+      "quality_status": "detected",
+      "error": null
+    },
+    "rear": {
+      "angle": 143.4897749656174,
+      "value": 0.0,
+      "unit": "kg/cm2",
+      "status": "ok",
+      "reading_status": null,
+      "quality_status": "detected",
+      "error": null
+    },
+    "battery": {
+      "angle": 139.07326049439604,
+      "value": 0.0,
+      "unit": "%",
+      "status": "ok",
+      "reading_status": "LOW",
+      "quality_status": "detected",
+      "error": null
+    },
+    "oil": {
+      "angle": 139.19260784324823,
+      "value": 0.0,
+      "unit": "%",
+      "status": "ok",
+      "reading_status": "LOW",
+      "quality_status": "detected",
+      "error": null
+    }
+  }
+}

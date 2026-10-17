@@ -1,0 +1,35 @@
+CENTRABUS current detector: new 50-image dataset
+Dataset: /home/centrabus/camera_calibration/needle_angle_fix_trial_20261013/new_50_dataset
+Results: /home/centrabus/camera_calibration/needle_angle_fix_trial_20261013/new_50_validation/results.csv
+
+Total dashboard images: 50
+Total possible gauge cases: 300
+Complete 6/6 dashboards: 50
+Incomplete dashboards: 0
+Successful gauge detections: 300
+Failed gauge detections: 0
+CHECK_IMAGE warnings: 225
+
+Failure count by gauge:
+  FUEL: 0
+  COOLANT: 0
+  FRONT: 0
+  REAR: 0
+  BATTERY: 0
+  OIL: 0
+
+Registration quality counts:
+  good: 18
+  review: 32
+
+Minimum current scale: 0.55003
+Maximum current scale: 2.53770
+
+Production file SHA-256:
+  gauge_readers.py: 3f7e349923aaee9ba0c9cb12f1ed3b4d153fd1c52ff16cc790aa5de67fa7f6e2
+  centrabus_dashboard_reader.py: d4fbd16f24f391e30a5aec5518216eb9bf4361d184b7025a5163b26396508973
+  centrabus_live_reader.py: 2a87ec4cea355b70bbe4568db65169afa7d317b8ee9c4a853a1e1eb9712fd0c2
+
+DETECTED and CHECK_IMAGE mean the reader returned an angle; neither
+status confirms that the line visually follows the needle.
+Numeric gauge calibration remains unverified. Inspect annotations manually.

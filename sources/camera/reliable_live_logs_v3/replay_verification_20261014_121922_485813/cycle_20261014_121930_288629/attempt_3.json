@@ -1,0 +1,11 @@
+{
+  "attempt": 3,
+  "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121930_288629/attempt_3.jpg",
+  "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121930_288629/attempt_3_annotated.jpg",
+  "timestamp": "2026-10-14T04:19:31.485147+00:00",
+  "log_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121930_288629/attempt_3.log",
+  "outcome": "rejected",
+  "error": "RuntimeError: Not enough good ORB matches. Found 2, need at least 12.",
+  "error_category": "orb_registration",
+  "duration_seconds": 0.584
+}

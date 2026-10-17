@@ -1,0 +1,12 @@
+image,status,error
+/home/centrabus/centrabus_camera/captures/dashboard_20261011_163937_486054.jpg,detected,
+/home/centrabus/centrabus_camera/captures/dashboard_20261011_164041_189791.jpg,failed,RuntimeError: fuel red component misses the gauge hub.
+/home/centrabus/centrabus_camera/captures/dashboard_20261011_164116_486444.jpg,detected,
+/home/centrabus/centrabus_camera/captures/dashboard_20261011_164313_079284.jpg,detected,
+/home/centrabus/centrabus_camera/captures/dashboard_20261011_164356_795005.jpg,detected,
+/home/centrabus/centrabus_camera/captures/dashboard_20261011_164459_897258.jpg,detected,
+/home/centrabus/centrabus_camera/captures/dashboard_20261011_164627_157247.jpg,detected,
+/home/centrabus/centrabus_camera/captures/dashboard_20261011_164831_610307.jpg,detected,
+/home/centrabus/centrabus_camera/captures/dashboard_20261011_165038_213044.jpg,detected,
+/home/centrabus/centrabus_camera/captures/dashboard_20261011_165233_642182.jpg,detected,
+/home/centrabus/centrabus_camera/captures/dashboard_20261011_165446_280858.jpg,detected,

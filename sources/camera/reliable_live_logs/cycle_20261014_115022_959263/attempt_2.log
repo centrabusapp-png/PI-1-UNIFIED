@@ -1,0 +1,72 @@
+attempt: 2
+timestamp: 2026-10-14T03:50:32.579725+00:00
+capture_command: rpicam-still --nopreview --autofocus-mode auto --width 1920 --height 1080 -o /home/centrabus/camera_calibration/reliable_live_logs/cycle_20261014_115022_959263/attempt_2.jpg
+capture_returncode: 0
+capture_stdout:
+
+capture_stderr:
+[1:30:47.884400101] [6640]  INFO Camera camera_manager.cpp:340 libcamera v0.7.1+rpt20260609
+[1:30:47.904448388] [6643]  INFO RPI pipeline_base.cpp:1133 Using configuration file '/usr/share/libcamera/pipeline/rpi/vc4/rpi_apps.yaml'
+[1:30:47.932892558] [6643]  INFO IPAProxy ipa_proxy.cpp:184 Using tuning file /usr/share/libcamera/ipa/rpi/vc4/imx708.json
+[1:30:47.938613616] [6643]  INFO Camera camera_manager.cpp:223 Adding camera '/base/soc/i2c0mux/i2c@1/imx708@1a' for pipeline handler rpi/vc4
+[1:30:47.938665502] [6643]  INFO RPI vc4.cpp:445 Registered camera /base/soc/i2c0mux/i2c@1/imx708@1a to Unicam device /dev/media1 and ISP device /dev/media2
+Mode selection for 2304:1296:12:P
+    SRGGB10_CSI2P,1536x864/0 - Score: 3400
+    SRGGB10_CSI2P,2304x1296/0 - Score: 1000
+    SRGGB10_CSI2P,4608x2592/0 - Score: 1900
+[1:30:47.979925589] [6640]  INFO Camera camera.cpp:1216 configuring streams: (0) 2304x1296-YUV420/sYCC (1) 2304x1296-SBGGR10_CSI2P/RAW
+[1:30:47.980328364] [6643]  INFO RPI vc4.cpp:620 Sensor: /base/soc/i2c0mux/i2c@1/imx708@1a - Selected sensor format: 2304x1296-SBGGR10_1X10/RAW - Selected unicam format: 2304x1296-pBAA/RAW
+Mode selection for 1920:1080:12:P
+    SRGGB10_CSI2P,1536x864/0 - Score: 2200
+    SRGGB10_CSI2P,2304x1296/0 - Score: 1150
+    SRGGB10_CSI2P,4608x2592/0 - Score: 2050
+[1:30:53.043425317] [6640]  INFO Camera camera.cpp:1216 configuring streams: (0) 1920x1080-YUV420/sYCC (1) 2304x1296-SBGGR10_CSI2P/RAW
+[1:30:53.044243867] [6643]  INFO RPI vc4.cpp:620 Sensor: /base/soc/i2c0mux/i2c@1/imx708@1a - Selected sensor format: 2304x1296-SBGGR10_1X10/RAW - Selected unicam format: 2304x1296-pBAA/RAW
+Still capture image received
+
+detector_stdout:
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/camera_calibration/reliable_live_logs/cycle_20261014_115022_959263/attempt_2.jpg
+
+ORB good matches: 182
+ORB inliers: 49
+Inlier ratio: 0.269
+Current scale: 1.02591
+Rotation: -2.788 deg
+Registration quality: good
+
+FUEL      angle= 120.739 deg     15.0% EMPTY  [VALUE UNVERIFIED]
+COOLANT   angle= 141.716 deg      0.0% COLD  [VALUE UNVERIFIED]
+FRONT strict inner-red pixels=0; trying radial live fallback.
+FRONT relaxed inner-red pixels=2106
+FRONT radial candidate=51.5 deg, pixels=392, bins=5/6, span=38.2
+FRONT     angle=  58.566 deg    12.63 kg/cm2  [VALUE UNVERIFIED] [CHECK IMAGE]
+REAR      angle=  86.248 deg     8.39 kg/cm2  [VALUE UNVERIFIED]
+
+exception:
+Traceback (most recent call last):
+  File "/home/centrabus/camera_calibration/centrabus_reliable_live_reader.py", line 246, in run_attempt
+    results, registration = detect_fn(image, annotated, log)
+                            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/centrabus/camera_calibration/centrabus_reliable_live_reader.py", line 223, in detect_image
+    results = read_dashboard(image_path, output_path=annotated_path)
+  File "/home/centrabus/camera_calibration/v2_live_test_runtime/centrabus_dashboard_reader.py", line 1042, in read_dashboard
+    result = reader(
+        crop, scale=current_scale, hub=local_hub
+    )
+  File "/home/centrabus/camera_calibration/v2_live_test_runtime/gauge_readers.py", line 489, in read_battery
+    return _read_simple_linear_gauge(
+        image,
+    ...<7 lines>...
+        )
+    )
+  File "/home/centrabus/camera_calibration/v2_live_test_runtime/gauge_readers.py", line 451, in _read_simple_linear_gauge
+    raise RuntimeError(f"{gauge_name} red component misses the gauge hub.")
+RuntimeError: battery red component misses the gauge hub.
+
+outcome: rejected
+duration_seconds: 6.231

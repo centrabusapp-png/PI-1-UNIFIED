@@ -1,0 +1,32 @@
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/centrabus_camera/captures/dashboard_20261014_105002_604171.jpg
+
+ORB good matches: 133
+ORB inliers: 42
+Inlier ratio: 0.316
+Current scale: 0.89725
+Rotation: -0.331 deg
+Registration quality: good
+
+FUEL      angle= 133.184 deg      1.9% EMPTY  [VALUE UNVERIFIED]
+COOLANT   angle= 141.954 deg      0.0% COLD  [VALUE UNVERIFIED]
+FRONT strict inner-red pixels=0; trying radial live fallback.
+FRONT relaxed inner-red pixels=1215
+FRONT connected needle candidate=85.0 deg, span=87.5
+FRONT     angle=  84.977 deg     8.57 kg/cm2  [VALUE UNVERIFIED] [CHECK IMAGE]
+REAR strict inner-red pixels=21; trying radial live fallback.
+REAR relaxed inner-red pixels=1108
+REAR connected needle candidate=87.6 deg, span=94.7
+REAR      angle=  87.633 deg     8.20 kg/cm2  [VALUE UNVERIFIED] [CHECK IMAGE]
+BATTERY   angle=  84.312 deg     53.4% NORMAL  [VALUE UNVERIFIED]
+OIL       angle= 106.494 deg     30.0% NORMAL  [VALUE UNVERIFIED]
+
+Annotated image:
+/home/centrabus/camera_calibration/live_detector_v3_dev_20261014/validation/prior_live_10/annotated/010_dashboard_20261014_105002_604171_annotated.jpg
+
+DETECTION COMPLETE: 6 / 6 gauge candidates processed; numeric calibration is unverified.
+================================================================================

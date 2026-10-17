@@ -1,0 +1,31 @@
+Wrote 60 gauge rows to results.csv
+104804_403366.j front yes live_component 86.27954367861136 0 1816 89.87301289662719 fallback detector; check image
+104804_403366.j rear yes live_component 88.51029729387972 2 1735 93.93183571249247 fallback detector; check image
+104804_403366.j battery yes strict 85.11333678775881 1067 1067 104.38869670610895 
+104815_200291.j front yes live_component 85.56363753723781 0 1790 88.59023076705634 fallback detector; check image
+104815_200291.j rear yes live_component 88.44024691563857 8 1724 94.22920157816262 fallback detector; check image
+104815_200291.j battery yes strict 84.70371677656263 1040 1040 105.47511554864494 
+104825_912288.j front yes live_radial 62.87146780208937 0 433 44.892796826362606 fallback detector; check image; visual mismatch: selected slanted fragment, visible needle near vertical
+104825_912288.j rear yes strict 86.86179702558677 106 106 49.1181260086596 
+104825_912288.j battery yes strict 84.76723720894404 1155 1155 93.43446901438462 
+104836_756202.j front yes live_radial 129.25100904258906 0 365 77.78908751010896 fallback detector; check image
+104836_756202.j rear yes strict 142.9796365275614 49 49 45.92143914699553 strict mask retains only short section of visible angled needle
+104836_756202.j battery no failed  301   battery red component is too short to be a needle.
+104847_627779.j front not_attempted not_attempted     ORB registration failed; exact V2 did not attempt gauges
+104847_627779.j rear not_attempted not_attempted     ORB registration failed; exact V2 did not attempt gauges
+104847_627779.j battery not_attempted not_attempted     ORB registration failed; exact V2 did not attempt gauges
+104918_966489.j front yes live_component 86.8755119624297 0 1811 90.91923045367002 fallback detector; check image
+104918_966489.j rear yes live_component 88.78741174817137 10 1792 95.9128998324275 fallback detector; check image
+104918_966489.j battery yes strict 85.54852893137142 1154 1154 101.31633629380802 
+104929_972590.j front yes live_component 86.09197339944994 0 1783 89.12266331240534 registration review; fallback detector; check image
+104929_972590.j rear yes live_component 88.37762772685092 26 1730 94.53191882949318 registration review; fallback detector; check image
+104929_972590.j battery yes strict 85.0831471800079 1020 1020 95.33624704172071 registration review
+104940_819909.j front yes live_component 86.3867709201466 0 1807 89.22641856670379 registration review; fallback detector; check image
+104940_819909.j rear no failed  47   rear red candidate is too short to be a needle.
+104940_819909.j battery yes strict 85.10386354630828 1093 1093 100.40418317978589 registration review
+104951_832177.j front yes live_component 85.72635298599018 0 1723 87.19315900355576 fallback detector; check image
+104951_832177.j rear yes live_component 87.96623184914816 8 1716 96.24118164740503 fallback detector; check image
+104951_832177.j battery yes strict 84.47810872610414 1071 1071 104.47966309287182 
+105002_604171.j front yes live_component 84.97743620853457 0 1699 87.50120399296283 fallback detector; check image
+105002_604171.j rear yes live_component 87.6329526518994 21 1753 94.71594388484945 fallback detector; check image
+105002_604171.j battery yes strict 84.31201209593868 990 990 92.43916918709297 

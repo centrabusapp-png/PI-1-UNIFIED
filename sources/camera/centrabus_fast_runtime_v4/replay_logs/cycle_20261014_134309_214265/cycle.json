@@ -1,0 +1,64 @@
+{
+  "cycle_id": "cycle_20261014_134309_214265",
+  "status": "retry_failed",
+  "attempts_used": 3,
+  "accepted_attempt": null,
+  "confirmation_pair": null,
+  "duration_seconds": 1.316,
+  "retry_seconds": 0.834,
+  "camera_capture_seconds": 0.001621,
+  "orb_registration_seconds": 0,
+  "gauge_processing_seconds": 0,
+  "annotation_seconds": 0,
+  "total_processing_seconds": 0,
+  "orb_retries": 3,
+  "gauge_exception_retries": 0,
+  "capture_retries": 0,
+  "consensus_retries": 0,
+  "pair_comparisons": [],
+  "attempts": [
+    {
+      "attempt": 1,
+      "outcome": "rejected",
+      "error": "RuntimeError: Could not generate enough ORB descriptors.",
+      "error_category": "orb_registration",
+      "quality_warnings": null,
+      "capture_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/replay_logs/cycle_20261014_134309_214265/attempt_1.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/replay_logs/cycle_20261014_134309_214265/attempt_1_annotated.jpg",
+      "duration_seconds": 0.455,
+      "timing": {
+        "camera_capture_seconds": 0.000567,
+        "failed_phase_seconds": 0.446796
+      }
+    },
+    {
+      "attempt": 2,
+      "outcome": "rejected",
+      "error": "RuntimeError: Could not generate enough ORB descriptors.",
+      "error_category": "orb_registration",
+      "quality_warnings": null,
+      "capture_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/replay_logs/cycle_20261014_134309_214265/attempt_2.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/replay_logs/cycle_20261014_134309_214265/attempt_2_annotated.jpg",
+      "duration_seconds": 0.396,
+      "timing": {
+        "camera_capture_seconds": 0.000701,
+        "failed_phase_seconds": 0.388966
+      }
+    },
+    {
+      "attempt": 3,
+      "outcome": "rejected",
+      "error": "RuntimeError: Could not generate enough ORB descriptors.",
+      "error_category": "orb_registration",
+      "quality_warnings": null,
+      "capture_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/replay_logs/cycle_20261014_134309_214265/attempt_3.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/replay_logs/cycle_20261014_134309_214265/attempt_3_annotated.jpg",
+      "duration_seconds": 0.397,
+      "timing": {
+        "camera_capture_seconds": 0.000353,
+        "failed_phase_seconds": 0.38897
+      }
+    }
+  ],
+  "state_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/replay_state.json"
+}

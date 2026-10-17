@@ -1,0 +1,40 @@
+{
+  "cycle_id": "cycle_20261014_134003_770307",
+  "status": "accepted",
+  "attempts_used": 1,
+  "accepted_attempt": 1,
+  "confirmation_pair": null,
+  "duration_seconds": 3.563,
+  "retry_seconds": 0.0,
+  "camera_capture_seconds": 0.001715,
+  "orb_registration_seconds": 0.705434,
+  "gauge_processing_seconds": 0.134263,
+  "annotation_seconds": 0.032431,
+  "total_processing_seconds": 3.533785,
+  "orb_retries": 0,
+  "gauge_exception_retries": 0,
+  "capture_retries": 0,
+  "consensus_retries": 0,
+  "pair_comparisons": [],
+  "attempts": [
+    {
+      "attempt": 1,
+      "outcome": "success",
+      "error": null,
+      "error_category": null,
+      "quality_warnings": [],
+      "capture_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/replay_logs/cycle_20261014_134003_770307/attempt_1.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/replay_logs/cycle_20261014_134003_770307/attempt_1_annotated.jpg",
+      "duration_seconds": 3.536,
+      "timing": {
+        "camera_capture_seconds": 0.001715,
+        "orb_registration_seconds": 0.705434,
+        "gauge_processing_seconds": 0.134263,
+        "annotation_seconds": 0.032431,
+        "detector_total_seconds": 0.872211,
+        "total_processing_seconds": 3.533785
+      }
+    }
+  ],
+  "state_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/replay_state.json"
+}

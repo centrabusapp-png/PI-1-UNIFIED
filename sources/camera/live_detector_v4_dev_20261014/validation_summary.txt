@@ -1,0 +1,70 @@
+V4 development detector validation against V3 and frozen V2
+V3 and V2 original-80 angles and annotated images were identical in the prior V3 validation; V2 comparison therefore also reports V3 differences.
+V2 gauge_readers SHA-256: 4da4f3659d12d29d261db5f369cb9fbe0ecfe2a5500d413c6ecbcbd31ee5c889
+V4 gauge_readers SHA-256: af1071c51ac8a7dfbf6f0646d9ce3e7f87f1d40300f7451b453ec47541524270
+Original dashboards: 30
+New dashboards: 50
+Original 80 gauge detections: 480/480
+Regressions (V2 detected, V4 failed): 0
+Angle differences versus V2: 14 nonzero; >1 degree 2; maximum 1.796873 degrees
+Pixel-identical annotated dashboards: 66/80
+original_30: 180/180 gauge detections
+new_50: 300/300 gauge detections
+prior_live_10: 52/60 gauge detections
+failed_live_3: 18/18 gauge detections
+latest_live_48: 287/288 gauge detections
+Changed original-80 angles:
+  new_50 IMG_20261008_142431.jpg rear: 95.549697 -> 94.677393
+  new_50 IMG_20261008_142434.jpg rear: 95.263443 -> 94.282000
+  new_50 IMG_20261008_142436.jpg rear: 95.262918 -> 94.108111
+  new_50 IMG_20261008_142438.jpg rear: 94.607944 -> 93.898430
+  new_50 IMG_20261008_142440.jpg rear: 94.456313 -> 93.808169
+  new_50 IMG_20261008_142441.jpg rear: 94.811538 -> 94.043510
+  new_50 IMG_20261008_142443.jpg rear: 93.776546 -> 92.939533
+  new_50 IMG_20261008_142447.jpg rear: 93.872284 -> 93.195556
+  new_50 IMG_20261008_142450.jpg rear: 93.398945 -> 92.603427
+  new_50 IMG_20261008_142451.jpg rear: 93.524484 -> 92.596726
+  new_50 Screenshot 2026-10-11 181437.png rear: 89.895398 -> 90.687490
+  new_50 Screenshot 2026-10-11 181502.png rear: 91.240148 -> 90.860089
+  new_50 Screenshot 2026-10-11 181522.png rear: 90.275971 -> 90.762349
+  new_50 Screenshot 2026-10-11 181632.png rear: 91.919199 -> 90.122326
+Live FRONT/BATTERY:
+  dashboard_20261014_104804_403366.jpg front detected 86.27954367861136 live_component 
+  dashboard_20261014_104804_403366.jpg battery detected 85.11333678775881 strict 
+  dashboard_20261014_104815_200291.jpg front detected 85.56363753723781 live_component 
+  dashboard_20261014_104815_200291.jpg battery detected 84.70371677656263 strict 
+  dashboard_20261014_104825_912288.jpg front detected 85.61063626139541 local_arc_component 
+  dashboard_20261014_104825_912288.jpg battery detected 84.76723720894404 strict 
+  dashboard_20261014_104836_756202.jpg front detected 129.25100904258906 live_radial 
+  dashboard_20261014_104836_756202.jpg battery failed   RuntimeError: battery red component is too short to be a needle.
+  dashboard_20261014_104847_627779.jpg front failed   RuntimeError: Not enough good ORB matches. Found 2, need at least 12.
+  dashboard_20261014_104847_627779.jpg battery failed   RuntimeError: Not enough good ORB matches. Found 2, need at least 12.
+  dashboard_20261014_104918_966489.jpg front detected 86.8755119624297 live_component 
+  dashboard_20261014_104918_966489.jpg battery detected 85.54852893137142 strict 
+  dashboard_20261014_104929_972590.jpg front detected 86.09197339944994 live_component 
+  dashboard_20261014_104929_972590.jpg battery detected 85.0831471800079 strict 
+  dashboard_20261014_104940_819909.jpg front detected 86.3867709201466 live_component 
+  dashboard_20261014_104940_819909.jpg battery detected 85.10386354630828 strict 
+  dashboard_20261014_104951_832177.jpg front detected 85.72635298599018 live_component 
+  dashboard_20261014_104951_832177.jpg battery detected 84.47810872610414 strict 
+  dashboard_20261014_105002_604171.jpg front detected 84.97743620853457 live_component 
+  dashboard_20261014_105002_604171.jpg battery detected 84.31201209593868 strict 
+  attempt_1.jpg front detected 86.92271541615112 local_arc_component 
+  attempt_1.jpg battery detected 83.36471299898135 local_arc_relaxed 
+  attempt_2.jpg front detected 86.04111543489955 local_arc_component 
+  attempt_2.jpg battery detected 79.68164935013044 local_arc_relaxed 
+  attempt_3.jpg front detected 86.16602623731394 local_arc_component 
+  attempt_3.jpg battery detected 84.66951090609473 local_arc_relaxed 
+All live annotations saved under validation/prior_live_10 and validation/failed_live_3.
+latest_live_48 rear: V3 range 57.006..109.169; V4 range 83.211..87.296; changed >1 degree 32/48
+latest_live_48 oil: V3 range 98.867..120.651; V4 range 100.892..103.001; changed >1 degree 40/48
+Latest live full-image V3/V4 pairs and contact sheets: validation/latest_live_48/v3_v4_comparisons
+The 14 changed 80-image annotations are all REAR in new_50; the original 30 and all other gauges are pixel-identical.
+Changed REAR review sheets: validation/new_50/changed_rear_review_1.jpg and changed_rear_review_2.jpg.
+Visual review of those 14 crops: V4 traces the longer visible red shaft; no wrong-candidate regression observed.
+Earlier 12 listed cycles: 24 attempts, 144/144 gauge detections. Latest 10 listed cycles: 24 attempts, 143/144.
+The sole latest failure is cycle_20261014_123113_752756/attempt_2 BATTERY: red component misses hub; V3 also rejected that attempt and produced no annotation.
+All 48 full comparisons and six REAR/OIL crop contact sheets are saved; the rejected V3 attempt uses its raw image labeled as such.
+Known earlier live failures persist: prior-live ORB failure, a BATTERY short fragment, and an ambiguous FRONT radial reading at 10:48:36.
+Disposition: suitable for another development real-camera test with manual review; not promoted to production.
+Isolated V4 retry runner: centrabus_reliable_live_reader_v4_dev.py (default logs and state stay inside this V4 directory); camera capture was not run during this validation.

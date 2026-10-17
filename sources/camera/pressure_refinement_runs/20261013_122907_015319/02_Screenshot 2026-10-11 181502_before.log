@@ -1,0 +1,42 @@
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/camera_calibration/new_50_dataset/Screenshot 2026-10-11 181502.png
+
+ORB good matches: 132
+ORB inliers: 24
+Inlier ratio: 0.182
+Current scale: 0.57613
+Rotation: -0.595 deg
+Registration quality: review
+
+Traceback (most recent call last):
+  File "/home/centrabus/camera_calibration/centrabus_dashboard_reader.py", line 1409, in <module>
+    main()
+    ~~~~^^
+  File "/home/centrabus/camera_calibration/centrabus_dashboard_reader.py", line 1400, in main
+    read_dashboard(
+    ~~~~~~~~~~~~~~^
+        args.image,
+        ^^^^^^^^^^^
+        output_path=
+        ^^^^^^^^^^^^
+            args.output
+            ^^^^^^^^^^^
+    )
+    ^
+  File "/home/centrabus/camera_calibration/centrabus_dashboard_reader.py", line 1042, in read_dashboard
+    result = reader(
+        crop, scale=current_scale, hub=local_hub
+    )
+  File "/home/centrabus/camera_calibration/gauge_readers.py", line 497, in read_fuel
+    return _read_simple_linear_gauge(
+        image,
+    ...<7 lines>...
+        )
+    )
+  File "/home/centrabus/camera_calibration/gauge_readers.py", line 421, in _read_simple_linear_gauge
+    raise RuntimeError(f"{gauge_name} red component misses the gauge hub.")
+RuntimeError: fuel red component misses the gauge hub.

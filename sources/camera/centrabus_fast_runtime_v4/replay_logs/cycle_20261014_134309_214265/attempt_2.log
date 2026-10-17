@@ -1,0 +1,20 @@
+attempt: 2
+timestamp: 2026-10-14T05:43:09.696933+00:00
+replay_source: /tmp/centrabus_obscured_1920x1080.jpg
+detector_stdout:
+
+exception:
+Traceback (most recent call last):
+  File "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/fast_reader.py", line 338, in run_attempt
+    results, registration, detector_timing = detect_fn(image, annotated, log)
+                                             ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/fast_reader.py", line 310, in detect_image
+    results = read_dashboard(image_path, output_path=annotated_path)
+  File "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/centrabus_dashboard_reader.py", line 516, in read_dashboard
+    raise RuntimeError(
+    ...<2 lines>...
+    )
+RuntimeError: Could not generate enough ORB descriptors.
+
+outcome: rejected
+duration_seconds: 0.396

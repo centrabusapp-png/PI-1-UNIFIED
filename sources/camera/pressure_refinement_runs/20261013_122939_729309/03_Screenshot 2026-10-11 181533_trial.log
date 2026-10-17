@@ -1,0 +1,26 @@
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/camera_calibration/new_50_dataset/Screenshot 2026-10-11 181533.png
+
+ORB good matches: 127
+ORB inliers: 27
+Inlier ratio: 0.213
+Current scale: 0.57756
+Rotation: -0.055 deg
+Registration quality: review
+
+FUEL      angle= 144.150 deg      0.0% EMPTY  [VALUE UNVERIFIED] [CHECK IMAGE]
+COOLANT   angle= 143.561 deg      0.0% COLD  [VALUE UNVERIFIED] [CHECK IMAGE]
+FRONT     angle=  88.405 deg     8.09 kg/cm2  [VALUE UNVERIFIED] [CHECK IMAGE]
+REAR      angle=  91.398 deg     7.66 kg/cm2  [VALUE UNVERIFIED] [CHECK IMAGE]
+BATTERY   angle=  82.695 deg     55.1% NORMAL  [VALUE UNVERIFIED] [CHECK IMAGE]
+OIL       angle= 103.543 deg     33.1% NORMAL  [VALUE UNVERIFIED] [CHECK IMAGE]
+
+Annotated image:
+/home/centrabus/camera_calibration/pressure_refinement_runs/20261013_122939_729309/03_Screenshot 2026-10-11 181533_trial.jpg
+
+DETECTION COMPLETE: 6 / 6 gauge candidates processed; numeric calibration is unverified.
+================================================================================

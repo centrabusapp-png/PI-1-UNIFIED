@@ -1,0 +1,25 @@
+.env
+.env.*
+*.env
+**/*.pem
+**/*.key
+**/credentials*.json
+**/service-account.json
+**/*.sqlite*
+**/*.db
+**/__pycache__/
+**/*.pyc
+.test-tmp/
+*connection-review*.json
+
+# New local runtime output is not part of the source/reference publication.
+.venv/
+venv/
+*.p12
+*.pfx
+**/*service_account*.json
+/candidate/**/latest_gps*.json
+/candidate/**/latest_gauges*.json
+/candidate/**/logs/
+/candidate/**/*.log
+/tests/**/*.log

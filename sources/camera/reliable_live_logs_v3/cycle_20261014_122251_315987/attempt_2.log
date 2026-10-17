@@ -1,0 +1,3 @@
+attempt: 2
+timestamp: 2026-10-14T04:23:00.128248+00:00
+capture_command: rpicam-still --nopreview --autofocus-mode auto --width 1920 --height 1080 -o /home/centrabus/camera_calibration/reliable_live_logs_v3/cycle_20261014_122251_315987/attempt_2.jpg

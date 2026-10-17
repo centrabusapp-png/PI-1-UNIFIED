@@ -1,0 +1,20 @@
+attempt: 3
+timestamp: 2026-10-14T03:27:07.602010+00:00
+REPLAY SOURCE: /home/centrabus/centrabus_camera/captures/dashboard_20261014_104847_627779.jpg
+detector_stdout:
+
+exception:
+Traceback (most recent call last):
+  File "/home/centrabus/camera_calibration/centrabus_reliable_live_reader.py", line 243, in run_attempt
+    results, registration = detect_fn(image, annotated, log)
+                            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/centrabus/camera_calibration/centrabus_reliable_live_reader.py", line 220, in detect_image
+    results = read_dashboard(image_path, output_path=annotated_path)
+  File "/home/centrabus/camera_calibration/v2_live_test_runtime/centrabus_dashboard_reader.py", line 563, in read_dashboard
+    raise RuntimeError(
+    ...<4 lines>...
+    )
+RuntimeError: Not enough good ORB matches. Found 2, need at least 12.
+
+outcome: rejected
+duration_seconds: 0.663

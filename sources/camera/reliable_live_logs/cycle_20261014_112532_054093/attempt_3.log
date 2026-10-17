@@ -1,0 +1,34 @@
+attempt: 3
+timestamp: 2026-10-14T03:25:32.309223+00:00
+capture_command: rpicam-still --nopreview --autofocus-mode auto --width 1920 --height 1080 -o /home/centrabus/camera_calibration/reliable_live_logs/cycle_20261014_112532_054093/attempt_3.jpg
+capture_returncode: 255
+capture_stdout:
+
+capture_stderr:
+Could not open any dmaHeap device
+[1:05:47.619994577] [13]  INFO Camera camera_manager.cpp:340 libcamera v0.7.1+rpt20260609
+[1:05:47.620995228] [16]  WARN DeviceEnumerator device_enumerator_sysfs.cpp:70 Device node /dev/media4 should exist but doesn't
+[1:05:47.621049707] [16]  WARN DeviceEnumerator device_enumerator_sysfs.cpp:70 Device node /dev/media2 should exist but doesn't
+[1:05:47.621066150] [16]  WARN DeviceEnumerator device_enumerator_sysfs.cpp:70 Device node /dev/media0 should exist but doesn't
+[1:05:47.621080150] [16]  WARN DeviceEnumerator device_enumerator_sysfs.cpp:70 Device node /dev/media3 should exist but doesn't
+[1:05:47.621093927] [16]  WARN DeviceEnumerator device_enumerator_sysfs.cpp:70 Device node /dev/media1 should exist but doesn't
+[1:05:47.621188255] [16] ERROR DmaBufAllocator dma_buf_allocator.cpp:119 Could not open any dma-buf provider
+ERROR: *** no cameras available ***
+
+exception:
+Traceback (most recent call last):
+  File "/home/centrabus/camera_calibration/centrabus_reliable_live_reader.py", line 237, in run_attempt
+    capture_fn(image, log)
+    ~~~~~~~~~~^^^^^^^^^^^^
+  File "/home/centrabus/camera_calibration/centrabus_reliable_live_reader.py", line 202, in capture_image
+    raise RuntimeError(f"rpicam-still failed with exit {completed.returncode}: "
+                       f"{completed.stderr.strip()[-600:]}")
+RuntimeError: rpicam-still failed with exit 255: numerator_sysfs.cpp:70 Device node /dev/media2 should exist but doesn't
+[1:05:47.621066150] [16]  WARN DeviceEnumerator device_enumerator_sysfs.cpp:70 Device node /dev/media0 should exist but doesn't
+[1:05:47.621080150] [16]  WARN DeviceEnumerator device_enumerator_sysfs.cpp:70 Device node /dev/media3 should exist but doesn't
+[1:05:47.621093927] [16]  WARN DeviceEnumerator device_enumerator_sysfs.cpp:70 Device node /dev/media1 should exist but doesn't
+[1:05:47.621188255] [16] ERROR DmaBufAllocator dma_buf_allocator.cpp:119 Could not open any dma-buf provider
+ERROR: *** no cameras available ***
+
+outcome: rejected
+duration_seconds: 0.092

@@ -1,0 +1,26 @@
+{
+  "benchmark": "camera-in-the-loop, not physical-bus validation",
+  "reference_method": "current centrabus_dashboard_reader.read_dashboard",
+  "reference_image": "/home/centrabus/centrabus_camera/captures/dashboard_20260904_144540.jpg",
+  "reference_sha256": "87a9a17e33cab32f6604a58cbc235cda5e0045b89eb32192651ae7b27ee09764",
+  "reference_angles_deg": {
+    "fuel": 143.7257813850481,
+    "coolant": 142.14154735655285,
+    "front": 139.38931152891024,
+    "rear": 143.4897749656174,
+    "battery": 139.07326049439604,
+    "oil": 139.19260784324823
+  },
+  "reference_orb_metrics": {
+    "orb_good_matches": 3000,
+    "orb_inliers": 3000,
+    "orb_inlier_ratio": 1.0,
+    "current_scale": 1.0,
+    "rotation": 0.0
+  },
+  "code_sha256": {
+    "gauge_readers.py": "1dc554e148c53af6c0ece826dd2932e0b2fb7252b0e01bd139e3ed69b1693f56",
+    "centrabus_dashboard_reader.py": "659333ee508bdcc1d9d73445963a6d9df61e743ad36176e3d0d5ade95a6bc92e",
+    "centrabus_live_reader.py": "2a87ec4cea355b70bbe4568db65169afa7d317b8ee9c4a853a1e1eb9712fd0c2"
+  }
+}

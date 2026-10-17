@@ -1,0 +1,3 @@
+FULL SIX-GAUGE ATTEMPT
+
+ERROR: RuntimeError: Not enough good ORB matches. Found 2, need at least 12.

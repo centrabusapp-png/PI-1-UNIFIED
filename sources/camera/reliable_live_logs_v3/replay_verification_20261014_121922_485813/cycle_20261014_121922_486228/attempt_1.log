@@ -1,0 +1,39 @@
+attempt: 1
+timestamp: 2026-10-14T04:19:22.486484+00:00
+REPLAY SOURCE: /home/centrabus/camera_calibration/reliable_live_logs/cycle_20261014_115022_959263/attempt_1.jpg
+detector_stdout:
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121922_486228/attempt_1.jpg
+
+ORB good matches: 186
+ORB inliers: 45
+Inlier ratio: 0.242
+Current scale: 1.01835
+Rotation: -2.278 deg
+Registration quality: review
+
+FUEL      angle= 120.534 deg     15.2% EMPTY  [VALUE UNVERIFIED] [CHECK IMAGE]
+COOLANT   angle= 142.263 deg      0.0% COLD  [VALUE UNVERIFIED] [CHECK IMAGE]
+FRONT strict inner-red pixels=0; trying radial live fallback.
+FRONT relaxed inner-red pixels=2099
+FRONT radial candidate=55.0 deg, pixels=404, bins=5/6, span=39.5
+FRONT strict inner-red pixels=0; trying radial live fallback.
+FRONT relaxed inner-red pixels=1385
+FRONT connected needle candidate=86.9 deg, span=101.6
+FRONT     angle=  86.923 deg     8.30 kg/cm2  [VALUE UNVERIFIED] [CHECK IMAGE]
+REAR      angle=  87.242 deg     8.25 kg/cm2  [VALUE UNVERIFIED] [CHECK IMAGE]
+BATTERY   angle=  83.365 deg     54.4% NORMAL  [VALUE UNVERIFIED] [CHECK IMAGE]
+OIL       angle= 102.301 deg     34.4% NORMAL  [VALUE UNVERIFIED] [CHECK IMAGE]
+
+Annotated image:
+/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121922_486228/attempt_1_annotated.jpg
+
+DETECTION COMPLETE: 6 / 6 gauge candidates processed; numeric calibration is unverified.
+================================================================================
+
+outcome: success
+duration_seconds: 3.984

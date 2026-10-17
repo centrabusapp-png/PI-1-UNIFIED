@@ -1,0 +1,53 @@
+{
+  "source": "/home/centrabus/camera_calibration/independent_test_dataset/dashboard_20260904_142615.jpg",
+  "frozen_detector": "/home/centrabus/camera_calibration/CENTRABUS_VALIDATED_80_IMAGES_ANGLE_FIX_20261013_152818/detector_snapshot",
+  "hashes_before": {
+    "gauge_readers.py": "3f7e349923aaee9ba0c9cb12f1ed3b4d153fd1c52ff16cc790aa5de67fa7f6e2",
+    "centrabus_dashboard_reader.py": "ea6de1bcb41886d37952b14d9c2338609bff9cd32cc2f557158077fad9eea2c2",
+    "centrabus_live_reader.py": "2a87ec4cea355b70bbe4568db65169afa7d317b8ee9c4a853a1e1eb9712fd0c2",
+    "fuel_angle_refinement.py": "b4bfd546132f29bdb958fba4944839c93f79c06f54044faa74ecf095bd918bce"
+  },
+  "hashes_after": {
+    "gauge_readers.py": "3f7e349923aaee9ba0c9cb12f1ed3b4d153fd1c52ff16cc790aa5de67fa7f6e2",
+    "centrabus_dashboard_reader.py": "ea6de1bcb41886d37952b14d9c2338609bff9cd32cc2f557158077fad9eea2c2",
+    "centrabus_live_reader.py": "2a87ec4cea355b70bbe4568db65169afa7d317b8ee9c4a853a1e1eb9712fd0c2",
+    "fuel_angle_refinement.py": "b4bfd546132f29bdb958fba4944839c93f79c06f54044faa74ecf095bd918bce"
+  },
+  "plain_result": {
+    "gauge": "coolant",
+    "angle": 8.76899439058805,
+    "percent": 100.0,
+    "status": "HOT",
+    "base": [
+      177,
+      241
+    ],
+    "tip": [
+      305,
+      221
+    ],
+    "line_span": 129.55307792561317,
+    "hub_error": 47.86026041436344,
+    "mask_mode": "strict",
+    "value_validated": false,
+    "registration_quality": "good",
+    "detection_quality": "good",
+    "quality_status": "detected",
+    "roi": [
+      941,
+      159,
+      1345,
+      458
+    ]
+  },
+  "transformed_hub_local": [
+    204.68603515625,
+    188.9747314453125
+  ],
+  "scale": 0.9982365540049579,
+  "minimum_area": 299,
+  "minimum_span": 34.93827939017353,
+  "maximum_hub_line_distance": 49.9118277002479,
+  "selected_component_id": 3,
+  "candidate_count": 3
+}

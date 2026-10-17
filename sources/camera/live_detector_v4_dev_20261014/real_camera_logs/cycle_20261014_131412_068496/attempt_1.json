@@ -1,0 +1,100 @@
+{
+  "attempt": 1,
+  "capture_path": "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/real_camera_logs/cycle_20261014_131412_068496/attempt_1.jpg",
+  "annotated_path": "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/real_camera_logs/cycle_20261014_131412_068496/attempt_1_annotated.jpg",
+  "timestamp": "2026-10-14T05:14:12.069034+00:00",
+  "log_path": "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/real_camera_logs/cycle_20261014_131412_068496/attempt_1.log",
+  "outcome": "success",
+  "registration": {
+    "status": "good",
+    "quality": "good",
+    "matches": 189,
+    "inliers": 50,
+    "inlier_ratio": 0.265,
+    "scale": 0.89039,
+    "rotation": -0.184
+  },
+  "gauges": {
+    "fuel": {
+      "angle": 119.6391393192756,
+      "value": 16.169327032341474,
+      "unit": "%",
+      "status": "ok",
+      "reading_status": "EMPTY",
+      "quality_status": "detected",
+      "detection_quality": "good",
+      "mask_mode": "strict",
+      "check_image": false,
+      "value_validated": false
+    },
+    "coolant": {
+      "angle": 141.51038659918444,
+      "value": 0.0,
+      "unit": "%",
+      "status": "ok",
+      "reading_status": "COLD",
+      "quality_status": "detected",
+      "detection_quality": "good",
+      "mask_mode": "strict",
+      "check_image": false,
+      "value_validated": false
+    },
+    "front": {
+      "angle": 84.80276138373775,
+      "value": 8.599605516608893,
+      "unit": "kg/cm2",
+      "status": "ok",
+      "reading_status": null,
+      "quality_status": "review",
+      "detection_quality": "review",
+      "mask_mode": "live_radial",
+      "check_image": true,
+      "value_validated": false
+    },
+    "rear": {
+      "angle": 86.93843834727292,
+      "value": 8.29450880753244,
+      "unit": "kg/cm2",
+      "status": "ok",
+      "reading_status": null,
+      "quality_status": "review",
+      "detection_quality": "review",
+      "mask_mode": "coherent_relaxed",
+      "check_image": true,
+      "value_validated": false
+    },
+    "battery": {
+      "angle": 82.68159142048685,
+      "value": 55.07200903106647,
+      "unit": "%",
+      "status": "ok",
+      "reading_status": "NORMAL",
+      "quality_status": "review",
+      "detection_quality": "review",
+      "mask_mode": "relaxed",
+      "check_image": true,
+      "value_validated": false
+    },
+    "oil": {
+      "angle": 101.68259204746225,
+      "value": 35.07095573951342,
+      "unit": "%",
+      "status": "ok",
+      "reading_status": "NORMAL",
+      "quality_status": "detected",
+      "detection_quality": "good",
+      "mask_mode": "strict",
+      "check_image": false,
+      "value_validated": false
+    }
+  },
+  "quality_warnings": [
+    "front:CHECK IMAGE",
+    "front:pressure fallback live_radial",
+    "rear:CHECK IMAGE",
+    "rear:pressure fallback coherent_relaxed",
+    "battery:CHECK IMAGE",
+    "battery:fallback relaxed"
+  ],
+  "duration_seconds": 8.963
+}

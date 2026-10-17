@@ -1,0 +1,22 @@
+Dataset: independent_7
+Dashboards: 7
+Complete 6/6 dashboards: 7
+Gauge cases: 42
+Successful detections: 42
+Failed detections: 0
+Angle differences >1°: 1
+Angle differences >2°: 1
+Angle differences >5°: 1
+Maximum angle difference: 132.556163°
+Pixel-identical annotated dashboards: 6/7
+By gauge (success/failure):
+  FUEL: 7/0
+  COOLANT: 7/0
+  FRONT: 7/0
+  REAR: 7/0
+  BATTERY: 7/0
+  OIL: 7/0
+Changed angles:
+  dashboard_20260904_142615.jpg COOLANT: 8.768994° -> 141.325157° (Δ 132.556163°)
+Results CSV: /home/centrabus/camera_calibration/coolant_hub_selector_dev_20261013/validation_20261013_180926/independent_7/results.csv
+Annotated images: /home/centrabus/camera_calibration/coolant_hub_selector_dev_20261013/validation_20261013_180926/independent_7/annotated

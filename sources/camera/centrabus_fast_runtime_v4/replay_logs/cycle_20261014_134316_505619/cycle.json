@@ -1,0 +1,81 @@
+{
+  "cycle_id": "cycle_20261014_134316_505619",
+  "status": "accepted",
+  "attempts_used": 2,
+  "accepted_attempt": 2,
+  "confirmation_pair": [
+    1,
+    2
+  ],
+  "duration_seconds": 2.142,
+  "retry_seconds": 1.004,
+  "camera_capture_seconds": 0.003325,
+  "orb_registration_seconds": 1.378792,
+  "gauge_processing_seconds": 0.638428,
+  "annotation_seconds": 0.066697,
+  "total_processing_seconds": 2.088092,
+  "orb_retries": 0,
+  "gauge_exception_retries": 0,
+  "capture_retries": 0,
+  "consensus_retries": 0,
+  "pair_comparisons": [
+    {
+      "attempts": [
+        1,
+        2
+      ],
+      "agrees": true,
+      "angle_differences": {
+        "fuel": 0.0,
+        "coolant": 0.0,
+        "front": 0.0,
+        "rear": 0.0,
+        "battery": 0.0,
+        "oil": 0.0
+      }
+    }
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "outcome": "success",
+      "error": null,
+      "error_category": null,
+      "quality_warnings": [
+        "front:short_radial_shaft"
+      ],
+      "capture_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/replay_logs/cycle_20261014_134316_505619/attempt_1.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/replay_logs/cycle_20261014_134316_505619/attempt_1_annotated.jpg",
+      "duration_seconds": 1.124,
+      "timing": {
+        "camera_capture_seconds": 0.002288,
+        "orb_registration_seconds": 0.738844,
+        "gauge_processing_seconds": 0.339625,
+        "annotation_seconds": 0.032794,
+        "detector_total_seconds": 1.111335,
+        "total_processing_seconds": 1.114336
+      }
+    },
+    {
+      "attempt": 2,
+      "outcome": "success",
+      "error": null,
+      "error_category": null,
+      "quality_warnings": [
+        "front:short_radial_shaft"
+      ],
+      "capture_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/replay_logs/cycle_20261014_134316_505619/attempt_2.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/replay_logs/cycle_20261014_134316_505619/attempt_2_annotated.jpg",
+      "duration_seconds": 0.975,
+      "timing": {
+        "camera_capture_seconds": 0.001037,
+        "orb_registration_seconds": 0.639948,
+        "gauge_processing_seconds": 0.298803,
+        "annotation_seconds": 0.033903,
+        "detector_total_seconds": 0.972725,
+        "total_processing_seconds": 0.973756
+      }
+    }
+  ],
+  "state_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/replay_state.json"
+}

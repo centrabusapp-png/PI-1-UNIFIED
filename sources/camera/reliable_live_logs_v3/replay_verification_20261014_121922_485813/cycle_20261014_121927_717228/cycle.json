@@ -1,0 +1,65 @@
+{
+  "cycle_id": "cycle_20261014_121927_717228",
+  "status": "accepted",
+  "attempts_used": 2,
+  "accepted_attempt": 2,
+  "confirmation_pair": [
+    1,
+    2
+  ],
+  "duration_seconds": 2.561,
+  "orb_retries": 0,
+  "gauge_exception_retries": 0,
+  "capture_retries": 0,
+  "consensus_retries": 0,
+  "pair_comparisons": [
+    {
+      "attempts": [
+        1,
+        2
+      ],
+      "agrees": true,
+      "angle_differences": {
+        "fuel": 0.124,
+        "coolant": 0.01,
+        "front": 0.125,
+        "rear": 2.798,
+        "battery": 4.988,
+        "oil": 0.725
+      }
+    }
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "outcome": "success",
+      "error": null,
+      "error_category": null,
+      "quality_warnings": [
+        "front:CHECK IMAGE",
+        "front:pressure fallback local_arc_component",
+        "battery:CHECK IMAGE",
+        "battery:fallback local_arc_relaxed"
+      ],
+      "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121927_717228/attempt_1.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121927_717228/attempt_1_annotated.jpg",
+      "duration_seconds": 1.303
+    },
+    {
+      "attempt": 2,
+      "outcome": "success",
+      "error": null,
+      "error_category": null,
+      "quality_warnings": [
+        "front:CHECK IMAGE",
+        "front:pressure fallback local_arc_component",
+        "battery:CHECK IMAGE",
+        "battery:fallback local_arc_relaxed"
+      ],
+      "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121927_717228/attempt_2.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121927_717228/attempt_2_annotated.jpg",
+      "duration_seconds": 1.212
+    }
+  ],
+  "state_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/latest_gauges_replay.json"
+}

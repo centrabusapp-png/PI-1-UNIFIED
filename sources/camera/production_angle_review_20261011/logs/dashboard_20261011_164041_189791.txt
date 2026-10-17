@@ -1,0 +1,16 @@
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/centrabus_camera/captures/dashboard_20261011_164041_189791.jpg
+
+ORB good matches: 96
+ORB inliers: 39
+Inlier ratio: 0.406
+Current scale: 0.99513
+Rotation: -0.641 deg
+Registration quality: good
+
+
+ERROR: RuntimeError: fuel red component misses the gauge hub.

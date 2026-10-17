@@ -1,0 +1,60 @@
+{
+  "mode": "TEST",
+  "numeric_values_verified": false,
+  "timestamp": "2026-10-13T10:23:44.024041+00:00",
+  "image": "/tmp/nonexistent_centrabus_image.jpg",
+  "annotated_image": null,
+  "status": "error",
+  "error": "FileNotFoundError: Image not found: /tmp/nonexistent_centrabus_image.jpg",
+  "registration": {
+    "status": null,
+    "matches": null,
+    "inliers": null,
+    "scale": null,
+    "rotation": null
+  },
+  "gauges": {
+    "fuel": {
+      "angle": null,
+      "value": null,
+      "unit": null,
+      "status": "error",
+      "error": "FileNotFoundError: Image not found: /tmp/nonexistent_centrabus_image.jpg"
+    },
+    "coolant": {
+      "angle": null,
+      "value": null,
+      "unit": null,
+      "status": "error",
+      "error": "FileNotFoundError: Image not found: /tmp/nonexistent_centrabus_image.jpg"
+    },
+    "front": {
+      "angle": null,
+      "value": null,
+      "unit": null,
+      "status": "error",
+      "error": "FileNotFoundError: Image not found: /tmp/nonexistent_centrabus_image.jpg"
+    },
+    "rear": {
+      "angle": null,
+      "value": null,
+      "unit": null,
+      "status": "error",
+      "error": "FileNotFoundError: Image not found: /tmp/nonexistent_centrabus_image.jpg"
+    },
+    "battery": {
+      "angle": null,
+      "value": null,
+      "unit": null,
+      "status": "error",
+      "error": "FileNotFoundError: Image not found: /tmp/nonexistent_centrabus_image.jpg"
+    },
+    "oil": {
+      "angle": null,
+      "value": null,
+      "unit": null,
+      "status": "error",
+      "error": "FileNotFoundError: Image not found: /tmp/nonexistent_centrabus_image.jpg"
+    }
+  }
+}

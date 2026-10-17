@@ -1,0 +1,210 @@
+original_30 1 centrabus_calibration0 6 parity yes
+original_30 2 centrabus_calibration1 6 parity yes
+original_30 3 centrabus_calibration2 6 parity yes
+original_30 4 centrabus_calibration3 6 parity yes
+original_30 5 centrabus_calibration4 6 parity yes
+original_30 6 centrabus_calibration5 6 parity yes
+original_30 7 centrabus_calibration6 6 parity yes
+original_30 8 centrabus_calibration7 6 parity yes
+original_30 9 centrabus_calibration8 6 parity yes
+original_30 10 centrabus_calibration9 6 parity yes
+original_30 11 centrabus_calibration9.0 6 parity yes
+original_30 12 centrabus_calibration9.1 6 parity yes
+original_30 13 centrabus_calibration9.2 6 parity yes
+original_30 14 centrabus_calibration9.3 6 parity yes
+original_30 15 centrabus_calibration9.4 6 parity yes
+original_30 16 centrabus_calibration9.5 6 parity yes
+original_30 17 centrabus_calibration9.6 6 parity yes
+original_30 18 centrabus_calibration9.7 6 parity yes
+original_30 19 centrabus_calibration9.8 6 parity yes
+original_30 20 centrabus_calibration9.9 6 parity yes
+original_30 21 centrabus_calibration9.9.0 6 parity yes
+original_30 22 centrabus_calibration9.9.1 6 parity yes
+original_30 23 centrabus_calibration9.9.2 6 parity yes
+original_30 24 centrabus_calibration9.9.3 6 parity yes
+original_30 25 centrabus_calibration9.9.4 6 parity yes
+original_30 26 centrabus_calibration9.9.5 6 parity yes
+original_30 27 centrabus_calibration9.9.6 6 parity yes
+original_30 28 centrabus_calibration9.9.7 6 parity yes
+original_30 29 centrabus_calibration9.9.8 6 parity yes
+original_30 30 centrabus_calibration9.9.9 6 parity yes
+new_50 31 IMG_20261008_142431.jpg 6 parity no
+new_50 32 IMG_20261008_142434.jpg 6 parity no
+new_50 33 IMG_20261008_142436.jpg 6 parity no
+new_50 34 IMG_20261008_142438.jpg 6 parity no
+new_50 35 IMG_20261008_142440.jpg 6 parity no
+new_50 36 IMG_20261008_142441.jpg 6 parity no
+new_50 37 IMG_20261008_142443.jpg 6 parity no
+new_50 38 IMG_20261008_142447.jpg 6 parity no
+new_50 39 IMG_20261008_142450.jpg 6 parity no
+new_50 40 IMG_20261008_142451.jpg 6 parity no
+new_50 41 Screenshot 2026-10-11 180109.png 6 parity yes
+new_50 42 Screenshot 2026-10-11 180118.png 6 parity yes
+new_50 43 Screenshot 2026-10-11 180129.png 6 parity yes
+new_50 44 Screenshot 2026-10-11 180137.png 6 parity yes
+new_50 45 Screenshot 2026-10-11 180154.png 6 parity yes
+new_50 46 Screenshot 2026-10-11 180201.png 6 parity yes
+new_50 47 Screenshot 2026-10-11 180210.png 6 parity yes
+new_50 48 Screenshot 2026-10-11 180227.png 6 parity yes
+new_50 49 Screenshot 2026-10-11 180731.png 6 parity yes
+new_50 50 Screenshot 2026-10-11 180739.png 6 parity yes
+new_50 51 Screenshot 2026-10-11 180747.png 6 parity yes
+new_50 52 Screenshot 2026-10-11 180804.png 6 parity yes
+new_50 53 Screenshot 2026-10-11 180820.png 6 parity yes
+new_50 54 Screenshot 2026-10-11 180913.png 6 parity yes
+new_50 55 Screenshot 2026-10-11 180919.png 6 parity yes
+new_50 56 Screenshot 2026-10-11 180941.png 6 parity yes
+new_50 57 Screenshot 2026-10-11 181119.png 6 parity yes
+new_50 58 Screenshot 2026-10-11 181128.png 6 parity yes
+new_50 59 Screenshot 2026-10-11 181136.png 6 parity yes
+new_50 60 Screenshot 2026-10-11 181155.png 6 parity yes
+new_50 61 Screenshot 2026-10-11 181202.png 6 parity yes
+new_50 62 Screenshot 2026-10-11 181211.png 6 parity yes
+new_50 63 Screenshot 2026-10-11 181242.png 6 parity yes
+new_50 64 Screenshot 2026-10-11 181437.png 6 parity no
+new_50 65 Screenshot 2026-10-11 181502.png 6 parity no
+new_50 66 Screenshot 2026-10-11 181514.png 6 parity yes
+new_50 67 Screenshot 2026-10-11 181522.png 6 parity no
+new_50 68 Screenshot 2026-10-11 181533.png 6 parity yes
+new_50 69 Screenshot 2026-10-11 181541.png 6 parity yes
+new_50 70 Screenshot 2026-10-11 181632.png 6 parity no
+new_50 71 Screenshot 2026-10-11 181643.png 6 parity yes
+new_50 72 Screenshot 2026-10-11 181656.png 6 parity yes
+new_50 73 Screenshot 2026-10-11 181722.png 6 parity yes
+new_50 74 Screenshot 2026-10-11 181737.png 6 parity yes
+new_50 75 Screenshot 2026-10-11 182345.png 6 parity yes
+new_50 76 Screenshot 2026-10-11 182353.png 6 parity yes
+new_50 77 Screenshot 2026-10-11 182412.png 6 parity yes
+new_50 78 Screenshot 2026-10-11 182421.png 6 parity yes
+new_50 79 Screenshot 2026-10-11 182426.png 6 parity yes
+new_50 80 Screenshot 2026-10-11 182440.png 6 parity yes
+prior_live_10 1 dashboard_20261014_104804_403366.jpg 6 parity 
+prior_live_10 2 dashboard_20261014_104815_200291.jpg 6 parity 
+prior_live_10 3 dashboard_20261014_104825_912288.jpg 6 parity 
+prior_live_10 4 dashboard_20261014_104836_756202.jpg 5 parity 
+prior_live_10 5 dashboard_20261014_104847_627779.jpg 0 parity 
+prior_live_10 6 dashboard_20261014_104918_966489.jpg 6 parity 
+prior_live_10 7 dashboard_20261014_104929_972590.jpg 6 parity 
+prior_live_10 8 dashboard_20261014_104940_819909.jpg 5 parity 
+prior_live_10 9 dashboard_20261014_104951_832177.jpg 6 parity 
+prior_live_10 10 dashboard_20261014_105002_604171.jpg 6 parity 
+failed_live_3 1 attempt_1.jpg 6 parity 
+failed_live_3 2 attempt_2.jpg 6 parity 
+failed_live_3 3 attempt_3.jpg 6 parity 
+latest_live_48 1 cycle_20261014_122251_315987/attempt_1.jpg 6 parity 
+latest_live_48 2 cycle_20261014_122308_057218/attempt_1.jpg 6 parity 
+latest_live_48 3 cycle_20261014_122308_057218/attempt_2.jpg 6 parity 
+latest_live_48 4 cycle_20261014_122722_400168/attempt_1.jpg 6 parity 
+latest_live_48 5 cycle_20261014_122722_400168/attempt_2.jpg 6 parity 
+latest_live_48 6 cycle_20261014_122722_400168/attempt_3.jpg 6 parity 
+latest_live_48 7 cycle_20261014_122744_574919/attempt_1.jpg 6 parity 
+latest_live_48 8 cycle_20261014_122744_574919/attempt_2.jpg 6 parity 
+latest_live_48 9 cycle_20261014_122757_325774/attempt_1.jpg 6 parity 
+latest_live_48 10 cycle_20261014_122757_325774/attempt_2.jpg 6 parity 
+latest_live_48 11 cycle_20261014_122810_611191/attempt_1.jpg 6 parity 
+latest_live_48 12 cycle_20261014_122810_611191/attempt_2.jpg 6 parity 
+latest_live_48 13 cycle_20261014_122824_268508/attempt_1.jpg 6 parity 
+latest_live_48 14 cycle_20261014_122824_268508/attempt_2.jpg 6 parity 
+latest_live_48 15 cycle_20261014_122837_354611/attempt_1.jpg 6 parity 
+latest_live_48 16 cycle_20261014_122837_354611/attempt_2.jpg 6 parity 
+latest_live_48 17 cycle_20261014_122850_513451/attempt_1.jpg 6 parity 
+latest_live_48 18 cycle_20261014_122850_513451/attempt_2.jpg 6 parity 
+latest_live_48 19 cycle_20261014_122903_717121/attempt_1.jpg 6 parity 
+latest_live_48 20 cycle_20261014_122903_717121/attempt_2.jpg 6 parity 
+latest_live_48 21 cycle_20261014_122916_867430/attempt_1.jpg 6 parity 
+latest_live_48 22 cycle_20261014_122916_867430/attempt_2.jpg 6 parity 
+latest_live_48 23 cycle_20261014_122930_039427/attempt_1.jpg 6 parity 
+latest_live_48 24 cycle_20261014_122930_039427/attempt_2.jpg 6 parity 
+latest_live_48 25 cycle_20261014_123031_932694/attempt_1.jpg 6 parity 
+latest_live_48 26 cycle_20261014_123031_932694/attempt_2.jpg 6 parity 
+latest_live_48 27 cycle_20261014_123047_392588/attempt_1.jpg 6 parity 
+latest_live_48 28 cycle_20261014_123047_392588/attempt_2.jpg 6 parity 
+latest_live_48 29 cycle_20261014_123100_785595/attempt_1.jpg 6 parity 
+latest_live_48 30 cycle_20261014_123100_785595/attempt_2.jpg 6 parity 
+latest_live_48 31 cycle_20261014_123113_752756/attempt_1.jpg 6 parity 
+latest_live_48 32 cycle_20261014_123113_752756/attempt_2.jpg 5 parity 
+[ WARN:0@160.942] global loadsave.cpp:241 findDecoder imread_('/home/centrabus/camera_calibration/reliable_live_logs_v3/cycle_20261014_123113_752756/attempt_2_annotated.jpg'): can't open/read file: check file path/integrity
+latest_live_48 33 cycle_20261014_123113_752756/attempt_3.jpg 6 parity 
+latest_live_48 34 cycle_20261014_123133_372159/attempt_1.jpg 6 parity 
+latest_live_48 35 cycle_20261014_123133_372159/attempt_2.jpg 6 parity 
+latest_live_48 36 cycle_20261014_123145_950977/attempt_1.jpg 6 parity 
+latest_live_48 37 cycle_20261014_123145_950977/attempt_2.jpg 6 parity 
+latest_live_48 38 cycle_20261014_123158_506464/attempt_1.jpg 6 parity 
+latest_live_48 39 cycle_20261014_123158_506464/attempt_2.jpg 6 parity 
+latest_live_48 40 cycle_20261014_123210_877337/attempt_1.jpg 6 parity 
+latest_live_48 41 cycle_20261014_123210_877337/attempt_2.jpg 6 parity 
+latest_live_48 42 cycle_20261014_123210_877337/attempt_3.jpg 6 parity 
+latest_live_48 43 cycle_20261014_123229_587910/attempt_1.jpg 6 parity 
+latest_live_48 44 cycle_20261014_123229_587910/attempt_2.jpg 6 parity 
+latest_live_48 45 cycle_20261014_123229_587910/attempt_3.jpg 6 parity 
+latest_live_48 46 cycle_20261014_123248_340869/attempt_1.jpg 6 parity 
+latest_live_48 47 cycle_20261014_123248_340869/attempt_2.jpg 6 parity 
+latest_live_48 48 cycle_20261014_123248_340869/attempt_3.jpg 6 parity 
+V4 development detector validation against V3 and frozen V2
+V2 gauge_readers SHA-256: 4da4f3659d12d29d261db5f369cb9fbe0ecfe2a5500d413c6ecbcbd31ee5c889
+V4 gauge_readers SHA-256: af1071c51ac8a7dfbf6f0646d9ce3e7f87f1d40300f7451b453ec47541524270
+Original dashboards: 30
+New dashboards: 50
+Original 80 gauge detections: 480/480
+Regressions (V2 detected, V4 failed): 0
+Angle differences versus V2: 14 nonzero; >1 degree 2; maximum 1.796873 degrees
+Pixel-identical annotated dashboards: 66/80
+original_30: 180/180 gauge detections
+new_50: 300/300 gauge detections
+prior_live_10: 52/60 gauge detections
+failed_live_3: 18/18 gauge detections
+latest_live_48: 287/288 gauge detections
+Changed original-80 angles:
+  new_50 IMG_20261008_142431.jpg rear: 95.549697 -> 94.677393
+  new_50 IMG_20261008_142434.jpg rear: 95.263443 -> 94.282000
+  new_50 IMG_20261008_142436.jpg rear: 95.262918 -> 94.108111
+  new_50 IMG_20261008_142438.jpg rear: 94.607944 -> 93.898430
+  new_50 IMG_20261008_142440.jpg rear: 94.456313 -> 93.808169
+  new_50 IMG_20261008_142441.jpg rear: 94.811538 -> 94.043510
+  new_50 IMG_20261008_142443.jpg rear: 93.776546 -> 92.939533
+  new_50 IMG_20261008_142447.jpg rear: 93.872284 -> 93.195556
+  new_50 IMG_20261008_142450.jpg rear: 93.398945 -> 92.603427
+  new_50 IMG_20261008_142451.jpg rear: 93.524484 -> 92.596726
+  new_50 Screenshot 2026-10-11 181437.png rear: 89.895398 -> 90.687490
+  new_50 Screenshot 2026-10-11 181502.png rear: 91.240148 -> 90.860089
+  new_50 Screenshot 2026-10-11 181522.png rear: 90.275971 -> 90.762349
+  new_50 Screenshot 2026-10-11 181632.png rear: 91.919199 -> 90.122326
+Live FRONT/BATTERY:
+  dashboard_20261014_104804_403366.jpg front detected 86.27954367861136 live_component 
+  dashboard_20261014_104804_403366.jpg battery detected 85.11333678775881 strict 
+  dashboard_20261014_104815_200291.jpg front detected 85.56363753723781 live_component 
+  dashboard_20261014_104815_200291.jpg battery detected 84.70371677656263 strict 
+  dashboard_20261014_104825_912288.jpg front detected 85.61063626139541 local_arc_component 
+  dashboard_20261014_104825_912288.jpg battery detected 84.76723720894404 strict 
+  dashboard_20261014_104836_756202.jpg front detected 129.25100904258906 live_radial 
+  dashboard_20261014_104836_756202.jpg battery failed   RuntimeError: battery red component is too short to be a needle.
+  dashboard_20261014_104847_627779.jpg front failed   RuntimeError: Not enough good ORB matches. Found 2, need at least 12.
+  dashboard_20261014_104847_627779.jpg battery failed   RuntimeError: Not enough good ORB matches. Found 2, need at least 12.
+  dashboard_20261014_104918_966489.jpg front detected 86.8755119624297 live_component 
+  dashboard_20261014_104918_966489.jpg battery detected 85.54852893137142 strict 
+  dashboard_20261014_104929_972590.jpg front detected 86.09197339944994 live_component 
+  dashboard_20261014_104929_972590.jpg battery detected 85.0831471800079 strict 
+  dashboard_20261014_104940_819909.jpg front detected 86.3867709201466 live_component 
+  dashboard_20261014_104940_819909.jpg battery detected 85.10386354630828 strict 
+  dashboard_20261014_104951_832177.jpg front detected 85.72635298599018 live_component 
+  dashboard_20261014_104951_832177.jpg battery detected 84.47810872610414 strict 
+  dashboard_20261014_105002_604171.jpg front detected 84.97743620853457 live_component 
+  dashboard_20261014_105002_604171.jpg battery detected 84.31201209593868 strict 
+  attempt_1.jpg front detected 86.92271541615112 local_arc_component 
+  attempt_1.jpg battery detected 83.36471299898135 local_arc_relaxed 
+  attempt_2.jpg front detected 86.04111543489955 local_arc_component 
+  attempt_2.jpg battery detected 79.68164935013044 local_arc_relaxed 
+  attempt_3.jpg front detected 86.16602623731394 local_arc_component 
+  attempt_3.jpg battery detected 84.66951090609473 local_arc_relaxed 
+All live annotations saved under validation/prior_live_10 and validation/failed_live_3.
+latest_live_48 rear: V3 range 57.006..109.169; V4 range 83.211..87.296; changed >1 degree 32/48
+latest_live_48 oil: V3 range 98.867..120.651; V4 range 100.892..103.001; changed >1 degree 40/48
+Latest live full-image V3/V4 pairs and contact sheets: validation/latest_live_48/v3_v4_comparisons
+The 14 changed 80-image annotations are all REAR in new_50; the original 30 and all other gauges are pixel-identical.
+Changed REAR review sheets: validation/new_50/changed_rear_review_1.jpg and changed_rear_review_2.jpg.
+Visual review of those 14 crops: V4 traces the longer visible red shaft; no wrong-candidate regression observed.
+Earlier 12 listed cycles: 24 attempts, 144/144 gauge detections. Latest 10 listed cycles: 24 attempts, 143/144.
+The sole latest failure is cycle_20261014_123113_752756/attempt_2 BATTERY: red component misses hub; V3 also rejected that attempt and produced no annotation.
+All 48 full comparisons and six REAR/OIL crop contact sheets are saved; the rejected V3 attempt uses its raw image labeled as such.
+Known earlier live failures persist: prior-live ORB failure, a BATTERY short fragment, and an ambiguous FRONT radial reading at 10:48:36.
+Disposition: suitable for another development real-camera test with manual review; not promoted to production.

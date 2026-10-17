@@ -1,0 +1,22 @@
+Dataset: original_30
+Dashboards: 30
+Complete 6/6 dashboards: 30
+Gauge cases: 180
+Successful detections: 180
+Failed detections: 0
+Angle differences >1°: 0
+Angle differences >2°: 0
+Angle differences >5°: 0
+Maximum angle difference: 0.000000°
+Pixel-identical annotated dashboards: 30/30
+By gauge (success/failure):
+  FUEL: 30/0
+  COOLANT: 30/0
+  FRONT: 30/0
+  REAR: 30/0
+  BATTERY: 30/0
+  OIL: 30/0
+Changed angles:
+  None
+Results CSV: /home/centrabus/camera_calibration/coolant_hub_selector_dev_20261013/validation_20261013_181402/original_30/results.csv
+Annotated images: /home/centrabus/camera_calibration/coolant_hub_selector_dev_20261013/validation_20261013_181402/original_30/annotated

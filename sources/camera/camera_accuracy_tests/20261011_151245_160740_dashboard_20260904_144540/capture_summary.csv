@@ -1,0 +1,2 @@
+capture_number,capture_image,success_count,failure_count,average_absolute_error,maximum_angle_error,within_1_degree,within_2_degrees,within_5_degrees
+1,/home/centrabus/camera_calibration/camera_accuracy_tests/20261011_151245_160740_dashboard_20260904_144540/captures/capture_001.jpg,0,6,,,0,0,0

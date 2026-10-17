@@ -1,0 +1,32 @@
+CENTRABUS final independent test: frozen ANGLE_FIX detector
+Frozen detector path: /home/centrabus/camera_calibration/CENTRABUS_VALIDATED_80_IMAGES_ANGLE_FIX_20261013_152818/detector_snapshot
+Independent dataset: /home/centrabus/camera_calibration/independent_test_dataset
+
+Verified detector SHA-256 hashes:
+  gauge_readers.py: 3f7e349923aaee9ba0c9cb12f1ed3b4d153fd1c52ff16cc790aa5de67fa7f6e2
+  centrabus_dashboard_reader.py: ea6de1bcb41886d37952b14d9c2338609bff9cd32cc2f557158077fad9eea2c2
+  centrabus_live_reader.py: 2a87ec4cea355b70bbe4568db65169afa7d317b8ee9c4a853a1e1eb9712fd0c2
+  fuel_angle_refinement.py: b4bfd546132f29bdb958fba4944839c93f79c06f54044faa74ecf095bd918bce
+
+Total dashboards: 8
+Dashboards with 6/6 detections: 7
+Total gauge cases: 48
+Successful detections: 46
+Failed detections: 2
+
+Success/failure count by gauge:
+  FUEL: 7 success, 1 failure
+  COOLANT: 8 success, 0 failure
+  FRONT: 8 success, 0 failure
+  REAR: 8 success, 0 failure
+  BATTERY: 7 success, 1 failure
+  OIL: 8 success, 0 failure
+
+Annotated dashboards: /home/centrabus/camera_calibration/independent_test_results_20261013/annotated
+Results CSV: /home/centrabus/camera_calibration/independent_test_results_20261013/results.csv
+Manual review CSV: /home/centrabus/camera_calibration/independent_test_results_20261013/manual_visual_review.csv
+Logs: /home/centrabus/camera_calibration/independent_test_results_20261013/logs
+
+Detection success means an angle was returned; it is not an accuracy result.
+Visual review is still required for all 48 gauge cases.
+Numeric gauge values have not been independently validated.

@@ -1,0 +1,75 @@
+{
+  "cycle_id": "cycle_20261014_123113_752756",
+  "status": "accepted",
+  "attempts_used": 3,
+  "accepted_attempt": 3,
+  "confirmation_pair": [
+    1,
+    3
+  ],
+  "duration_seconds": 19.609,
+  "orb_retries": 0,
+  "gauge_exception_retries": 1,
+  "capture_retries": 0,
+  "consensus_retries": 0,
+  "pair_comparisons": [
+    {
+      "attempts": [
+        1,
+        3
+      ],
+      "agrees": true,
+      "angle_differences": {
+        "fuel": 0.137,
+        "coolant": 2.615,
+        "front": 1.078,
+        "rear": 9.125,
+        "battery": 0.779,
+        "oil": 3.033
+      }
+    }
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "outcome": "success",
+      "error": null,
+      "error_category": null,
+      "quality_warnings": [
+        "front:CHECK IMAGE",
+        "front:pressure fallback live_component",
+        "battery:CHECK IMAGE",
+        "battery:fallback relaxed"
+      ],
+      "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/cycle_20261014_123113_752756/attempt_1.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/cycle_20261014_123113_752756/attempt_1_annotated.jpg",
+      "duration_seconds": 6.264
+    },
+    {
+      "attempt": 2,
+      "outcome": "rejected",
+      "error": "RuntimeError: battery red component misses the gauge hub.",
+      "error_category": "gauge_exception",
+      "quality_warnings": null,
+      "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/cycle_20261014_123113_752756/attempt_2.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/cycle_20261014_123113_752756/attempt_2_annotated.jpg",
+      "duration_seconds": 6.721
+    },
+    {
+      "attempt": 3,
+      "outcome": "success",
+      "error": null,
+      "error_category": null,
+      "quality_warnings": [
+        "front:CHECK IMAGE",
+        "front:pressure fallback local_arc_component",
+        "battery:CHECK IMAGE",
+        "battery:fallback local_arc_relaxed"
+      ],
+      "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/cycle_20261014_123113_752756/attempt_3.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/cycle_20261014_123113_752756/attempt_3_annotated.jpg",
+      "duration_seconds": 6.578
+    }
+  ],
+  "state_path": "/home/centrabus/centrabus_camera/latest_gauges.json"
+}

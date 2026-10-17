@@ -1,0 +1,213 @@
+{
+  "kind": "saved-image replay; no camera capture; no publication to default state",
+  "runtime": "/home/centrabus/camera_calibration/live_detector_v3_dev_20261014",
+  "reference": "/home/centrabus/camera_calibration/live_detector_v3_dev_20261014/centrabus_calibration0/01_reference/dashboard_20260904_144540.jpg",
+  "state_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/latest_gauges_replay.json",
+  "cycles": [
+    {
+      "sequence": [
+        "/home/centrabus/camera_calibration/reliable_live_logs/cycle_20261014_115022_959263/attempt_1.jpg",
+        "/home/centrabus/camera_calibration/reliable_live_logs/cycle_20261014_115022_959263/attempt_2.jpg",
+        "/home/centrabus/camera_calibration/reliable_live_logs/cycle_20261014_115022_959263/attempt_3.jpg"
+      ],
+      "summary": {
+        "cycle_id": "cycle_20261014_121922_486228",
+        "status": "accepted",
+        "attempts_used": 2,
+        "accepted_attempt": 2,
+        "confirmation_pair": [
+          1,
+          2
+        ],
+        "duration_seconds": 5.217,
+        "orb_retries": 0,
+        "gauge_exception_retries": 0,
+        "capture_retries": 0,
+        "consensus_retries": 0,
+        "pair_comparisons": [
+          {
+            "attempts": [
+              1,
+              2
+            ],
+            "agrees": true,
+            "angle_differences": {
+              "fuel": 0.205,
+              "coolant": 0.547,
+              "front": 0.882,
+              "rear": 0.993,
+              "battery": 3.683,
+              "oil": 0.802
+            }
+          }
+        ],
+        "attempts": [
+          {
+            "attempt": 1,
+            "outcome": "success",
+            "error": null,
+            "error_category": null,
+            "quality_warnings": [
+              "registration:review",
+              "fuel:CHECK IMAGE",
+              "coolant:CHECK IMAGE",
+              "front:CHECK IMAGE",
+              "front:pressure fallback local_arc_component",
+              "rear:CHECK IMAGE",
+              "battery:CHECK IMAGE",
+              "battery:fallback local_arc_relaxed",
+              "oil:CHECK IMAGE"
+            ],
+            "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121922_486228/attempt_1.jpg",
+            "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121922_486228/attempt_1_annotated.jpg",
+            "duration_seconds": 3.984
+          },
+          {
+            "attempt": 2,
+            "outcome": "success",
+            "error": null,
+            "error_category": null,
+            "quality_warnings": [
+              "front:CHECK IMAGE",
+              "front:pressure fallback local_arc_component",
+              "battery:CHECK IMAGE",
+              "battery:fallback local_arc_relaxed"
+            ],
+            "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121922_486228/attempt_2.jpg",
+            "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121922_486228/attempt_2_annotated.jpg",
+            "duration_seconds": 1.193
+          }
+        ],
+        "state_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/latest_gauges_replay.json"
+      }
+    },
+    {
+      "sequence": [
+        "/home/centrabus/camera_calibration/reliable_live_logs/cycle_20261014_115022_959263/attempt_3.jpg",
+        "/home/centrabus/camera_calibration/reliable_live_logs/cycle_20261014_115022_959263/attempt_2.jpg",
+        "/home/centrabus/camera_calibration/reliable_live_logs/cycle_20261014_115022_959263/attempt_1.jpg"
+      ],
+      "summary": {
+        "cycle_id": "cycle_20261014_121927_717228",
+        "status": "accepted",
+        "attempts_used": 2,
+        "accepted_attempt": 2,
+        "confirmation_pair": [
+          1,
+          2
+        ],
+        "duration_seconds": 2.561,
+        "orb_retries": 0,
+        "gauge_exception_retries": 0,
+        "capture_retries": 0,
+        "consensus_retries": 0,
+        "pair_comparisons": [
+          {
+            "attempts": [
+              1,
+              2
+            ],
+            "agrees": true,
+            "angle_differences": {
+              "fuel": 0.124,
+              "coolant": 0.01,
+              "front": 0.125,
+              "rear": 2.798,
+              "battery": 4.988,
+              "oil": 0.725
+            }
+          }
+        ],
+        "attempts": [
+          {
+            "attempt": 1,
+            "outcome": "success",
+            "error": null,
+            "error_category": null,
+            "quality_warnings": [
+              "front:CHECK IMAGE",
+              "front:pressure fallback local_arc_component",
+              "battery:CHECK IMAGE",
+              "battery:fallback local_arc_relaxed"
+            ],
+            "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121927_717228/attempt_1.jpg",
+            "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121927_717228/attempt_1_annotated.jpg",
+            "duration_seconds": 1.303
+          },
+          {
+            "attempt": 2,
+            "outcome": "success",
+            "error": null,
+            "error_category": null,
+            "quality_warnings": [
+              "front:CHECK IMAGE",
+              "front:pressure fallback local_arc_component",
+              "battery:CHECK IMAGE",
+              "battery:fallback local_arc_relaxed"
+            ],
+            "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121927_717228/attempt_2.jpg",
+            "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121927_717228/attempt_2_annotated.jpg",
+            "duration_seconds": 1.212
+          }
+        ],
+        "state_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/latest_gauges_replay.json"
+      }
+    },
+    {
+      "sequence": [
+        "/home/centrabus/centrabus_camera/captures/dashboard_20261014_104847_627779.jpg",
+        "/home/centrabus/centrabus_camera/captures/dashboard_20261014_104847_627779.jpg",
+        "/home/centrabus/centrabus_camera/captures/dashboard_20261014_104847_627779.jpg"
+      ],
+      "summary": {
+        "cycle_id": "cycle_20261014_121930_288629",
+        "status": "retry_failed",
+        "attempts_used": 3,
+        "accepted_attempt": null,
+        "confirmation_pair": [
+          1,
+          2
+        ],
+        "duration_seconds": 1.805,
+        "orb_retries": 3,
+        "gauge_exception_retries": 0,
+        "capture_retries": 0,
+        "consensus_retries": 0,
+        "pair_comparisons": [],
+        "attempts": [
+          {
+            "attempt": 1,
+            "outcome": "rejected",
+            "error": "RuntimeError: Not enough good ORB matches. Found 2, need at least 12.",
+            "error_category": "orb_registration",
+            "quality_warnings": null,
+            "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121930_288629/attempt_1.jpg",
+            "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121930_288629/attempt_1_annotated.jpg",
+            "duration_seconds": 0.589
+          },
+          {
+            "attempt": 2,
+            "outcome": "rejected",
+            "error": "RuntimeError: Not enough good ORB matches. Found 2, need at least 12.",
+            "error_category": "orb_registration",
+            "quality_warnings": null,
+            "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121930_288629/attempt_2.jpg",
+            "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121930_288629/attempt_2_annotated.jpg",
+            "duration_seconds": 0.585
+          },
+          {
+            "attempt": 3,
+            "outcome": "rejected",
+            "error": "RuntimeError: Not enough good ORB matches. Found 2, need at least 12.",
+            "error_category": "orb_registration",
+            "quality_warnings": null,
+            "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121930_288629/attempt_3.jpg",
+            "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/cycle_20261014_121930_288629/attempt_3_annotated.jpg",
+            "duration_seconds": 0.584
+          }
+        ],
+        "state_path": "/home/centrabus/camera_calibration/reliable_live_logs_v3/replay_verification_20261014_121922_485813/latest_gauges_replay.json"
+      }
+    }
+  ]
+}

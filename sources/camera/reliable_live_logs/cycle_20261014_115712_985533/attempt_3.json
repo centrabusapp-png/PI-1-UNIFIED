@@ -1,0 +1,11 @@
+{
+  "attempt": 3,
+  "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs/cycle_20261014_115712_985533/attempt_3.jpg",
+  "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs/cycle_20261014_115712_985533/attempt_3_annotated.jpg",
+  "timestamp": "2026-10-14T03:57:27.706605+00:00",
+  "log_path": "/home/centrabus/camera_calibration/reliable_live_logs/cycle_20261014_115712_985533/attempt_3.log",
+  "outcome": "rejected",
+  "error": "RuntimeError: battery red component misses the gauge hub.",
+  "error_category": "gauge_exception",
+  "duration_seconds": 6.297
+}

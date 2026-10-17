@@ -1,0 +1,52 @@
+{
+  "cycle_id": "cycle_20261014_112705_812895",
+  "status": "retry_failed",
+  "attempts_used": 3,
+  "accepted_attempt": null,
+  "confirmation_pair": [
+    1,
+    3
+  ],
+  "duration_seconds": 2.477,
+  "orb_retries": 1,
+  "gauge_exception_retries": 1,
+  "capture_retries": 0,
+  "consensus_retries": 0,
+  "pair_comparisons": [],
+  "attempts": [
+    {
+      "attempt": 1,
+      "outcome": "success",
+      "error": null,
+      "error_category": null,
+      "quality_warnings": [
+        "front:CHECK IMAGE",
+        "front:pressure fallback live_radial"
+      ],
+      "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/cycle_20261014_112705_812895/attempt_1.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/cycle_20261014_112705_812895/attempt_1_annotated.jpg",
+      "duration_seconds": 0.872
+    },
+    {
+      "attempt": 2,
+      "outcome": "rejected",
+      "error": "RuntimeError: battery red component is too short to be a needle.",
+      "error_category": "gauge_exception",
+      "quality_warnings": null,
+      "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/cycle_20261014_112705_812895/attempt_2.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/cycle_20261014_112705_812895/attempt_2_annotated.jpg",
+      "duration_seconds": 0.881
+    },
+    {
+      "attempt": 3,
+      "outcome": "rejected",
+      "error": "RuntimeError: Not enough good ORB matches. Found 2, need at least 12.",
+      "error_category": "orb_registration",
+      "quality_warnings": null,
+      "capture_path": "/home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/cycle_20261014_112705_812895/attempt_3.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/cycle_20261014_112705_812895/attempt_3_annotated.jpg",
+      "duration_seconds": 0.663
+    }
+  ],
+  "state_path": "/home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/latest_gauges_test.json"
+}

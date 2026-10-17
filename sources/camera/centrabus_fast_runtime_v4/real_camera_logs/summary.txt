@@ -1,0 +1,27 @@
+CENTRABUS fast V4 reader run summary
+Generated UTC: 2026-10-14T06:15:31.427495+00:00
+State path: /home/centrabus/camera_calibration/centrabus_fast_runtime_v4/latest_gauges_fast_v4.json
+Total cycles: 10
+Accepted on attempt 1: 10
+Accepted on attempt 2: 0
+Accepted on attempt 3: 0
+Completely rejected cycles: 0
+ORB retries: 0
+Gauge exception retries: 0
+Capture retries: 0
+Consensus retries: 0
+Average time per accepted cycle: 1.23 s
+Maximum cycle time: 1.41 s
+Accepted annotated images visually suspicious: pending manual inspection
+
+Cycles:
+  cycle_20261014_141518_534196: accepted; attempts=1; accepted_attempt=1; duration=1.41s
+  cycle_20261014_141519_951178: accepted; attempts=1; accepted_attempt=1; duration=1.25s
+  cycle_20261014_141521_209423: accepted; attempts=1; accepted_attempt=1; duration=1.23s
+  cycle_20261014_141522_450112: accepted; attempts=1; accepted_attempt=1; duration=1.21s
+  cycle_20261014_141523_670646: accepted; attempts=1; accepted_attempt=1; duration=1.23s
+  cycle_20261014_141524_907539: accepted; attempts=1; accepted_attempt=1; duration=1.20s
+  cycle_20261014_141526_115239: accepted; attempts=1; accepted_attempt=1; duration=1.21s
+  cycle_20261014_141527_337894: accepted; attempts=1; accepted_attempt=1; duration=1.19s
+  cycle_20261014_141528_531414: accepted; attempts=1; accepted_attempt=1; duration=1.19s
+  cycle_20261014_141529_732103: accepted; attempts=1; accepted_attempt=1; duration=1.24s

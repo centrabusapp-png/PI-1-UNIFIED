@@ -1,0 +1,64 @@
+{
+  "cycle_id": "cycle_20261014_135110_958003",
+  "status": "retry_failed",
+  "attempts_used": 3,
+  "accepted_attempt": null,
+  "confirmation_pair": null,
+  "duration_seconds": 3.39,
+  "retry_seconds": 2.234,
+  "camera_capture_seconds": 0.140734,
+  "orb_registration_seconds": 0,
+  "gauge_processing_seconds": 0,
+  "annotation_seconds": 0,
+  "total_processing_seconds": 0,
+  "orb_retries": 0,
+  "gauge_exception_retries": 3,
+  "capture_retries": 0,
+  "consensus_retries": 0,
+  "pair_comparisons": [],
+  "attempts": [
+    {
+      "attempt": 1,
+      "outcome": "rejected",
+      "error": "RuntimeError: battery red component misses the gauge hub.",
+      "error_category": "gauge_exception",
+      "quality_warnings": null,
+      "capture_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/real_camera_logs/cycle_20261014_135110_958003/attempt_1.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/real_camera_logs/cycle_20261014_135110_958003/attempt_1_annotated.jpg",
+      "duration_seconds": 1.146,
+      "timing": {
+        "camera_capture_seconds": 0.066057,
+        "failed_phase_seconds": 1.073641
+      }
+    },
+    {
+      "attempt": 2,
+      "outcome": "rejected",
+      "error": "RuntimeError: battery red component misses the gauge hub.",
+      "error_category": "gauge_exception",
+      "quality_warnings": null,
+      "capture_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/real_camera_logs/cycle_20261014_135110_958003/attempt_2.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/real_camera_logs/cycle_20261014_135110_958003/attempt_2_annotated.jpg",
+      "duration_seconds": 1.095,
+      "timing": {
+        "camera_capture_seconds": 0.030389,
+        "failed_phase_seconds": 1.057729
+      }
+    },
+    {
+      "attempt": 3,
+      "outcome": "rejected",
+      "error": "RuntimeError: battery red component misses the gauge hub.",
+      "error_category": "gauge_exception",
+      "quality_warnings": null,
+      "capture_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/real_camera_logs/cycle_20261014_135110_958003/attempt_3.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/real_camera_logs/cycle_20261014_135110_958003/attempt_3_annotated.jpg",
+      "duration_seconds": 1.105,
+      "timing": {
+        "camera_capture_seconds": 0.044288,
+        "failed_phase_seconds": 1.054577
+      }
+    }
+  ],
+  "state_path": "/home/centrabus/camera_calibration/centrabus_fast_runtime_v4/latest_gauges_fast_v4.json"
+}

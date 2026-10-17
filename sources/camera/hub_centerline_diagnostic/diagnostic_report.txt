@@ -1,0 +1,119 @@
+CENTRABUS HUB-CONSTRAINED CENTERLINE DIAGNOSTIC
+2026-10-13
+
+Inputs
+------
+50 original dashboard images: new_50_dataset
+Frozen baseline: new_50_validation_BASELINE_20261012_182448
+Production code: original files restored from needle_angle_fix_backup_20261013
+
+Outputs
+-------
+comparison.csv: 300 rows, one per gauge/image
+comparisons/: 300 individual source-crop overlays
+flagged_dashboards/: 13 six-gauge comparison sheets
+failure_035_fuel.txt and failure_044_front.txt: quantitative failure audits
+failure_*_mask.jpg: strict and relaxed mask overlays
+
+Reproduction check
+------------------
+ORB match counts, inlier counts, and registration-quality labels matched the
+baseline for all 50 images. All 298 baseline detected angles were reproduced
+exactly; the same two failures were reproduced. The diagnostic has not changed
+the detector. The 98 pressure-gauge candidate rays are alternatives for visual
+comparison, not validated measurements.
+
+Current angle versus annotation
+-------------------------------
+The drawn endpoint direction is close to the stored angle in almost all cases.
+Across the 298 detections, the median difference is 0.22 degrees; the maximum
+is 2.66 degrees (image 011 FRONT). In the flagged FRONT cases 034, 043, and
+045, the differences are 0.55, 0.12, and 0.96 degrees respectively. Thus the
+larger concerns in these cases are not explained by drawing endpoints alone.
+The line intercept can still look displaced from the physical hub because the
+reader draws the fitted pixel segment, not a line beginning at the hub.
+
+Hub-ray candidate
+-----------------
+The candidate searches 30-150 degrees in 0.25-degree steps, requires support
+in multiple consecutive radial bins, requires inner support, and refines using
+per-bin angular medians. It uses the detector-selected red pixels for successful
+pressure detections. For failed FRONT 044 it tests strict then relaxed inner-band
+pixels. It constrains the ray to the transformed physical reference hub.
+
+FRONT: candidate available in 48/50. Median difference from current angle is
+4.60 degrees; 22 of 48 differ by more than 5 degrees.
+REAR: candidate available in 50/50. Median difference is 3.31 degrees; 14 of
+50 differ by more than 5 degrees.
+
+This is disagreement, not accuracy improvement. In the large camera images
+001-010, FRONT changes by 9.86-12.22 degrees even though the current fitted
+line visibly follows the near-vertical red shaft. In image 001 the current
+line passes 45.27 crop pixels from the transformed reference hub, while the
+candidate ray from that hub cuts across the shaft. The transformed hub is not
+reliably colocated with the visible pivot/shaft in every current image.
+
+The candidate does not resolve several flagged FRONT cases: 034 changes
+81.32 -> 80.21 degrees; 043 changes 78.81 -> 79.10; 045 changes 69.50 ->
+68.67. It cannot restore missing needle pixels or correct a displaced hub.
+Image 011 FRONT changes 106.69 -> 98.80, but has only LOW candidate support;
+this is not sufficient evidence of an improvement. Image 044 gets an 83.75
+degree relaxed-band candidate, also LOW confidence/ambiguous; this is not a
+validated recovery.
+
+Hard failure 035 FUEL
+---------------------
+The strict red mask contains 333 pixels, and the current min_area is 100.
+Two components pass min_area. The actual needle component has 216 pixels,
+angle about 131.28 degrees, and fitted hub distance 3.59 pixels, but its
+area*bounding-box-elongation score is 230.9. A separate short red mark near
+the E label has 117 pixels and score 351.0, so the detector picks it first.
+That mark's fitted line misses the transformed hub by 66.40 pixels, exceeding
+the 28.81-pixel limit. The failure is component ranking and lack of trying the
+next plausible component, not missing red pixels or an incorrect ROI.
+In images 036, 038, 039, and 042, the current yellow FUEL line visibly includes
+red pixels near the E marker and is shallower than the physical needle shaft;
+these are angle-selection errors, not merely annotation-endpoint errors.
+
+Hard failure 044 FRONT
+----------------------
+The strict mask contains 82 inner-band red pixels, exceeding the 30-pixel
+fallback trigger. Its Huber fitted span is 13.94 pixels, just below the
+14.38-pixel minimum, so the current reader raises "red candidate is too
+short". The relaxed mask contains 491 inner-band pixels; its main shaft-like
+component has 879 pixels, 66.47-pixel 5th-to-95th span, 0.71-pixel hub error,
+and 5.38-pixel 90th-percentile cross-line error. The current relaxed component
+limit is 5.18 pixels, so it is rejected by 0.20 pixel. The issue is a strict
+fragment plus a narrowly rejected relaxed candidate; this does not justify
+globally reducing HSV or quality thresholds.
+
+Simple gauges and OIL
+---------------------
+FUEL, COOLANT, and BATTERY do have coordinates in REFERENCE_SIMPLE_HUBS, but
+the production code explicitly calls them approximate and uses them only for
+plausibility rejection. Their calibration0 scripts still contain placeholder
+pivots (195,365), outside the 405x300 crops. These are not established physical
+pivots for a hub-constrained angle estimator. The required calibration is the
+physical axle center in each calibration0 crop (x,y) for FUEL, COOLANT, and
+BATTERY, then an image-by-image check that the mapped center lands correctly.
+
+OIL uses a nominal pivot (205,215), filters red pixels by radial distance,
+then selects one connected component and applies a free cv2.fitLine(DIST_L2).
+It draws the endpoints of that free fit. Its drawn angle differs from its
+stored angle by at most 0.88 degrees here, so endpoint rounding is small;
+the free fitted line can still miss the pivot. Its median line-to-nominal-pivot
+distance is 4.11 crop pixels (maximum 14.37). Red-mask selection, the actual
+pivot location, and the free final fit each remain plausible contributors.
+
+Recommendation
+--------------
+Do not replace FRONT/REAR free-line angles with the tested hub-constrained ray.
+The first targeted algorithm change to test after approval should be FUEL-only
+candidate selection: compare the actual shaft and nearby red marking using
+needle length, line fit, and consistency with a measured FUEL pivot, rejecting
+ambiguous candidates rather than changing HSV or global thresholds. The pivot
+must first be measured in the calibration0 FUEL crop; the current simple hub
+is only approximate. For FRONT/REAR, first diagnose and locally align the
+actual hub in each current crop before testing any hub-constrained angle.
+Any production proposal needs the original 30 plus new 50 dashboard regression
+and manual angle-error review, not merely 480/480 detection counts.

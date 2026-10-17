@@ -1,0 +1,17 @@
+Image: Screenshot 2026-10-11 181502.png
+Baseline error: RuntimeError: fuel red component misses the gauge hub.
+Reproduced error: RuntimeError: fuel red component misses the gauge hub.
+Gauge: FUEL
+Current scale: 0.57613
+Transformed crop hub: (111.08, 109.50)
+Detector console: (none)
+Strict red pixels: 333
+Relaxed red pixels: 1106
+min_area: 100
+line length minimum: 20.16
+hub-error limit: 28.81
+strict connected components with >=3 pixels: 2
+ 1. area=117 bbox=(32, 39, 21, 7) selection_score=351.0 angle=179.18 span=20.06 hub_error=66.40 passes_area=True
+ 2. area=216 bbox=(56, 42, 29, 31) selection_score=230.9 angle=131.28 span=40.27 hub_error=3.59 passes_area=True
+relaxed connected components with >=3 pixels: 1
+ 1. area=1106 bbox=(27, 21, 62, 55) selection_score=1246.8 angle=141.93 span=70.64 hub_error=15.09 passes_area=True

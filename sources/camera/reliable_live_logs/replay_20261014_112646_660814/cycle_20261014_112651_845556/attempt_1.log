@@ -1,0 +1,49 @@
+attempt: 1
+timestamp: 2026-10-14T03:26:51.848667+00:00
+REPLAY SOURCE: /home/centrabus/centrabus_camera/captures/dashboard_20261014_104836_756202.jpg
+detector_stdout:
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/camera_calibration/reliable_live_logs/replay_20261014_112646_660814/cycle_20261014_112651_845556/attempt_1.jpg
+
+ORB good matches: 142
+ORB inliers: 49
+Inlier ratio: 0.345
+Current scale: 0.96323
+Rotation: -0.511 deg
+Registration quality: good
+
+FUEL      angle= 139.144 deg      0.0% EMPTY  [VALUE UNVERIFIED]
+COOLANT   angle= 139.552 deg      0.0% COLD  [VALUE UNVERIFIED]
+FRONT strict inner-red pixels=0; trying radial live fallback.
+FRONT relaxed inner-red pixels=1677
+FRONT radial candidate=126.5 deg, pixels=365, bins=6/6, span=77.9
+FRONT     angle= 129.251 deg     1.47 kg/cm2  [VALUE UNVERIFIED] [CHECK IMAGE]
+REAR      angle= 142.980 deg     0.00 kg/cm2  [VALUE UNVERIFIED]
+
+exception:
+Traceback (most recent call last):
+  File "/home/centrabus/camera_calibration/centrabus_reliable_live_reader.py", line 243, in run_attempt
+    results, registration = detect_fn(image, annotated, log)
+                            ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/centrabus/camera_calibration/centrabus_reliable_live_reader.py", line 220, in detect_image
+    results = read_dashboard(image_path, output_path=annotated_path)
+  File "/home/centrabus/camera_calibration/v2_live_test_runtime/centrabus_dashboard_reader.py", line 1042, in read_dashboard
+    result = reader(
+        crop, scale=current_scale, hub=local_hub
+    )
+  File "/home/centrabus/camera_calibration/v2_live_test_runtime/gauge_readers.py", line 489, in read_battery
+    return _read_simple_linear_gauge(
+        image,
+    ...<7 lines>...
+        )
+    )
+  File "/home/centrabus/camera_calibration/v2_live_test_runtime/gauge_readers.py", line 441, in _read_simple_linear_gauge
+    raise RuntimeError(f"{gauge_name} red component is too short to be a needle.")
+RuntimeError: battery red component is too short to be a needle.
+
+outcome: rejected
+duration_seconds: 0.962

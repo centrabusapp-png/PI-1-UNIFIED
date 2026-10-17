@@ -1,0 +1,46 @@
+
+================================================================================
+CENTRABUS DASHBOARD READER
+================================================================================
+
+Input: /home/centrabus/camera_calibration/new_50_dataset/Screenshot 2026-10-11 181737.png
+
+ORB good matches: 125
+ORB inliers: 25
+Inlier ratio: 0.200
+Current scale: 0.57523
+Rotation: -1.904 deg
+Registration quality: review
+
+FUEL      angle= 142.231 deg      0.0% EMPTY  [VALUE UNVERIFIED] [CHECK IMAGE]
+COOLANT   angle= 141.619 deg      0.0% COLD  [VALUE UNVERIFIED] [CHECK IMAGE]
+Traceback (most recent call last):
+  File "/home/centrabus/camera_calibration/centrabus_dashboard_reader.py", line 1409, in <module>
+    main()
+    ~~~~^^
+  File "/home/centrabus/camera_calibration/centrabus_dashboard_reader.py", line 1400, in main
+    read_dashboard(
+    ~~~~~~~~~~~~~~^
+        args.image,
+        ^^^^^^^^^^^
+        output_path=
+        ^^^^^^^^^^^^
+            args.output
+            ^^^^^^^^^^^
+    )
+    ^
+  File "/home/centrabus/camera_calibration/centrabus_dashboard_reader.py", line 997, in read_dashboard
+    result = read_front(
+        crop,
+        config=
+            pressure_config
+    )
+  File "/home/centrabus/camera_calibration/gauge_readers.py", line 2059, in read_front
+    return _read_pressure_gauge(
+        image,
+        gauge_name="front",
+        config=config
+    )
+  File "/home/centrabus/camera_calibration/gauge_readers.py", line 1822, in _read_pressure_gauge
+    raise RuntimeError(f"{gauge_name} red candidate is too short to be a needle.")
+RuntimeError: front red candidate is too short to be a needle.

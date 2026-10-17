@@ -1,0 +1,73 @@
+{
+  "cycle_id": "cycle_20261014_131427_201754",
+  "status": "accepted",
+  "attempts_used": 2,
+  "accepted_attempt": 2,
+  "confirmation_pair": [
+    1,
+    2
+  ],
+  "duration_seconds": 12.5,
+  "orb_retries": 0,
+  "gauge_exception_retries": 0,
+  "capture_retries": 0,
+  "consensus_retries": 0,
+  "pair_comparisons": [
+    {
+      "attempts": [
+        1,
+        2
+      ],
+      "agrees": true,
+      "angle_differences": {
+        "fuel": 0.026,
+        "coolant": 0.155,
+        "front": 0.29,
+        "rear": 0.331,
+        "battery": 1.104,
+        "oil": 0.079
+      }
+    }
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "outcome": "success",
+      "error": null,
+      "error_category": null,
+      "quality_warnings": [
+        "registration:review",
+        "fuel:CHECK IMAGE",
+        "coolant:CHECK IMAGE",
+        "front:CHECK IMAGE",
+        "front:pressure fallback live_component",
+        "rear:CHECK IMAGE",
+        "rear:pressure fallback coherent_relaxed",
+        "battery:CHECK IMAGE",
+        "battery:fallback relaxed",
+        "oil:CHECK IMAGE"
+      ],
+      "capture_path": "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/real_camera_logs/cycle_20261014_131427_201754/attempt_1.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/real_camera_logs/cycle_20261014_131427_201754/attempt_1_annotated.jpg",
+      "duration_seconds": 6.239
+    },
+    {
+      "attempt": 2,
+      "outcome": "success",
+      "error": null,
+      "error_category": null,
+      "quality_warnings": [
+        "front:CHECK IMAGE",
+        "front:pressure fallback live_component",
+        "rear:CHECK IMAGE",
+        "rear:pressure fallback coherent_relaxed",
+        "battery:CHECK IMAGE",
+        "battery:fallback relaxed"
+      ],
+      "capture_path": "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/real_camera_logs/cycle_20261014_131427_201754/attempt_2.jpg",
+      "annotated_path": "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/real_camera_logs/cycle_20261014_131427_201754/attempt_2_annotated.jpg",
+      "duration_seconds": 6.223
+    }
+  ],
+  "state_path": "/home/centrabus/camera_calibration/live_detector_v4_dev_20261014/latest_gauges_v4_dev.json"
+}

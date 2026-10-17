@@ -1,0 +1,49 @@
+timestamp,capture_number,reference_image,reference_sha256,capture_image,annotated_image,gauge,reference_angle,camera_angle,absolute_error,status,error_message,orb_good_matches,orb_inliers,orb_inlier_ratio,current_scale,rotation,detection_quality,registration_quality
+2026-10-11T15:12:46+08:00,1,/home/centrabus/centrabus_camera/captures/dashboard_20260904_144540.jpg,87a9a17e33cab32f6604a58cbc235cda5e0045b89eb32192651ae7b27ee09764,/home/centrabus/camera_calibration/camera_accuracy_tests/20261011_151245_160740_dashboard_20260904_144540/captures/capture_001.jpg,,fuel,143.7257813850481,,,CAPTURE_FAILED,"RuntimeError: rpicam-still exited 255: [2:40:46.389497276] [12737]  INFO Camera camera_manager.cpp:340 libcamera v0.7.1+rpt20260609
+[2:40:46.411318546] [12740] ERROR V4L2 v4l2_device.cpp:412 'imx708': Unable to set controls: Device or resource busy
+[2:40:46.412124121] [12740]  INFO RPI pipeline_base.cpp:1133 Using configuration file '/usr/share/libcamera/pipeline/rpi/vc4/rpi_apps.yaml'
+[2:40:46.470552398] [12740]  INFO IPAProxy ipa_proxy.cpp:184 Using tuning file /usr/share/libcamera/ipa/rpi/vc4/imx708.json
+[2:40:46.477539062] [12740]  INFO Camera camera_manager.cpp:223 Adding camera '/base/soc/i2c0mux/i2c@1/imx708@1a' for pipeline handler rpi/vc4
+[2:40:46.477597154] [12740]  INFO RPI vc4.cpp:445 Registered camera /base/soc/i2c0mux/i2c@1/imx708@1a to Unicam device /dev/media1 and ISP device /dev/media2
+[2:40:46.529292335] [12737]  INFO Camera camera.cpp:1021 Pipeline handler in use by another process
+ERROR: *** failed to acquire camera /base/soc/i2c0mux/i2c@1/imx708@1a ***",,,,,,,
+2026-10-11T15:12:46+08:00,1,/home/centrabus/centrabus_camera/captures/dashboard_20260904_144540.jpg,87a9a17e33cab32f6604a58cbc235cda5e0045b89eb32192651ae7b27ee09764,/home/centrabus/camera_calibration/camera_accuracy_tests/20261011_151245_160740_dashboard_20260904_144540/captures/capture_001.jpg,,coolant,142.14154735655285,,,CAPTURE_FAILED,"RuntimeError: rpicam-still exited 255: [2:40:46.389497276] [12737]  INFO Camera camera_manager.cpp:340 libcamera v0.7.1+rpt20260609
+[2:40:46.411318546] [12740] ERROR V4L2 v4l2_device.cpp:412 'imx708': Unable to set controls: Device or resource busy
+[2:40:46.412124121] [12740]  INFO RPI pipeline_base.cpp:1133 Using configuration file '/usr/share/libcamera/pipeline/rpi/vc4/rpi_apps.yaml'
+[2:40:46.470552398] [12740]  INFO IPAProxy ipa_proxy.cpp:184 Using tuning file /usr/share/libcamera/ipa/rpi/vc4/imx708.json
+[2:40:46.477539062] [12740]  INFO Camera camera_manager.cpp:223 Adding camera '/base/soc/i2c0mux/i2c@1/imx708@1a' for pipeline handler rpi/vc4
+[2:40:46.477597154] [12740]  INFO RPI vc4.cpp:445 Registered camera /base/soc/i2c0mux/i2c@1/imx708@1a to Unicam device /dev/media1 and ISP device /dev/media2
+[2:40:46.529292335] [12737]  INFO Camera camera.cpp:1021 Pipeline handler in use by another process
+ERROR: *** failed to acquire camera /base/soc/i2c0mux/i2c@1/imx708@1a ***",,,,,,,
+2026-10-11T15:12:46+08:00,1,/home/centrabus/centrabus_camera/captures/dashboard_20260904_144540.jpg,87a9a17e33cab32f6604a58cbc235cda5e0045b89eb32192651ae7b27ee09764,/home/centrabus/camera_calibration/camera_accuracy_tests/20261011_151245_160740_dashboard_20260904_144540/captures/capture_001.jpg,,front,139.38931152891024,,,CAPTURE_FAILED,"RuntimeError: rpicam-still exited 255: [2:40:46.389497276] [12737]  INFO Camera camera_manager.cpp:340 libcamera v0.7.1+rpt20260609
+[2:40:46.411318546] [12740] ERROR V4L2 v4l2_device.cpp:412 'imx708': Unable to set controls: Device or resource busy
+[2:40:46.412124121] [12740]  INFO RPI pipeline_base.cpp:1133 Using configuration file '/usr/share/libcamera/pipeline/rpi/vc4/rpi_apps.yaml'
+[2:40:46.470552398] [12740]  INFO IPAProxy ipa_proxy.cpp:184 Using tuning file /usr/share/libcamera/ipa/rpi/vc4/imx708.json
+[2:40:46.477539062] [12740]  INFO Camera camera_manager.cpp:223 Adding camera '/base/soc/i2c0mux/i2c@1/imx708@1a' for pipeline handler rpi/vc4
+[2:40:46.477597154] [12740]  INFO RPI vc4.cpp:445 Registered camera /base/soc/i2c0mux/i2c@1/imx708@1a to Unicam device /dev/media1 and ISP device /dev/media2
+[2:40:46.529292335] [12737]  INFO Camera camera.cpp:1021 Pipeline handler in use by another process
+ERROR: *** failed to acquire camera /base/soc/i2c0mux/i2c@1/imx708@1a ***",,,,,,,
+2026-10-11T15:12:46+08:00,1,/home/centrabus/centrabus_camera/captures/dashboard_20260904_144540.jpg,87a9a17e33cab32f6604a58cbc235cda5e0045b89eb32192651ae7b27ee09764,/home/centrabus/camera_calibration/camera_accuracy_tests/20261011_151245_160740_dashboard_20260904_144540/captures/capture_001.jpg,,rear,143.4897749656174,,,CAPTURE_FAILED,"RuntimeError: rpicam-still exited 255: [2:40:46.389497276] [12737]  INFO Camera camera_manager.cpp:340 libcamera v0.7.1+rpt20260609
+[2:40:46.411318546] [12740] ERROR V4L2 v4l2_device.cpp:412 'imx708': Unable to set controls: Device or resource busy
+[2:40:46.412124121] [12740]  INFO RPI pipeline_base.cpp:1133 Using configuration file '/usr/share/libcamera/pipeline/rpi/vc4/rpi_apps.yaml'
+[2:40:46.470552398] [12740]  INFO IPAProxy ipa_proxy.cpp:184 Using tuning file /usr/share/libcamera/ipa/rpi/vc4/imx708.json
+[2:40:46.477539062] [12740]  INFO Camera camera_manager.cpp:223 Adding camera '/base/soc/i2c0mux/i2c@1/imx708@1a' for pipeline handler rpi/vc4
+[2:40:46.477597154] [12740]  INFO RPI vc4.cpp:445 Registered camera /base/soc/i2c0mux/i2c@1/imx708@1a to Unicam device /dev/media1 and ISP device /dev/media2
+[2:40:46.529292335] [12737]  INFO Camera camera.cpp:1021 Pipeline handler in use by another process
+ERROR: *** failed to acquire camera /base/soc/i2c0mux/i2c@1/imx708@1a ***",,,,,,,
+2026-10-11T15:12:46+08:00,1,/home/centrabus/centrabus_camera/captures/dashboard_20260904_144540.jpg,87a9a17e33cab32f6604a58cbc235cda5e0045b89eb32192651ae7b27ee09764,/home/centrabus/camera_calibration/camera_accuracy_tests/20261011_151245_160740_dashboard_20260904_144540/captures/capture_001.jpg,,battery,139.07326049439604,,,CAPTURE_FAILED,"RuntimeError: rpicam-still exited 255: [2:40:46.389497276] [12737]  INFO Camera camera_manager.cpp:340 libcamera v0.7.1+rpt20260609
+[2:40:46.411318546] [12740] ERROR V4L2 v4l2_device.cpp:412 'imx708': Unable to set controls: Device or resource busy
+[2:40:46.412124121] [12740]  INFO RPI pipeline_base.cpp:1133 Using configuration file '/usr/share/libcamera/pipeline/rpi/vc4/rpi_apps.yaml'
+[2:40:46.470552398] [12740]  INFO IPAProxy ipa_proxy.cpp:184 Using tuning file /usr/share/libcamera/ipa/rpi/vc4/imx708.json
+[2:40:46.477539062] [12740]  INFO Camera camera_manager.cpp:223 Adding camera '/base/soc/i2c0mux/i2c@1/imx708@1a' for pipeline handler rpi/vc4
+[2:40:46.477597154] [12740]  INFO RPI vc4.cpp:445 Registered camera /base/soc/i2c0mux/i2c@1/imx708@1a to Unicam device /dev/media1 and ISP device /dev/media2
+[2:40:46.529292335] [12737]  INFO Camera camera.cpp:1021 Pipeline handler in use by another process
+ERROR: *** failed to acquire camera /base/soc/i2c0mux/i2c@1/imx708@1a ***",,,,,,,
+2026-10-11T15:12:46+08:00,1,/home/centrabus/centrabus_camera/captures/dashboard_20260904_144540.jpg,87a9a17e33cab32f6604a58cbc235cda5e0045b89eb32192651ae7b27ee09764,/home/centrabus/camera_calibration/camera_accuracy_tests/20261011_151245_160740_dashboard_20260904_144540/captures/capture_001.jpg,,oil,139.19260784324823,,,CAPTURE_FAILED,"RuntimeError: rpicam-still exited 255: [2:40:46.389497276] [12737]  INFO Camera camera_manager.cpp:340 libcamera v0.7.1+rpt20260609
+[2:40:46.411318546] [12740] ERROR V4L2 v4l2_device.cpp:412 'imx708': Unable to set controls: Device or resource busy
+[2:40:46.412124121] [12740]  INFO RPI pipeline_base.cpp:1133 Using configuration file '/usr/share/libcamera/pipeline/rpi/vc4/rpi_apps.yaml'
+[2:40:46.470552398] [12740]  INFO IPAProxy ipa_proxy.cpp:184 Using tuning file /usr/share/libcamera/ipa/rpi/vc4/imx708.json
+[2:40:46.477539062] [12740]  INFO Camera camera_manager.cpp:223 Adding camera '/base/soc/i2c0mux/i2c@1/imx708@1a' for pipeline handler rpi/vc4
+[2:40:46.477597154] [12740]  INFO RPI vc4.cpp:445 Registered camera /base/soc/i2c0mux/i2c@1/imx708@1a to Unicam device /dev/media1 and ISP device /dev/media2
+[2:40:46.529292335] [12737]  INFO Camera camera.cpp:1021 Pipeline handler in use by another process
+ERROR: *** failed to acquire camera /base/soc/i2c0mux/i2c@1/imx708@1a ***",,,,,,,
