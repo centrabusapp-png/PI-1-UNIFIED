@@ -15,6 +15,13 @@ class GuiLauncherTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("--preview", result.stdout)
         self.assertIn("--allow-network-changes", result.stdout)
+        self.assertIn("--presence-env", result.stdout)
+
+    def test_preview_rejects_private_presence_configuration_without_reading_it(self):
+        result = subprocess.run([sys.executable, "-I", "-B", str(ROOT / "setup-pi.py"), "--preview", "--presence-env", "/does-not-exist.env"],
+                                capture_output=True, text=True, timeout=5, check=False)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("unsafe preview", result.stderr)
 
     def test_other_device_identity_is_rejected_even_in_preview(self):
         import json

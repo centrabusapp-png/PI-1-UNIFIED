@@ -11,6 +11,7 @@
   let stopped = false;
   let backendBusy = false;
   let backendPrefilled = false;
+  let presenceDeadline = 0;
   const controllers = new Set();
   const notice = (message, error = false) => { byId('notice').textContent = message; byId('notice').classList.toggle('error', error); };
   const clearPassword = () => { byId('password').value = ''; };
@@ -41,6 +42,8 @@
     byId('confirm').disabled = busy || trial || !state?.changesEnabled;
     byId('priority').disabled = busy || trial || !state?.changesEnabled;
     byId('backend-check').disabled = backendBusy || !state || state.preview || !token;
+    byId('presence-start').disabled = busy || backendBusy || trial || !state?.presence?.canStart || !byId('presence-confirm').checked || byId('backend-origin').value.trim() !== state?.backend?.origin;
+    byId('presence-stop').disabled = busy || !state?.presence?.running || !token;
     byId('connect').textContent = selected?.connected ? 'Already connected' : !state?.changesEnabled ? 'Enable connections first' : !selected ? 'Select a network first' : 'Connect with rollback protection';
   }
 
@@ -58,6 +61,7 @@
       next.connectionMessage || 'Enable connections, then choose a network.';
     if (!backendPrefilled) { byId('backend-origin').value = next.backend?.origin || ''; backendPrefilled = true; }
     renderBackend(next.backend);
+    renderPresence(next.presence);
     if (next.preview) notice('Preview only. No synthetic network list, laptop scan or real device operation is used.');
     else if (['failed', 'unknown', 'authorizing'].includes(next.task?.state)) notice(next.task.message, next.task.state !== 'authorizing');
     else if (!next.changesEnabled) notice('Scan networks, then use Enable connections to approve trials on this Pi.');
@@ -129,6 +133,18 @@
   byId('scan').addEventListener('click', scan);
   byId('refresh').addEventListener('click', refresh);
   byId('enable-confirm').addEventListener('change', controls);
+  byId('presence-confirm').addEventListener('change', controls);
+  byId('backend-origin').addEventListener('input', () => { byId('presence-confirm').checked = false; controls(); });
+  for (const [id, path] of [['presence-start', '/api/presence/start'], ['presence-stop', '/api/presence/stop']]) byId(id).addEventListener('click', async () => {
+    if (byId(id).disabled) return;
+    busy = true; controls();
+    try {
+      await api(path, id === 'presence-start' ? { confirmed: byId('presence-confirm').checked } : {});
+      byId('presence-confirm').checked = false;
+      await refresh();
+    } catch (error) { notice(error.message, true); }
+    finally { busy = false; controls(); }
+  });
   byId('enable').addEventListener('click', async () => {
     if (byId('enable').disabled) return;
     busy = true; clearPassword(); controls();
@@ -139,8 +155,16 @@
   function renderBackend(report) {
     if (backendBusy) return;
     byId('backend-state').textContent = ({ ready: 'API ready', unreachable: 'Unreachable', unverified: 'Not verified' })[report?.state] || 'Not checked';
+    byId('backend-mode').textContent = ({ 'local-setup': 'Setup only', 'real-lan': 'Real LAN', 'legacy-gps': 'GPS enabled' })[report?.mode] || 'Not checked';
+    byId('gps-state').textContent = report?.gpsPersistenceEnabled === true ? 'Enabled' : report?.gpsPersistenceEnabled === false ? 'Disabled' : 'Not checked';
     byId('backend-message').textContent = report?.message || 'Express API has not been checked.';
     byId('backend-time').textContent = report?.checkedAt ? `Last check: ${new Date(report.checkedAt * 1000).toLocaleTimeString()}. Check again after a network change.` : '';
+  }
+  function renderPresence(report) {
+    byId('presence-state').textContent = ({ online: 'Setup online', waiting: 'Waiting for check-in', expired: 'Expired', stopped: 'Stopped', not_configured: 'Not configured' })[report?.state] || 'Not checked';
+    byId('presence-message').textContent = report?.message || 'This app has not sent an authenticated setup check-in.';
+    byId('presence-time').textContent = report?.lastConfirmedAt ? `Last verified acknowledgement: ${new Date(report.lastConfirmedAt).toLocaleTimeString()}. GPS delivery is checked separately.` : '';
+    presenceDeadline = report?.state === 'online' ? performance.now() + Math.max(0, report.expiresInSeconds || 0) * 1000 : 0;
   }
   byId('backend-form').addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -150,6 +174,7 @@
     try {
       const result = await api('/api/backend-check', { origin: byId('backend-origin').value.trim() });
       if (state) state.backend = result.backend;
+      byId('backend-origin').value = result.backend.origin;
       backendBusy = false; renderBackend(result.backend);
     } catch (error) {
       byId('backend-state').textContent = 'Not checked'; byId('backend-message').textContent = error.message;
@@ -157,6 +182,10 @@
     } finally { backendBusy = false; controls(); }
   });
   function countdown() {
+    if (state?.presence?.state === 'online' && performance.now() >= presenceDeadline) {
+      byId('presence-state').textContent = 'Expired';
+      byId('presence-message').textContent = 'The last verified setup acknowledgement expired. Waiting for a new verified check-in.';
+    }
     const remaining = Math.max(0, Math.ceil((state?.task?.deadlineEpoch || 0) - Date.now() / 1000));
     byId('countdown').textContent = state?.task?.state === 'awaiting_confirmation' ? `${remaining}s left to confirm. If unsure, choose Roll back.` : '';
     if (!remaining && state?.task?.state === 'awaiting_confirmation') byId('keep').disabled = true;

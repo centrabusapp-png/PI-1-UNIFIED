@@ -19,11 +19,17 @@
     </form></section>
   </div>
   <section class="card"><div class="heading"><h2>Connection trial</h2><span id="trial-state" class="pill">Idle</span></div><p id="trial-message">No changes requested.</p><p id="countdown" class="hint"></p><div class="actions"><button id="keep" type="button" disabled>Keep this connection</button><button id="rollback" type="button" class="secondary" disabled>Roll back</button></div><p class="hint">If you do not confirm, NetworkManager’s checkpoint timer requests restoration. “Rolled back” is shown only after the original connection is observed again.</p></section>
-  <section class="card"><div class="heading"><h2>Dashboard connection</h2><span id="backend-state" class="pill">Not checked</span></div>
+  <section class="card"><div class="heading"><h2>Backend and dashboard</h2><span id="backend-state" class="pill">Not checked</span></div>
     <p id="backend-message" role="status">Wi-Fi alone does not verify the Express API or Supabase delivery.</p>
+    <dl class="status-grid"><div><dt>Backend mode</dt><dd id="backend-mode">Not checked</dd></div><div><dt>GPS writes on backend</dt><dd id="gps-state">Not checked</dd></div><div><dt>Dashboard check-in</dt><dd id="presence-state">Not configured</dd></div></dl>
+    <p id="presence-message" class="hint" role="status">This app has not sent an authenticated setup check-in.</p>
+    <p id="presence-time" class="hint"></p>
     <form id="backend-form" autocomplete="off"><label for="backend-origin">Express API address</label><input id="backend-origin" type="text" maxlength="2048" spellcheck="false" placeholder="http://LAPTOP-PRIVATE-IP:5000">
       <p class="hint">Use the backend/API address, not the dashboard page. This check sends no credentials or GPS, and does not change the sender configuration.</p><button id="backend-check" type="submit" disabled>Check Express API</button></form>
-    <p id="backend-time" class="hint"></p><p class="hint">A ready API does not prove device authentication, bus assignment or fresh GPS in the dashboard. Those need a separately approved sender test.</p>
+    <p id="backend-time" class="hint"></p><p class="hint">A ready API does not prove authenticated setup presence or fresh GPS delivery. Setup presence needs a verified check-in; GPS delivery needs a separate sender test.</p>
+    <label class="check"><input id="presence-confirm" type="checkbox">I approve authenticated setup-only check-ins to this Express API using this Pi’s existing private device configuration.</label>
+    <div class="actions"><button id="presence-start" type="button" disabled>Start check-ins</button><button id="presence-stop" class="secondary" type="button" disabled>Stop check-ins</button></div>
+    <p class="hint">Check-ins report this Pi’s setup presence about every 15 seconds. They do not start GPS uploads. After stopping, backend presence expires within 45 seconds of the last accepted check-in.</p>
   </section>
-  <footer>Only this device · No cloud credentials · No GPS, camera or service changes<br>This is not the CentraBus administrator dashboard. Fully offline first-time provisioning and remote dashboard Wi-Fi delivery are separate integration steps.</footer>
+  <footer>Only this device · Device secret stays on this Pi · No GPS, camera or service changes<br>This is not the CentraBus administrator dashboard. Fully offline first-time provisioning and remote dashboard Wi-Fi delivery are separate integration steps.</footer>
 </main></body></html>

@@ -34,9 +34,39 @@ class NoRedirect(HTTPRedirectHandler):
         return None
 
 
+def readiness_report(report):
+    """Recognize backend modes without enabling writes or claiming presence."""
+    unverified = {"state": "unverified", "mode": None, "gpsPersistenceEnabled": None,
+                  "setupPresenceEnabled": None,
+                  "message": "API responded, but its readiness report was not recognized. "
+                             "Dashboard check-in and GPS delivery remain unverified."}
+    if not isinstance(report, dict) or report.get("ready") is not True or report.get("simulation") is not False:
+        return unverified
+
+    mode = report.get("mode")
+    # START SYSTEM currently omits scope. Recognize only its explicit setup-only
+    # contract; a missing scope never qualifies a GPS-writing backend as ready.
+    setup_ready = (mode == "local-setup" and report.get("gpsPersistenceEnabled") is False
+                   and report.get("setupPresenceEnabled") is True
+                   and ("scope" not in report or report["scope"] == "backend-process-only"))
+    gps_ready = (mode in (None, "real-lan") and report.get("gpsPersistenceEnabled") is True
+                 and report.get("scope") == "backend-process-only")
+    if not setup_ready and not gps_ready:
+        return unverified
+
+    presence = report.get("setupPresenceEnabled")
+    return {"state": "ready", "mode": mode or "legacy-gps",
+            "gpsPersistenceEnabled": gps_ready,
+            "setupPresenceEnabled": presence if isinstance(presence, bool) else None,
+            "message": ("Express setup API is ready. GPS writes are disabled on the backend. " if setup_ready else
+                        "Express API is ready with GPS writes enabled on the backend. ")
+                       + "Dashboard check-in, device authentication, bus assignment and fresh GPS delivery are still unverified."}
+
+
 def check_backend(value):
     origin = public_origin(value)
     result = {"origin": origin, "state": "unreachable", "checkedAt": time.time(),
+              "mode": None, "gpsPersistenceEnabled": None, "setupPresenceEnabled": None,
               "message": "Express API unreachable. Check that the laptop backend is running, its API address is current, "
                          "and the Pi can reach it on this network."}
     try:
@@ -50,14 +80,7 @@ def check_backend(value):
                 report = json.loads(payload)
             except (ValueError, UnicodeError):
                 report = None
-            if (isinstance(report, dict) and report.get("ready") is True
-                    and report.get("simulation") is False and report.get("gpsPersistenceEnabled") is True
-                    and report.get("scope") == "backend-process-only"):
-                result.update(state="ready", message="Express reports ready with GPS persistence enabled. "
-                              "Device authentication, bus assignment and fresh dashboard GPS are still unverified.")
-            else:
-                result.update(state="unverified", message="API responded, but did not confirm the expected Express readiness flags. "
-                              "This does not verify dashboard or Supabase ingestion.")
+            result.update(readiness_report(report))
     except HTTPError as error:
         result.update(state="unverified", message=f"API returned HTTP {error.code} for /readyz. "
                       "Confirm the Express API address and readiness route. Redirects are not followed.")

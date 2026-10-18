@@ -98,3 +98,48 @@ observed unchanged and connected afterward. This supersedes the earlier failed
 checkpoint-preflight observation only; a real network switch/rollback and
 dashboard ingestion remain unverified. The Pi's existing Python GIO binding was
 used without installing packages or changing Polkit policy.
+
+## Backend mode alignment candidate — 2026-10-18
+
+The separate review checkout based on Pi commit `56bb1ce` now recognizes both
+backend launch modes. `START SYSTEM` reports `mode: local-setup`, `ready: true`,
+`simulation: false`, `gpsPersistenceEnabled: false` and `setupPresenceEnabled: true`.
+Its current report omits `scope`; only this explicit setup-only contract accepts
+that omission. The page shows API ready, Setup only, and GPS writes Disabled.
+`START LOCAL` reports `mode: real-lan` with GPS persistence enabled and
+`scope: backend-process-only`. The earlier GPS-enabled response without a mode
+remains supported. Simulation, inconsistent modes, unknown scopes and malformed
+flags remain unverified. No backend mode or persistence setting is changed.
+
+API readiness, GPS persistence and authenticated dashboard check-in are displayed
+separately. A backend supporting presence is not evidence that this Pi checked in.
+The candidate now implements the Windows operator's supplied challenge/HMAC/ack
+contract. This is new Pi client code on the Pi baseline, not an overwrite with
+the older Windows GUI. See DASHBOARD_ALIGNMENT.md for the contract and review limits.
+
+After separately approved rollout, normal launch discovers only the documented
+existing `~/centrabus-device/runtime.env` and `~/centrabus-device/GPS-001.env`
+paths using metadata. `--presence-env` can explicitly select one to three existing
+files when those paths differ. It does not read their contents at launch or create
+credentials. Preview rejects private configuration. Files must be regular,
+owner-private, inside this account's home, and identify GPS-001.
+
+Check the API, approve the setup-only check-in checkbox and click Start check-ins
+to read the existing private configuration and begin. The secret stays local;
+only the domain-separated HMAC signature is sent. A verified acknowledgement proof
+for this device and challenge is required for Setup online. New challenges are
+requested about every 15 seconds, with four-second socket timeouts and no rapid
+retry or queued replay. Reused challenges are rejected. Acknowledgements expire
+within the backend's 45-second presence window, never extended by network latency
+or failed attempts. The Pi also rejects signed acknowledgements older than 45
+seconds or more than five seconds ahead of its clock. It retains the backend's
+original acknowledgement time. GPS capture timestamps are not read or changed.
+
+Stop check-ins or close the foreground setup process to stop its worker. The
+backend can retain the last accepted presence for up to 45 seconds. The app's
+30-minute session expiry also stops future attempts. No sender, queue or service
+is started. API checks do not authorize check-ins or enable GPS writes.
+
+These candidate edits have not been applied to the running desktop setup session.
+No actual private configuration was read and no live check-in or production write
+was sent during preparation; mocked protocol tests do not prove integration.

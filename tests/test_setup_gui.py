@@ -416,6 +416,60 @@ class ApplicationTests(unittest.TestCase):
         self.assertEqual(self.manager.active, BASE)
         self.assertFalse(self.manager.calls and any("add" in args for args, _ in self.manager.calls))
 
+    def test_api_readiness_does_not_register_device_presence(self):
+        report = {"origin": "https://api.example.test", "state": "ready", "mode": "local-setup",
+                  "gpsPersistenceEnabled": False, "setupPresenceEnabled": True}
+        with patch.object(server, "check_backend", return_value=report):
+            self.app.backend_check({"origin": report["origin"]})
+        status = self.app.status()
+        self.assertEqual(status["backend"]["state"], "ready")
+        self.assertEqual(status["presence"]["state"], "not_configured")
+        self.assertIn("has not sent", status["presence"]["message"])
+        self.assertFalse(self.manager.calls and any("add" in args for args, _ in self.manager.calls))
+
+    def test_presence_requires_explicit_approval_config_and_fresh_presence_enabled_api(self):
+        with patch.object(server, "read_key") as read:
+            for payload in ({}, {"confirmed": False}, {"confirmed": True, "secret": SECRET}):
+                with self.assertRaises(network.SetupError): self.app.presence_start(payload)
+            with self.assertRaises(network.SetupError): self.app.presence_start({"confirmed": True})
+            self.app.presence_env = ("/synthetic-only.env",)
+            self.app.backend = {"state": "ready", "origin": "https://api.example.test", "checkedAt": time.time(),
+                                "setupPresenceEnabled": False}
+            with self.assertRaises(network.SetupError): self.app.presence_start({"confirmed": True})
+            self.app.backend.update(setupPresenceEnabled=True, checkedAt=time.time() - 61)
+            with self.assertRaises(network.SetupError): self.app.presence_start({"confirmed": True})
+            read.assert_not_called()
+
+    def test_presence_start_uses_only_existing_configuration_and_keeps_wifi_unchanged(self):
+        self.app.presence_env = ("/synthetic-only.env",)
+        self.app.backend = {"state": "ready", "origin": "https://api.example.test", "checkedAt": time.time(),
+                            "setupPresenceEnabled": True}
+        session = Mock(); session.running = True
+        session.status.return_value = {"state": "waiting", "running": True, "active": True}
+        with patch.object(server, "read_key", return_value=b'x' * 32) as read, patch.object(server, "PresenceClient") as client, patch.object(server, "PresenceSession", return_value=session):
+            self.app.presence_start({"confirmed": True})
+        read.assert_called_once_with(self.app.presence_env, "GPS-002")
+        client.assert_called_once_with("https://api.example.test", "GPS-002", b'x' * 32)
+        session.start.assert_called_once()
+        with self.assertRaises(network.SetupError): self.app.presence_start({"confirmed": True})
+        self.assertEqual(self.manager.active, BASE)
+        self.app.presence_stop(); session.stop.assert_called_once()
+
+    def test_api_destination_cannot_change_while_checkins_are_running(self):
+        self.app.backend = {"origin": "https://api.example.test"}
+        self.app.presence_session = Mock(running=True)
+        self.app.presence_session.status.return_value = {"state": "waiting", "running": True, "active": True}
+        with patch.object(server, "check_backend") as probe:
+            with self.assertRaises(network.SetupError):
+                self.app.backend_check({"origin": "https://different.example.test"})
+        probe.assert_not_called()
+
+    def test_old_network_observation_becomes_unknown_for_presence(self):
+        self.app.status()
+        self.assertTrue(self.app._presence_observation()["wifiConnected"])
+        self.app.observed_at -= 16
+        self.assertEqual(self.app._presence_observation(), {"wifiConnected": None, "internet": "unknown"})
+
     def test_scan_only_returns_whitelisted_metadata_and_no_bssid(self):
         result = self.app.scan()
         self.assertNotIn("bssid", json.dumps(result))
@@ -517,6 +571,8 @@ class HttpTests(unittest.TestCase):
         self.assertEqual(status, 409); self.assertNotIn(SECRET.encode(), body)
         self.assertEqual(self.request("/api/authorize", data={"confirmed": True})[0], 409)
         self.assertEqual(self.request("/api/backend-check", data={"origin": "https://api.example.test"})[0], 409)
+        self.assertEqual(self.request("/api/presence/start", data={"confirmed": True})[0], 409)
+        self.assertEqual(self.request("/api/presence/start", data={"confirmed": True}, headers={"Authorization": "Bearer wrong"})[0], 401)
 
     def test_frontend_has_no_storage_or_password_logging_and_clears_dom(self):
         js = (server.ASSETS / "app.js").read_text()
@@ -553,11 +609,42 @@ class BackendTests(unittest.TestCase):
         flags = {"ready": True, "simulation": False, "gpsPersistenceEnabled": True, "scope": "backend-process-only"}
         report = self.probe(json.dumps(flags).encode())
         self.assertEqual(report["state"], "ready")
+        self.assertTrue(report["gpsPersistenceEnabled"])
         self.assertIn("still unverified", report["message"])
         for change in ({"ready": 1}, {"simulation": True}, {"gpsPersistenceEnabled": False}, {"scope": "unknown"}):
             self.assertEqual(self.probe(json.dumps({**flags, **change}).encode())["state"], "unverified")
         for payload in (b"[]", b"not json", b"x" * 4097):
             self.assertEqual(self.probe(payload)["state"], "unverified")
+
+    def test_start_system_setup_api_can_be_ready_while_gps_writes_stay_disabled(self):
+        flags = {"ready": True, "mode": "local-setup", "simulation": False,
+                 "gpsPersistenceEnabled": False, "setupPresenceEnabled": True,
+                 "cameraEnabled": False, "wifiManagementEnabled": False}
+        for extra in ({}, {"scope": "backend-process-only"}):
+            report = self.probe(json.dumps({**flags, **extra}).encode())
+            self.assertEqual(report["state"], "ready")
+            self.assertEqual(report["mode"], "local-setup")
+            self.assertIs(report["gpsPersistenceEnabled"], False)
+            self.assertIn("GPS writes are disabled", report["message"])
+            self.assertIn("still unverified", report["message"])
+        for change in ({"mode": "unknown"}, {"gpsPersistenceEnabled": True}, {"setupPresenceEnabled": False},
+                       {"setupPresenceEnabled": 1}, {"scope": "end-to-end"}, {"simulation": True}, {"ready": 1}):
+            with self.subTest(change=change):
+                report = self.probe(json.dumps({**flags, **change}).encode())
+                self.assertEqual(report["state"], "unverified")
+                self.assertIsNone(report["gpsPersistenceEnabled"])
+
+    def test_start_local_gps_api_still_requires_the_process_scope(self):
+        flags = {"ready": True, "mode": "real-lan", "simulation": False,
+                 "gpsPersistenceEnabled": True, "scope": "backend-process-only"}
+        report = self.probe(json.dumps(flags).encode())
+        self.assertEqual(report["state"], "ready")
+        self.assertEqual(report["mode"], "real-lan")
+        self.assertIs(report["gpsPersistenceEnabled"], True)
+        for change in ({"gpsPersistenceEnabled": False}, {"scope": None}, {"mode": "unknown"}):
+            self.assertEqual(self.probe(json.dumps({**flags, **change}).encode())["state"], "unverified")
+        del flags["scope"]
+        self.assertEqual(self.probe(json.dumps(flags).encode())["state"], "unverified")
 
     def test_timeout_and_http_errors_are_sanitized_no_server_body_or_redirect(self):
         for problem in (TimeoutError(SECRET), backend.URLError(SECRET), backend.HTTPError("https://fixture.invalid", 302, SECRET, {}, None)):

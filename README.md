@@ -11,6 +11,10 @@ this Pi. It starts with scan/status only; **Enable connections** requests local
 approval and native OS authorization before trials. A separate **Check Express
 API** control reports backend readiness without sending telemetry. Connection
 trials require native checkpoint support and a known-good fallback.
+The subsequent alignment candidate separates setup-only API readiness from GPS
+persistence, and adds explicitly approved authenticated setup check-ins using
+existing device configuration. See `DASHBOARD_ALIGNMENT.md`; this has not been
+applied to the running desktop session or verified with live check-ins.
 `Open Setup Preview.cmd` previews the UI on Windows without scanning this laptop
 or contacting a Pi. No remote Wi-Fi agent, installer or service is enabled.
 Physical verification is pending. Existing GPS/camera runtime stays unchanged.

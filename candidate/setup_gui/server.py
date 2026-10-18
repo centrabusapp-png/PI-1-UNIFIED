@@ -1,4 +1,4 @@
-"""Local physical-console GUI. Loopback only; no cloud, GPS or service control."""
+"""Local-console GUI with opt-in setup presence; no GPS or service control."""
 from __future__ import annotations
 import argparse
 import getpass
@@ -16,13 +16,14 @@ import webbrowser
 
 from network import NetworkManager, RecoveryUnverified, SetupError
 from backend import check_backend, public_origin
+from presence import PresenceClient, PresenceSession, default_config_files, read_key
 
 ASSETS = Path(__file__).resolve().parent / "web"
 DEVICES = {"GPS-001": ("centrabus1", "centrabus1-pi"), "GPS-002": ("centrabus", "centrabus-pi")}
 
 
 class Application:
-    def __init__(self, device_id, manager=None, *, preview=False, backend_origin=None):
+    def __init__(self, device_id, manager=None, *, preview=False, backend_origin=None, presence_env=None):
         if device_id not in DEVICES:
             raise SetupError("Unsupported package identity.")
         self.device_id, self.manager, self.preview = device_id, manager, preview
@@ -39,6 +40,10 @@ class Application:
         self.backend_busy = False
         self.backend = {"origin": public_origin(backend_origin) if backend_origin else "", "state": "not_checked",
                         "checkedAt": None, "message": "Express API has not been checked. Wi-Fi connectivity alone does not verify dashboard delivery."}
+        self.presence_env = tuple(presence_env or ())
+        self.presence_session = None
+        self.observation = {"wifiConnected": None, "internet": "unknown"}
+        self.observed_at = 0
 
     def status(self):
         observation = {"connected": None, "internet": "unknown", "manager": "Unavailable", "interface": None}
@@ -49,12 +54,57 @@ class Application:
                 pass
         # Do not expose profile UUIDs, raw commands or raw errors to the browser.
         with self.lock:
+            self.observation = {"wifiConnected": observation["connected"], "internet": observation["internet"]}
+            self.observed_at = time.monotonic()
             return {"deviceId": self.device_id, "preview": self.preview,
                     "changesEnabled": bool(self.manager and self.manager.allow_changes),
                     "scanAvailable": bool(self.manager), "wifiConnected": observation["connected"],
                     "internet": observation["internet"], "manager": observation["manager"],
                     "interface": observation["interface"], "task": dict(self.task),
-                    "connectionMessage": self.connection_message, "backend": dict(self.backend)}
+                    "connectionMessage": self.connection_message, "backend": dict(self.backend),
+                    "presence": self._presence_status()}
+
+    def _presence_status(self):
+        configured = bool(self.presence_env) and not self.preview
+        report = self.presence_session.status() if self.presence_session else {
+            "state": "stopped" if configured else "not_configured", "configured": configured,
+            "active": False, "running": False,
+            "message": "This app has not sent an authenticated setup check-in. "
+                       + ("Approve Start check-ins to use the existing private device configuration." if configured else
+                          "Launch with existing private device configuration to enable check-ins.")}
+        report["canStart"] = (configured and not report["running"] and not self.stopping and not self.backend_busy
+                              and time.monotonic() < self.expires and self.backend.get("state") == "ready"
+                              and self.backend.get("setupPresenceEnabled") is True)
+        return report
+
+    def _presence_observation(self):
+        with self.lock:
+            if time.monotonic() - self.observed_at > 15:
+                return {"wifiConnected": None, "internet": "unknown"}
+            return dict(self.observation)
+
+    def presence_start(self, data):
+        if set(data) != {"confirmed"} or data["confirmed"] is not True:
+            raise SetupError("Approve authenticated setup-only check-ins before starting.")
+        with self.lock:
+            if self.preview or not self.manager or not self._presence_status()["canStart"]:
+                raise SetupError("Check the setup API and existing private device configuration first. Finish any previous check-in worker.")
+            checked_at = self.backend.get("checkedAt")
+            if not isinstance(checked_at, (int, float)) or not 0 <= time.time() - checked_at <= 60:
+                raise SetupError("Check Express API again before approving check-ins.")
+            key = read_key(self.presence_env, self.device_id)
+            client = PresenceClient(self.backend["origin"], self.device_id, key)
+            self.presence_session = PresenceSession(client, self._presence_observation, deadline=self.expires)
+            self.presence_session.start()
+            return {"presence": self._presence_status()}
+
+    def presence_stop(self):
+        with self.lock:
+            session = self.presence_session
+        if session:
+            session.stop()
+        with self.lock:
+            return {"presence": self._presence_status()}
 
     def authorize(self, data):
         if set(data) != {"confirmed"} or data["confirmed"] is not True:
@@ -98,6 +148,8 @@ class Application:
                 raise SetupError("Readiness checks require this Pi's real setup session. Preview sends no network requests.")
             if self.backend_busy:
                 raise SetupError("An API check is already in progress.")
+            if self.presence_session and self.presence_session.running and origin != self.backend["origin"]:
+                raise SetupError("Stop setup check-ins before changing the Express API address.")
             self.backend_busy = True
         try:
             result = check_backend(origin)
@@ -209,6 +261,7 @@ class Application:
     def close(self):
         with self.lock:
             self.stopping = True
+        self.presence_stop()
         self.rollback()
 
 
@@ -297,7 +350,7 @@ class Handler(BaseHTTPRequestHandler):
             data = json.loads(raw, object_pairs_hook=unique_pairs)
             if not isinstance(data, dict):
                 raise SetupError("Invalid request.")
-            if self.path not in ("/api/connect", "/api/authorize", "/api/backend-check") and data:
+            if self.path not in ("/api/connect", "/api/authorize", "/api/backend-check", "/api/presence/start") and data:
                 raise SetupError("Unexpected request fields.")
             methods = {"/api/status": app.status, "/api/scan": app.scan, "/api/keep": app.keep, "/api/rollback": app.rollback}
             if self.path == "/api/connect":
@@ -306,6 +359,10 @@ class Handler(BaseHTTPRequestHandler):
                 result = app.authorize(data)
             elif self.path == "/api/backend-check":
                 result = app.backend_check(data)
+            elif self.path == "/api/presence/start":
+                result = app.presence_start(data)
+            elif self.path == "/api/presence/stop":
+                result = app.presence_stop()
             elif self.path in methods:
                 result = methods[self.path]()
             else:
@@ -323,12 +380,13 @@ def main(device_id=None):
     parser.add_argument("--interface", default="wlan0", help="Independently verified Wi-Fi interface")
     parser.add_argument("--allow-network-changes", action="store_true", help="Explicit operator-approved NetworkManager trials")
     parser.add_argument("--backend-url", help="Public Express API origin to prefill; never saved or contacted automatically")
+    parser.add_argument("--presence-env", action="append", help="Existing private device env file path; repeat for up to three files. Read only after check-in approval.")
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--device", choices=list(DEVICES), default=device_id or "GPS-001")
     args = parser.parse_args()
     if device_id and args.device != device_id:
         parser.error("This package belongs to a different Pi.")
-    if not 1024 <= args.port <= 65535 or args.preview and args.allow_network_changes:
+    if not 1024 <= args.port <= 65535 or args.preview and (args.allow_network_changes or args.presence_env) or len(args.presence_env or ()) > 3:
         parser.error("Invalid port or unsafe preview options.")
     manager = None
     lock = None
@@ -352,7 +410,8 @@ def main(device_id=None):
         except (OSError, SetupError):
             parser.error("Setup already open or verified NetworkManager/interface unavailable. Nothing was changed.")
     try:
-        app = Application(args.device, manager, preview=args.preview, backend_origin=args.backend_url)
+        presence_env = args.presence_env if args.presence_env is not None else (() if args.preview else default_config_files(args.device))
+        app = Application(args.device, manager, preview=args.preview, backend_origin=args.backend_url, presence_env=presence_env)
     except SetupError as error:
         parser.error(str(error))
     server = Server(app, args.port)

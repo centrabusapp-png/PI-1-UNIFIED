@@ -160,3 +160,47 @@ Final verification: all 7,001 source hashes and 50 candidate/package hashes
 passed. Candidate hashes were checked again after the last documentation edit;
 the six-file pre-repair backup still matches its recorded hashes. The reopened
 GUI on loopback port 8766 returned HTTP 200.
+
+## Setup API modes and authenticated presence candidate — 2026-10-18
+
+Prepared in a separate review checkout from Pi commit
+`56bb1ce777335bc5313ec6c66a6b1ed198837c63`. Before changes, all 50 manifest-listed
+paths plus five GUI/docs/test paths matched the active Pi package byte for byte.
+The Pi's existing setup session and installed files were not replaced.
+
+Readiness now recognizes the operator-confirmed setup-only START SYSTEM response
+without requiring GPS writes. GPS-enabled START LOCAL keeps its process-scope
+gate. API readiness, backend GPS persistence and authenticated setup presence are
+separate. A bounded, credential-free GET to the actual laptop's /readyz returned
+API ready / local-setup / GPS disabled with the new recognizer. This was a
+read-only backend check, not authentication or ingestion acceptance.
+
+The operator subsequently supplied the Windows setup-presence contract. The new
+Pi presence client implements the challenge, domain-separated HMAC signature,
+constant-time acknowledgement-proof check, fresh-nonce cadence, timeouts and
+presence expiry without changing the Wi-Fi adapter or sender. Independent Node
+crypto vectors matched Python for a clearly synthetic secret. Twenty presence
+tests cover signing, exact request fields/headers, identity/proof rejection,
+nonce reuse, expiry/clock skew, owner-private config, stop and retry cadence.
+
+All 164 package Python tests passed, including loopback HTTP fixtures with the
+sandbox socket restriction lifted. No device or real backend request occurs in
+that suite. The sparse checkout initially lacked the original GPS references;
+the unchanged 12 reference files were restored from the baseline commit before
+the complete suite passed. Eight actual UI test functions/DOM fixtures/assertions
+passed through the existing Node REPL runtime; no standalone node executable was
+installed. These include explicit check-in approval, setup-only GPS-disabled
+readiness, stop, selected-origin binding and local acknowledgement expiry.
+
+All 51 candidate/package hashes and the 12 restored GPS source-reference hashes
+passed. No tracked source, GPS/camera/setup runtime or native Wi-Fi adapter change
+is present. The archived camera tree remains excluded from the sparse checkout;
+its earlier full source verification is not a new physical/runtime claim.
+
+No actual private device configuration was read for the new client, no live
+challenge/check-in was sent, and no sender, service, receiver, camera or production
+data operation occurred. Live proof verification and dashboard Setup online
+visibility remain pending explicit operator authorization and acceptance. These
+mocked checks do not establish GPS freshness, authenticated bus mapping, database
+ingestion or physical Wi-Fi rollback. Existing GPS capture times/10-second gates,
+queues, credentials and working boot remain unchanged.

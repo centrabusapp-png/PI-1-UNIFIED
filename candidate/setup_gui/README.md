@@ -69,6 +69,32 @@ fresh Supabase/dashboard GPS remain unverified. `--backend-url` only prefills th
 in-memory field. Preview never sends API probes. See GUI_SETUP.md for this repair's
 actual read-only Pi observations and remaining physical gates.
 
+The subsequent backend-mode alignment candidate recognizes setup-only
+`START SYSTEM` readiness separately from `START LOCAL` GPS-writing readiness.
+It displays API readiness, backend GPS persistence and dashboard check-in as
+distinct statuses. The current setup-only report's omitted scope is accepted
+only with its explicit `local-setup`, non-simulation, GPS-disabled,
+setup-presence-enabled flags. GPS-enabled readiness still requires the process
+scope. No backend feature is enabled by checking readiness.
+
+The optional setup-presence client now follows the operator-supplied Windows
+contract: GET `/api/device-presence/challenge/GPS-001`, sign the exact setup
+observation, POST `/api/device-presence/check-in`, then verify its acknowledgement
+proof in constant time. API readiness never becomes authenticated presence by
+itself. The GUI requires explicit Start check-ins approval; the foreground app
+uses fresh challenges about every 15 seconds with four-second socket timeouts.
+Failed attempts never extend the 45-second presence window or queue retries.
+Stop/close/session expiry ends this worker without touching GPS services.
+
+Default discovery checks metadata only for the two existing documented device
+configuration paths. Optional `--presence-env` selects existing paths. Only after
+check-in approval are matching owner-private configuration files read. The device
+secret stays local and is used only to derive the setup-domain signing key. The
+browser/status never receives it, the derived key, a signature, challenge or proof.
+No new credential/config file is written. Python does not guarantee zeroization
+of temporary immutable strings; the derived key reference is dropped on stop.
+See GUI_SETUP.md and DASHBOARD_ALIGNMENT.md. Live check-ins remain untested.
+
 ## Access and privacy
 
 - The listener is fixed to **127.0.0.1 only**, never a LAN/public interface.
