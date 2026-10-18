@@ -4,16 +4,18 @@ This is a browser app running **on one Pi**, not a public or remote management
 server. Prepared on Windows; no physical Pi installation or network change was
 performed. It does not use Supabase, SSH, GPS files, queues, systemd or cameras.
 
-The same reviewed implementation is included separately in both unified packages
-under `candidate/setup_gui/`, with a package-bound `setup-pi.py` launcher. Existing
-source snapshots and GPS/camera runtime code remain untouched.
+This implementation is under `candidate/setup_gui/`, with a package-bound
+`setup-pi.py` launcher. This authorization repair applies to this GPS-001 package
+only; no other Pi/package was changed. Existing source snapshots and installed
+GPS/camera runtime code remain untouched.
 
 ## What the operator sees
 
 1. Device identity (GPS-001 or GPS-002), Wi-Fi state and NetworkManager's last
    global Internet-connectivity observation. A global full report can come from
    another interface; it is not an independent Wi-Fi Internet test.
-2. Scan networks -> select SSID -> enter password -> approve connection trial.
+2. Enable connections -> complete native OS authentication if requested -> scan
+   networks -> select SSID -> enter password -> approve connection trial.
 3. If enabled and supported: a new private NetworkManager profile is activated
    under a 90-second NetworkManager checkpoint. The UI offers an earlier,
    conservative confirmation deadline. Verify the new network, then Keep or Roll
@@ -25,7 +27,7 @@ source snapshots and GPS/camera runtime code remain untouched.
 
 ## Default safety boundary
 
-Default real-Pi launch allows explicit scan/status only, no connection change.
+Default real-Pi launch starts with explicit scan/status only, no connection change.
 It requires Linux, the correct actual UID/account/hostname, a private local-login
 runtime directory and an independently verified NetworkManager-managed Wi-Fi
 interface. It never installs, replaces or guesses the network manager.
@@ -33,10 +35,39 @@ interface. It never installs, replaces or guesses the network manager.
 reconfigured. Missing permissions, checkpoint support or usable known-good
 fallback block connection changes. No root/sudo or permission-policy change.
 
-The optional `--allow-network-changes` flag is an explicit FUTURE operator gate,
+The page provides an explicit Enable connections action after local approval.
+It uses the existing OS Polkit agent and verifies creation/removal of an unchanged
+checkpoint. This does not prove physical rollback after a failed switch. OS
+passwords never enter the web page. If a graphical agent is unavailable, the
+existing LXTerminal can run pkcheck's native text agent. Authentication input
+and output stay in that terminal; authorization is rechecked afterward. No
+terminal or agent is installed. Missing authorization remains visible and
+blocks trials; launch from a real Pi desktop terminal if an app-hosted process
+cannot use the desktop agent. No security policy or permission rules are edited.
+Expired OS authorization requires Enable connections again.
+
+The permission check and all checkpoint operations now share a persistent,
+in-process GIO system-bus client. A separately spawned nmcli client can report
+`auth` even when the GUI process is already authorized; that was the cause of
+the repeated Additional OS authorization message. The fix uses the already
+installed OS Python GIO binding, imported only for real connection operations.
+No packages or policy rules are installed. Actual authentication plus unchanged
+checkpoint creation/removal passed on this Pi; a Wi-Fi switch remains unverified.
+
+The optional `--allow-network-changes` flag remains an explicit operator gate,
 not physical authorization in this document. Do not use it before separate Pi
 preflight, rollback review and an approved maintenance window. Changing Wi-Fi
 can interrupt network telemetry; GPS acquisition/services are not restarted.
+
+Selecting the current network shows Already connected instead of creating a
+duplicate connection. The separate Express API check performs a bounded,
+credential-free GET `/readyz`; it does not start a sender, read secrets or edit
+runtime settings. Only private LAN or public HTTPS origins are accepted, without
+embedded credentials, paths, queries or fragments. No proxies/redirects are used.
+The result is backend-process readiness only; authentication, bus mapping and
+fresh Supabase/dashboard GPS remain unverified. `--backend-url` only prefills the
+in-memory field. Preview never sends API probes. See GUI_SETUP.md for this repair's
+actual read-only Pi observations and remaining physical gates.
 
 ## Access and privacy
 
@@ -74,10 +105,16 @@ python -B device/local_setup_gui/server.py --preview
 ```
 
 The isolated package launcher verifies the relevant source hashes first. No
-third-party Python dependencies are required. Close the foreground process with
+third-party Python dependencies are required for preview/mocked tests. Actual
+connection operations require the existing OS Python GIO binding. Close the foreground process with
 Ctrl+C. The launcher opens the browser; no persistent service is installed.
 
 Tests (NetworkManager is always mocked; the HTTP tests use loopback only):
+
+From this package: `python3 -B -m unittest discover -s tests -p test_setup_gui.py`,
+`python3 -B -m unittest discover -s tests -p test_gui_launcher.py`, and, when Node
+is available, `node tests/setup_gui_ui.test.cjs`. These tests make no OS
+authorization request, Wi-Fi switch or real backend request.
 
 ```powershell
 python -B -m unittest discover -s device/local_setup_gui -p "test*.py"
@@ -94,8 +131,8 @@ local keyboard/display; do not conduct the first trial solely over Wi-Fi SSH.
 
 Independently verify actual manager/version, interface, existing per-user Polkit
 permissions, non-TTY secret-agent stdin behavior and checkpoint rollback.
-The NetworkManager `device checkpoint` subcommand must work for this user. Its
-daemon timer is the recovery mechanism if the web process crashes; a daemon
+The NetworkManager native checkpoint API must work for the authorized GUI
+process. Its daemon timer is the recovery mechanism if the web process crashes; a daemon
 restart or power loss during trial is NOT a physically verified rollback case.
 The candidate keeps the new profile's autoconnect off until explicit Keep.
 

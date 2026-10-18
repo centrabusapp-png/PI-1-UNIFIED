@@ -15,13 +15,14 @@ import time
 import webbrowser
 
 from network import NetworkManager, RecoveryUnverified, SetupError
+from backend import check_backend, public_origin
 
 ASSETS = Path(__file__).resolve().parent / "web"
 DEVICES = {"GPS-001": ("centrabus1", "centrabus1-pi"), "GPS-002": ("centrabus", "centrabus-pi")}
 
 
 class Application:
-    def __init__(self, device_id, manager=None, *, preview=False):
+    def __init__(self, device_id, manager=None, *, preview=False, backend_origin=None):
         if device_id not in DEVICES:
             raise SetupError("Unsupported package identity.")
         self.device_id, self.manager, self.preview = device_id, manager, preview
@@ -34,6 +35,10 @@ class Application:
         self.busy = False
         self.stopping = False
         self.timer = None
+        self.connection_message = "Use Enable connections to approve trials and request OS rollback authorization."
+        self.backend_busy = False
+        self.backend = {"origin": public_origin(backend_origin) if backend_origin else "", "state": "not_checked",
+                        "checkedAt": None, "message": "Express API has not been checked. Wi-Fi connectivity alone does not verify dashboard delivery."}
 
     def status(self):
         observation = {"connected": None, "internet": "unknown", "manager": "Unavailable", "interface": None}
@@ -48,7 +53,60 @@ class Application:
                     "changesEnabled": bool(self.manager and self.manager.allow_changes),
                     "scanAvailable": bool(self.manager), "wifiConnected": observation["connected"],
                     "internet": observation["internet"], "manager": observation["manager"],
-                    "interface": observation["interface"], "task": dict(self.task)}
+                    "interface": observation["interface"], "task": dict(self.task),
+                    "connectionMessage": self.connection_message, "backend": dict(self.backend)}
+
+    def authorize(self, data):
+        if set(data) != {"confirmed"} or data["confirmed"] is not True:
+            raise SetupError("Approve connection trials at this Pi before enabling them.")
+        with self.lock:
+            if self.preview or not self.manager:
+                raise SetupError("Connection trials require this Pi's local desktop session.")
+            if self.busy or self.trial or self.stopping or self.task["state"] == "unknown":
+                raise SetupError("Finish the current operation and verify the original Wi-Fi first.")
+            self.busy = True
+            self.task = {"state": "authorizing", "message": "Complete OS authentication in the Pi dialog or the CentraBus OS Wi-Fi authorization terminal. No network is being switched."}
+            self.connection_message = self.task["message"]
+
+        def worker():
+            try:
+                self.manager.authorize()
+                with self.lock:
+                    if self.stopping:
+                        self.manager.allow_changes = False
+                        return
+                    self.connection_message = "Connections enabled for this session. Select a recently scanned network and approve its trial."
+                    self.task = {"state": "idle", "message": self.connection_message}
+            except Exception as error:
+                with self.lock:
+                    self.manager.allow_changes = False
+                    message = str(error) if isinstance(error, SetupError) else "Authorization failed. Retry from this Pi's desktop terminal."
+                    self.connection_message = message
+                    self.task = {"state": "unknown" if isinstance(error, RecoveryUnverified) else "failed", "message": message}
+            finally:
+                with self.lock:
+                    self.busy = False
+        threading.Thread(target=worker, daemon=False).start()
+        return {"accepted": True}
+
+    def backend_check(self, data):
+        if set(data) != {"origin"}:
+            raise SetupError("Provide only the public Express API origin.")
+        origin = public_origin(data["origin"])
+        with self.lock:
+            if self.preview or self.stopping:
+                raise SetupError("Readiness checks require this Pi's real setup session. Preview sends no network requests.")
+            if self.backend_busy:
+                raise SetupError("An API check is already in progress.")
+            self.backend_busy = True
+        try:
+            result = check_backend(origin)
+            with self.lock:
+                self.backend = result
+                return {"backend": dict(result)}
+        finally:
+            with self.lock:
+                self.backend_busy = False
 
     def scan(self):
         with self.lock:
@@ -108,7 +166,8 @@ class Application:
             except Exception as error:
                 with self.lock:
                     self.task = {"state": "unknown" if isinstance(error, RecoveryUnverified) else "failed",
-                                 "message": "Connection did not complete. Rollback was requested; verify the original network before retrying."}
+                                 "message": str(error) if isinstance(error, SetupError) else
+                                 "Connection did not complete. Rollback was requested; verify the original network before retrying."}
             finally:
                 data["password"] = ""
                 with self.lock:
@@ -238,11 +297,15 @@ class Handler(BaseHTTPRequestHandler):
             data = json.loads(raw, object_pairs_hook=unique_pairs)
             if not isinstance(data, dict):
                 raise SetupError("Invalid request.")
-            if self.path != "/api/connect" and data:
+            if self.path not in ("/api/connect", "/api/authorize", "/api/backend-check") and data:
                 raise SetupError("Unexpected request fields.")
             methods = {"/api/status": app.status, "/api/scan": app.scan, "/api/keep": app.keep, "/api/rollback": app.rollback}
             if self.path == "/api/connect":
                 result = app.connect(data)
+            elif self.path == "/api/authorize":
+                result = app.authorize(data)
+            elif self.path == "/api/backend-check":
+                result = app.backend_check(data)
             elif self.path in methods:
                 result = methods[self.path]()
             else:
@@ -259,6 +322,7 @@ def main(device_id=None):
     parser.add_argument("--preview", action="store_true", help="Windows-safe UI only; no Wi-Fi commands")
     parser.add_argument("--interface", default="wlan0", help="Independently verified Wi-Fi interface")
     parser.add_argument("--allow-network-changes", action="store_true", help="Explicit operator-approved NetworkManager trials")
+    parser.add_argument("--backend-url", help="Public Express API origin to prefill; never saved or contacted automatically")
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--device", choices=list(DEVICES), default=device_id or "GPS-001")
     args = parser.parse_args()
@@ -287,7 +351,10 @@ def main(device_id=None):
             manager.verify()
         except (OSError, SetupError):
             parser.error("Setup already open or verified NetworkManager/interface unavailable. Nothing was changed.")
-    app = Application(args.device, manager, preview=args.preview)
+    try:
+        app = Application(args.device, manager, preview=args.preview, backend_origin=args.backend_url)
+    except SetupError as error:
+        parser.error(str(error))
     server = Server(app, args.port)
     # Token goes only into a loopback URL fragment, never the HTTP request, logs,
     # output, a file or cloud storage. JS removes the fragment before rendering.

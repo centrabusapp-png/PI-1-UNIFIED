@@ -10,18 +10,22 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 FOLDER = ROOT / "candidate/setup_gui"
-REQUIRED = ("network.py", "server.py", "web/index.html", "web/style.css", "web/app.js")
+REQUIRED = ("candidate/setup_gui/network.py", "candidate/setup_gui/backend.py", "candidate/setup_gui/server.py",
+            "candidate/setup_gui/web/index.html", "candidate/setup_gui/web/style.css", "candidate/setup_gui/web/app.js",
+            "candidate/gps/backend_connection.py")
 
 def main():
     with (ROOT / "CANDIDATE_SHA256.csv").open(encoding="utf-8-sig", newline="") as source:
         expected = {row["RelativePath"]: row["SHA256"].lower() for row in csv.DictReader(source)}
     for name in REQUIRED:
-        path = FOLDER / name
-        if path.is_symlink() or not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != expected.get("candidate/setup_gui/" + name):
+        path = ROOT / name
+        if path.is_symlink() or not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != expected.get(name):
             raise SystemExit("STOP: setup GUI hash mismatch. No operations performed.")
     # Load only the verified sibling, without adding the checkout to sys.path.
-    for name in ("network", "server"):
-        spec = importlib.util.spec_from_file_location(name, FOLDER / (name + ".py"))
+    for name, path in (("backend_connection", ROOT / "candidate/gps/backend_connection.py"),
+                       ("network", FOLDER / "network.py"), ("backend", FOLDER / "backend.py"),
+                       ("server", FOLDER / "server.py")):
+        spec = importlib.util.spec_from_file_location(name, path)
         module = importlib.util.module_from_spec(spec)
         sys.modules[name] = module
         spec.loader.exec_module(module)

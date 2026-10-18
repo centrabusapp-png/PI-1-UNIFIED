@@ -2,7 +2,39 @@
 
 This package now includes `setup-pi.py` and `candidate/setup_gui/`.
 Read candidate/setup_gui/README.md completely for safety and integration limits.
-This does not install or enable a remote Wi-Fi agent, GPS service or camera.
+This does not install a remote Wi-Fi agent, GPS service or camera.
+
+## Connect correction (2026-10-18)
+
+Default launch now offers **Enable connections** after an explicit local
+approval checkbox. It asks the existing OS Polkit agent for required access,
+then creates/removes an unchanged native checkpoint before unlocking trials.
+Permission checks and checkpoint creation/Keep/rollback use one in-process
+GIO system-bus client. Authentication retained for the GUI process is never
+tested by a different nmcli process. Scanning/status and Wi-Fi profile commands
+still use nmcli; profile commands independently require their own access.
+This does not prove rollback after a failed switch or power loss. No root
+execution, permission-policy edits or service changes are performed.
+
+Complete OS authentication on this Pi, outside the page. If no graphical agent
+is available, the existing LXTerminal can open pkcheck's native text agent in a
+separate authorization terminal. Its input/output never passes through this
+page or Python. Authorization is rechecked afterward; a terminal exit alone
+does not count as success. If authentication remains unavailable, the failure
+remains visible and connections remain locked.
+Launch from the actual Pi desktop terminal and retry. An app-hosted process
+outside a logind desktop session may not have a suitable agent. Never enter an
+OS administrator password into the page's Wi-Fi password field.
+
+Selecting the current network says **Already connected**. Use **Check Express
+API** to check the backend independently. It sends one credential-free GET to
+the entered origin's `/readyz`, with a five-second socket timeout, no proxy or
+redirects and a 4 KiB response limit. Only private LAN or public HTTPS origins
+are allowed; embedded credentials, API paths, queries and fragments are rejected.
+The URL/result stay in memory. Optional `--backend-url` prefills the field without
+contacting the API or editing sender settings. Expected readiness flags confirm
+only the backend-process report, not device authentication, bus association,
+Supabase ingestion or fresh dashboard GPS.
 
 ## On Windows now
 
@@ -15,11 +47,12 @@ installation. No package installation, private env or network-manager call.
 
 The reviewed entrypoint is `python3 -I -B setup-pi.py`, launched from this
 package on its OWN Pi's desktop session. It opens a local browser automatically.
-This default mode permits explicit status/scan only. No services are installed.
+This default mode starts with explicit status/scan only. The operator can then
+approve Enable connections in this local maintenance session. No services are installed.
 
-Connection trials additionally require `--allow-network-changes --interface
-YOUR_VERIFIED_WIFI_INTERFACE` in a separately approved local maintenance session.
-These options are not approval to run now. Verify actual manager, private local
+The existing `--allow-network-changes --interface YOUR_VERIFIED_WIFI_INTERFACE`
+options remain available for separately approved local trials. These options
+are not authorization by themselves. Verify actual manager, private local
 login, permissions, original fallback profile and native checkpoint behavior first.
 Do not use sudo, SSH-only operation, an archived installer, or the other Pi's
 identity. Do not change GPS boot, GNSS, sender, camera, KML or queue.
@@ -49,3 +82,19 @@ return to the previous network using the existing OS manager in an approved loca
 session; do not wipe Wi-Fi profiles. No GPS or database rollback is involved.
 
 Do not push or transfer these local changes without reviewing hashes and approval.
+
+During this repair, Pi1 Wi-Fi was connected and NetworkManager reported full
+Internet access. The installed public API origin was `http://172.20.10.2:5000`;
+a bounded readiness check timed out. The installed sender was inactive/disabled
+and the original monitor active. The unchanged checkpoint preflight could not
+obtain authorization; the exact original Wi-Fi profile was observed unchanged.
+No network switch or dashboard ingestion was validated. The operator is checking
+the laptop Express backend separately. These are session observations, not an
+ongoing health guarantee.
+
+The subsequent authorization-loop repair passed an actual native OS authentication
+and unchanged-checkpoint creation/removal test. The original Wi-Fi profile was
+observed unchanged and connected afterward. This supersedes the earlier failed
+checkpoint-preflight observation only; a real network switch/rollback and
+dashboard ingestion remain unverified. The Pi's existing Python GIO binding was
+used without installing packages or changing Polkit policy.

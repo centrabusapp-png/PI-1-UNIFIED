@@ -9,6 +9,8 @@
   let busy = false;
   let polling = false;
   let stopped = false;
+  let backendBusy = false;
+  let backendPrefilled = false;
   const controllers = new Set();
   const notice = (message, error = false) => { byId('notice').textContent = message; byId('notice').classList.toggle('error', error); };
   const clearPassword = () => { byId('password').value = ''; };
@@ -28,12 +30,18 @@
   }
 
   function controls() {
-    const trial = ['connecting', 'awaiting_confirmation', 'unknown'].includes(state?.task?.state);
+    const trial = !token || stopped || ['authorizing', 'connecting', 'awaiting_confirmation', 'unknown'].includes(state?.task?.state);
     byId('scan').disabled = busy || trial || !state?.scanAvailable;
-    byId('connect').disabled = busy || trial || !state?.changesEnabled || !selected || selected.security === 'unsupported';
+    byId('connect').disabled = busy || trial || !state?.changesEnabled || !selected || selected.connected || selected.security === 'unsupported';
     byId('password').disabled = busy || trial || !state?.changesEnabled || !selected || selected.security === 'unsupported';
     byId('keep').disabled = busy || state?.task?.state !== 'awaiting_confirmation';
     byId('rollback').disabled = busy || state?.task?.state !== 'awaiting_confirmation';
+    byId('enable').disabled = busy || trial || !state?.scanAvailable || state?.changesEnabled || !byId('enable-confirm').checked;
+    byId('enable-panel').hidden = !!state?.changesEnabled;
+    byId('confirm').disabled = busy || trial || !state?.changesEnabled;
+    byId('priority').disabled = busy || trial || !state?.changesEnabled;
+    byId('backend-check').disabled = backendBusy || !state || state.preview || !token;
+    byId('connect').textContent = selected?.connected ? 'Already connected' : !state?.changesEnabled ? 'Enable connections first' : !selected ? 'Select a network first' : 'Connect with rollback protection';
   }
 
   function renderStatus(next) {
@@ -44,8 +52,15 @@
     byId('manager').textContent = next.interface ? `${next.manager} · ${next.interface}` : next.manager;
     byId('trial-state').textContent = (next.task?.state || 'unknown').replaceAll('_', ' ');
     byId('trial-message').textContent = next.task?.message || 'No verified report.';
+    byId('connection-help').textContent = next.preview ? 'Preview only. Network changes are unavailable.' :
+      selected?.security === 'unsupported' ? 'This network uses unsupported security. Choose a WPA2/WPA3 personal network.' :
+      selected?.connected ? 'This Pi is already connected to the selected network. Use Check Express API below to check dashboard connectivity.' :
+      next.connectionMessage || 'Enable connections, then choose a network.';
+    if (!backendPrefilled) { byId('backend-origin').value = next.backend?.origin || ''; backendPrefilled = true; }
+    renderBackend(next.backend);
     if (next.preview) notice('Preview only. No synthetic network list, laptop scan or real device operation is used.');
-    else if (!next.changesEnabled) notice('Read-only session. Scanning is available; connection changes require explicit local operator approval.');
+    else if (['failed', 'unknown', 'authorizing'].includes(next.task?.state)) notice(next.task.message, next.task.state !== 'authorizing');
+    else if (!next.changesEnabled) notice('Scan networks, then use Enable connections to approve trials on this Pi.');
     else notice('Local connection trials enabled. Verify the new connection and confirm Keep before rollback expires.');
     controls(); countdown();
   }
@@ -63,6 +78,10 @@
     byId('ssid').value = item.ssid;
     for (const element of byId('networks').querySelectorAll('button')) element.setAttribute('aria-checked', String(element === button));
     controls();
+    byId('connection-help').textContent = item.connected ?
+      'This Pi is already connected to this network. Use Check Express API below; reconnecting does not start the backend.' :
+      item.security === 'unsupported' ? 'This network uses unsupported security. Choose a WPA2/WPA3 personal network.' :
+      state?.changesEnabled ? 'Enter this network’s Wi-Fi password and approve the trial.' : 'Use Enable connections to unlock the password and Connect controls.';
     if (!byId('password').disabled) byId('password').focus();
   }
 
@@ -109,6 +128,34 @@
   });
   byId('scan').addEventListener('click', scan);
   byId('refresh').addEventListener('click', refresh);
+  byId('enable-confirm').addEventListener('change', controls);
+  byId('enable').addEventListener('click', async () => {
+    if (byId('enable').disabled) return;
+    busy = true; clearPassword(); controls();
+    try { await api('/api/authorize', { confirmed: byId('enable-confirm').checked }); await refresh(); }
+    catch (error) { notice(error.message, true); }
+    finally { busy = false; controls(); }
+  });
+  function renderBackend(report) {
+    if (backendBusy) return;
+    byId('backend-state').textContent = ({ ready: 'API ready', unreachable: 'Unreachable', unverified: 'Not verified' })[report?.state] || 'Not checked';
+    byId('backend-message').textContent = report?.message || 'Express API has not been checked.';
+    byId('backend-time').textContent = report?.checkedAt ? `Last check: ${new Date(report.checkedAt * 1000).toLocaleTimeString()}. Check again after a network change.` : '';
+  }
+  byId('backend-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (byId('backend-check').disabled) return;
+    backendBusy = true; controls();
+    byId('backend-state').textContent = 'Checking'; byId('backend-message').textContent = 'Checking Express /readyz from this Pi…';
+    try {
+      const result = await api('/api/backend-check', { origin: byId('backend-origin').value.trim() });
+      if (state) state.backend = result.backend;
+      backendBusy = false; renderBackend(result.backend);
+    } catch (error) {
+      byId('backend-state').textContent = 'Not checked'; byId('backend-message').textContent = error.message;
+      byId('backend-time').textContent = '';
+    } finally { backendBusy = false; controls(); }
+  });
   function countdown() {
     const remaining = Math.max(0, Math.ceil((state?.task?.deadlineEpoch || 0) - Date.now() / 1000));
     byId('countdown').textContent = state?.task?.state === 'awaiting_confirmation' ? `${remaining}s left to confirm. If unsure, choose Roll back.` : '';

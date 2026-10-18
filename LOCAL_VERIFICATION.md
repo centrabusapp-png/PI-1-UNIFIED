@@ -97,3 +97,66 @@ No full frontend build/test or active-backend suite was run because those source
 ## Historical readiness (before the connection update)
 
 SAFE FOR LOCAL REVIEW AND HASH-VERIFIED STAGING. CONDITIONAL FOR PHYSICAL TESTING after the target's preflight/backups and explicit operator authorization. Not certified for production installation or claims of zero staleness. Pi1's source-age blocker, per-device mappings and real camera calibration remain physical/integration gates.
+
+
+## Pi1 local Connect GUI repair — 2026-10-18
+
+Changed only the package GUI candidate, its isolated launcher, tests, documentation
+and candidate hashes. Verified rollback copies of 13 pre-change GUI/package files
+are in `.test-tmp/gui-before-connect-fix/verified-backup.json`. The installed GPS
+monitor/sender, boot, GNSS, KML, credentials, queue and `sources/` were not changed.
+
+Focused checks passed with this Pi Python 3.13.5: 41 initial GUI/backend cases and 3
+isolated launcher cases. Four actual JavaScript frontend behavior cases passed
+with the bundled Node runtime. NetworkManager/Polkit/HTTP are mocked in these
+checks; HTTP server regressions bind loopback only. Python GUI/launcher syntax
+and frontend JavaScript syntax passed.
+
+Actual bounded Pi observations were separate: wlan0 connected, manager connectivity
+full, original GPS monitor active, installed sender inactive/disabled. The existing
+public Express API origin http://172.20.10.2:5000 timed out at /readyz. The native
+unchanged-checkpoint preflight could not obtain authorization; the exact original
+Wi-Fi profile was observed unchanged afterward. This app-hosted process did not
+belong to a logind desktop session. No connection trial, password submission,
+GPS upload, database write or Supabase/dashboard acceptance test was performed.
+The new OS-authentication path still needs the operator at the Pi desktop; a
+missing agent fails closed and leaves its actionable reason visible.
+The native-terminal fallback is covered by additional mocked regressions; it is
+not counted as a successful physical OS authentication or Wi-Fi connection trial.
+
+Final repair checks: 129 package Python cases passed (discovery limited to tests/),
+plus 4 JavaScript frontend behavior cases. Full source/candidate hash verification
+is recorded separately below when completed. No physical connection trial is
+included in those test counts.
+
+Full final hash verification passed: 7,001 source files and 50 manifest-listed
+candidate/package files, zero failures. The reopened real Pi GUI returned HTTP
+200 and served both Enable connections and Check Express API controls. The
+verified pre-change backup still matches its recorded hashes.
+
+## Native authorization subject repair — 2026-10-18
+
+The previous process-scope bug was reproduced with read-only evidence: pkcheck
+reported authorization for the GUI process while a new nmcli client still reported
+checkpoint permission as auth. Permission checks and checkpoint create/destroy/
+rollback now use the same in-process GIO system-bus connection. The existing OS
+GIO binding was available; no package, Polkit policy, service or credential changed.
+Profile-changing nmcli commands retain a separate check of their own permissions.
+
+An actual bounded test then authenticated the in-process caller, created and
+removed an unchanged checkpoint, and observed the exact original Wi-Fi profile
+unchanged and connected afterward. Native permission for that caller became yes.
+This is physical authorization/checkpoint preflight evidence only; no network
+switch, failed-switch rollback, sender start or dashboard ingestion was tested.
+
+Fifty focused GUI/backend cases and the full 136-case package Python suite passed,
+plus four JavaScript behavior cases and adapter syntax checks. Tests mock the
+OS/network boundaries except their loopback HTTP server. Pre-repair backup hashes
+are in .test-tmp/gui-before-auth-subject-fix/verified-backup.json. The GUI was
+reopened on loopback port 8766 because the previous port was still unavailable
+immediately after closing the old process. Use the newly opened browser tab.
+
+Final verification: all 7,001 source hashes and 50 candidate/package hashes
+passed. Candidate hashes were checked again after the last documentation edit;
+the six-file pre-repair backup still matches its recorded hashes. The reopened
+GUI on loopback port 8766 returned HTTP 200.

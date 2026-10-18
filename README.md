@@ -7,8 +7,10 @@ Read `DEVICE.md`, `AI_SETUP_INSTRUCTIONS.md`, and `GPS_STUCK_MARKER.md` first. T
 ## Local browser setup GUI candidate
 
 See `GUI_SETUP.md`. The new `setup-pi.py` opens a local browser setup page on
-this Pi. Default mode is scan/status only; separately approved NetworkManager
-connection trials require verified native rollback and a known-good fallback.
+this Pi. It starts with scan/status only; **Enable connections** requests local
+approval and native OS authorization before trials. A separate **Check Express
+API** control reports backend readiness without sending telemetry. Connection
+trials require native checkpoint support and a known-good fallback.
 `Open Setup Preview.cmd` previews the UI on Windows without scanning this laptop
 or contacting a Pi. No remote Wi-Fi agent, installer or service is enabled.
 Physical verification is pending. Existing GPS/camera runtime stays unchanged.

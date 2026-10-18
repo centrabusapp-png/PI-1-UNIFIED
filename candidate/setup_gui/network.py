@@ -7,6 +7,7 @@ from __future__ import annotations
 import os
 import getpass
 import re
+import shlex
 import subprocess
 import sys
 import threading
@@ -20,6 +21,49 @@ class SetupError(Exception):
 
 class RecoveryUnverified(SetupError):
     pass
+
+
+PERMISSIONS = ("org.freedesktop.NetworkManager.network-control",
+               "org.freedesktop.NetworkManager.settings.modify.own",
+               "org.freedesktop.NetworkManager.checkpoint-rollback")
+
+
+def authorize_permission(action):
+    """Ask the existing desktop Polkit agent. Never collect an OS password."""
+    from pathlib import Path
+    if action not in PERMISSIONS:
+        raise SetupError("Unsupported authorization request.")
+    # Include start time and UID to avoid the PID-reuse race documented by pkcheck.
+    pid = os.getpid()
+    start = Path(f"/proc/{pid}/stat").read_text().rsplit(")", 1)[1].split()[19]
+    environment = {key: os.environ[key] for key in
+                   ("DISPLAY", "WAYLAND_DISPLAY", "XDG_RUNTIME_DIR", "DBUS_SESSION_BUS_ADDRESS", "XAUTHORITY")
+                   if key in os.environ}
+    environment.update(LC_ALL="C", LANG="C", PATH="/usr/bin:/bin")
+    arguments = ["/usr/bin/pkcheck", "--action-id", action, "--process",
+                 f"{pid},{start},{os.getuid()}", "--allow-user-interaction"]
+    try:
+        result = subprocess.run(arguments,
+                                stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                                timeout=40, check=False, shell=False, env=environment)
+        if result.returncode == 2 and Path("/usr/bin/lxterminal").is_file():
+            # Raspberry Pi desktops may have no graphical Polkit agent. Let
+            # pkcheck's own native agent read the OS password in a private PTY.
+            # Python/web code never receives terminal input or authentication output.
+            subprocess.run(["/usr/bin/lxterminal", "--no-remote", "--title=CentraBus OS Wi-Fi authorization",
+                            "--command=" + shlex.join([*arguments, "--enable-internal-agent"])],
+                           stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                           timeout=40, check=False, shell=False, env=environment)
+            # The terminal's exit status is not proof of authentication.
+            result = subprocess.run(arguments[:-1], stdin=subprocess.DEVNULL,
+                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                                    timeout=5, check=False, shell=False, env=environment)
+    except (OSError, subprocess.TimeoutExpired):
+        raise SetupError("OS authorization did not finish. Retry from this Pi's desktop terminal.") from None
+    if result.returncode != 0:
+        raise SetupError("OS authorization was cancelled or no desktop authentication agent is available. "
+                         "Open the setup from this Pi's desktop terminal and retry Enable connections. "
+                         "Enter an administrator password only in the OS dialog, never in this page.")
 
 
 def fields(line):
@@ -66,54 +110,109 @@ def run_command(args, *, secret=None, timeout=5):
         raise SetupError("Network operation timed out or is unavailable.") from None
 
 
+class NativeNetworkClient:
+    """One in-process D-Bus caller for permission checks and native checkpoints.
+
+    Polkit may retain authentication for this process only. A newly spawned
+    nmcli process must not be used as the proof of this caller's authorization.
+    GIO is loaded lazily; imports/Windows previews do not contact the system bus.
+    """
+    SERVICE = "org.freedesktop.NetworkManager"
+    PATH = "/org/freedesktop/NetworkManager"
+
+    def __init__(self, *, connection=None, variant_factory=None):
+        if connection is None:
+            try:
+                import gi
+                gi.require_version("Gio", "2.0")
+                from gi.repository import Gio, GLib
+                connection = Gio.bus_get_sync(Gio.BusType.SYSTEM, None)
+                variant_factory = GLib.Variant
+            except Exception:
+                raise SetupError("The installed Python GIO system-bus binding is unavailable. No packages were installed.") from None
+        self.connection, self.variant = connection, variant_factory
+
+    def call(self, method, signature=None, arguments=(), *, properties=False):
+        try:
+            parameters = self.variant(signature, arguments) if signature else None
+            return self.connection.call_sync(self.SERVICE, self.PATH,
+                                            "org.freedesktop.DBus.Properties" if properties else self.SERVICE,
+                                            method, parameters, None, 0, 5000, None).unpack()
+        except Exception:
+            raise SetupError("Native NetworkManager operation was denied, timed out or unavailable. "
+                             "Use Enable connections to request OS rollback authorization again.") from None
+
+    def permissions(self):
+        result = self.call("GetPermissions")[0]
+        if not isinstance(result, dict) or any(not isinstance(key, str) or value not in ("yes", "auth", "no")
+                                              for key, value in result.items()):
+            raise SetupError("Native permission report is invalid.")
+        return result
+
+    def device_path(self, interface):
+        path = self.call("GetDeviceByIpIface", "(s)", (interface,))[0]
+        if not isinstance(path, str) or not re.fullmatch(self.PATH + r"/Devices/\d+", path):
+            raise SetupError("Native Wi-Fi interface identity is invalid.")
+        return path
+
+    def create(self, device):
+        # Exactly this device, a daemon-owned timer, and no destroy-all flags.
+        path = self.call("CheckpointCreate", "(aouu)", ([device], 90, 0))[0]
+        if not isinstance(path, str) or not re.fullmatch(self.PATH + r"/Checkpoint/\d+", path):
+            raise SetupError("Native checkpoint identity is invalid. No connection was attempted.")
+        return path
+
+    def exists(self, path):
+        paths = self.call("Get", "(ss)", (self.SERVICE, "Checkpoints"), properties=True)[0]
+        return path in paths
+
+    def destroy(self, path):
+        if not path:
+            raise SetupError("An owned checkpoint is required.")
+        self.call("CheckpointDestroy", "(o)", (path,))
+
+    def rollback(self, path):
+        return self.call("CheckpointRollback", "(o)", (path,))[0]
+
+
 class Checkpoint:
-    """NetworkManager, not this web process, owns the 90-second rollback timer."""
-    def __init__(self, binary, interface, *, popen=subprocess.Popen):
-        self.process = popen([binary, "device", "checkpoint", "--timeout", "90", interface, "--",
-                              sys.executable, "-I", "-c", "print('CENTRABUS_CHECKPOINT_READY', flush=True)"],
-                             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
-                             text=True, bufsize=1, shell=False,
-                             env={"LC_ALL": "C", "LANG": "C", "PATH": "/usr/bin:/bin"})
-        ready = threading.Event()
-        self.ready = False
-
-        def observe():
-            # Discard output: neither UI nor logs receive command/manager errors.
-            for line in self.process.stdout:
-                if line.strip() == "CENTRABUS_CHECKPOINT_READY":
-                    self.ready = True
-                    ready.set()
-            ready.set()
-
-        threading.Thread(target=observe, daemon=True).start()
-        if not ready.wait(6) or not self.ready or self.process.poll() is not None:
-            self.reply(False)
-            raise SetupError("A verified rollback checkpoint could not be created. No connection attempted.")
-        self.deadline = time.monotonic() + 75  # conservative, earlier than NM's 90s
+    """Use the authorized process; NetworkManager owns the 90-second timer."""
+    def __init__(self, client, interface):
+        self.client, self.finished = client, False
+        self.device = client.device_path(interface)
+        self.deadline = time.monotonic() + 75  # earlier than the daemon's 90s
+        self.path = client.create(self.device)
 
     def alive(self):
-        return self.process.poll() is None and time.monotonic() < self.deadline
+        return not self.finished and time.monotonic() < self.deadline and self.client.exists(self.path)
 
     def reply(self, keep):
+        if self.finished:
+            return False
         try:
-            self.process.stdin.write("Yes\n" if keep else "No\n")
-            self.process.stdin.flush()
-            self.process.stdin.close()
-            self.process.wait(timeout=8)
-            return self.process.returncode == 0
-        except (OSError, ValueError, subprocess.TimeoutExpired):
-            # Leaving a checkpoint unconfirmed does NOT commit it. NM retains
-            # responsibility for rollback even if this process is lost.
-            try:
-                self.process.kill()
-                self.process.wait(timeout=2)
-            except (OSError, subprocess.TimeoutExpired):
-                pass
+            if keep:
+                if not self.alive():
+                    return False
+                self.client.destroy(self.path)
+            elif self.client.exists(self.path):
+                results = self.client.rollback(self.path)
+                if (not isinstance(results, dict) or type(results.get(self.device)) is not int
+                        or results[self.device] != 0):
+                    return False
+                if self.client.exists(self.path):
+                    self.client.destroy(self.path)
+            # A timed-out checkpoint is already gone; Trial independently
+            # requires observation of the exact original profile before cleanup.
+            self.finished = True
+            return True
+        except SetupError:
+            # Never turn a failed Keep into a commit or destroy an unknown
+            # checkpoint. The daemon's rollback timer remains the recovery guard.
             return False
 
 
 class NetworkManager:
-    def __init__(self, interface, *, allow_changes=False, runner=run_command, checkpoint=Checkpoint):
+    def __init__(self, interface, *, allow_changes=False, runner=run_command, checkpoint=None, native_client=None):
         if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,14}", interface):
             raise SetupError("Select a valid, independently verified Wi-Fi interface.")
         self.interface = interface
@@ -121,6 +220,7 @@ class NetworkManager:
         self.run = runner
         self.checkpoint = checkpoint
         self.binary = "/usr/bin/nmcli"
+        self.native = native_client
 
     def call(self, *args, **kwargs):
         return self.run([self.binary, "--colors", "no", *args], **kwargs)
@@ -151,6 +251,38 @@ class NetworkManager:
         return {"connected": connected, "profile_id": profile if connected else None,
                 "internet": connectivity if connectivity in ("full", "limited", "portal", "none", "unknown") else "unknown",
                 "manager": "NetworkManager", "interface": self.interface}
+
+    def permissions(self):
+        if self.native is None:
+            self.native = NativeNetworkClient()
+        return self.native.permissions()
+
+    def _create_checkpoint(self):
+        if self.checkpoint is not None:  # injected test boundary
+            return self.checkpoint(self.binary, self.interface)
+        if self.native is None:
+            self.native = NativeNetworkClient()
+        return Checkpoint(self.native, self.interface)
+
+    def authorize(self):
+        """Explicit local approval, native authentication, then an unchanged checkpoint."""
+        baseline = self.status()
+        if not baseline["connected"]:
+            raise SetupError("Connect a known-good Wi-Fi fallback using the Pi's OS network menu first.")
+        permissions = self.permissions()
+        # At most one OS dialog per request, keeping the operation bounded.
+        pending = [action for action in PERMISSIONS if permissions.get(action) != "yes"]
+        if any(permissions.get(action) != "auth" for action in pending):
+            raise SetupError("OS policy denies connection or rollback access. No permissions were changed.")
+        if pending:
+            authorize_permission(pending[0])
+            permissions = self.permissions()
+            if any(permissions.get(action) != "yes" for action in PERMISSIONS):
+                raise SetupError("Additional OS authorization is needed. Retry Enable connections locally.")
+        checkpoint = self._create_checkpoint()
+        if not checkpoint.reply(True) or self.status()["profile_id"] != baseline["profile_id"]:
+            raise RecoveryUnverified("Unchanged checkpoint cleanup was not verified. Check the original Wi-Fi locally.")
+        self.allow_changes = True
 
     def scan(self):
         self.verify()
@@ -187,12 +319,24 @@ class NetworkManager:
         baseline = self.status()
         if not baseline["connected"]:
             raise SetupError("A connected known-good Wi-Fi fallback is required for this first controlled trial.")
-        permissions = dict(fields(line) for line in self.call("-t", "-f", "PERMISSION,VALUE", "general", "permissions").splitlines())
-        required = ("org.freedesktop.NetworkManager.network-control", "org.freedesktop.NetworkManager.settings.modify.own",
-                    "org.freedesktop.NetworkManager.checkpoint-rollback")
-        if any(permissions.get(permission) != "yes" for permission in required):
-            raise SetupError("Existing local-user permissions are insufficient. No sudo or policy changes were made.")
-        checkpoint = self.checkpoint(self.binary, self.interface)
+        permissions = self.permissions()
+        if any(permissions.get(permission) != "yes" for permission in PERMISSIONS):
+            self.allow_changes = False
+            raise SetupError("OS authorization expired or is insufficient. Use Enable connections again. No policy was changed.")
+        # Connection/profile commands remain nmcli subprocesses. Check their
+        # own two permissions separately; the authenticated checkpoint caller
+        # stays in this process and is never substituted with a child client.
+        command_permissions = dict(fields(line) for line in
+                                   self.call("-t", "-f", "PERMISSION,VALUE", "general", "permissions").splitlines())
+        if any(command_permissions.get(action) != "yes" for action in PERMISSIONS[:-1]):
+            self.allow_changes = False
+            raise SetupError("OS access for Wi-Fi profile changes is unavailable to the connection command. "
+                             "Use this Pi's native network settings; no policy was changed.")
+        try:
+            checkpoint = self._create_checkpoint()
+        except SetupError:
+            self.allow_changes = False
+            raise
         trial = Trial(self, checkpoint, baseline["profile_id"], str(uuid.uuid4()), priority)
         try:
             if not checkpoint.alive():
@@ -236,10 +380,10 @@ class Trial:
     def rollback(self):
         if self.finished:
             return False
-        self.checkpoint.reply(False)
+        rollback_confirmed = self.checkpoint.reply(False)
         restored = False
         try:
-            restored = self.manager.status()["profile_id"] == self.baseline_id
+            restored = rollback_confirmed and self.manager.status()["profile_id"] == self.baseline_id
             if restored and self.created:
                 self.manager.call("connection", "delete", "uuid", self.profile_id)
         except SetupError:
