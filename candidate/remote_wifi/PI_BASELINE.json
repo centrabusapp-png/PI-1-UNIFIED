@@ -1,0 +1,6 @@
+{
+  "source": "PI-1-UNIFIED candidate/setup_gui/network.py",
+  "baselineCommit": "20c480c2d24526ffc2f3c8a5d40b5abcb40f7078",
+  "baselineSha256": "c77729dd831998983bf2f1c8629d12ac65e0537e499c6152f84d919488d5b56b",
+  "difference": "Optional pre-mutation journal callback; original Pi GUI files are unchanged."
+}
