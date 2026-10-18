@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>CentraBus · Pi Setup</title><link rel="stylesheet" href="/style.css"><script defer src="/app.js"></script></head>
+<body><main>
+  <header><div class="brand">Centra<span>BUS</span></div><span class="pill">Local device setup</span></header>
+  <section class="intro"><p class="eyebrow" id="identity">Raspberry Pi configuration</p><h1>Let’s get connected.</h1><p>Choose a Wi-Fi network for this Pi. GPS monitoring stays untouched.</p></section>
+  <p id="notice" class="notice" role="status">Opening your local setup session…</p>
+  <section class="card"><div class="heading"><h2>Connection overview</h2><button id="refresh" class="secondary" type="button">Refresh status</button></div><dl class="status-grid"><div><dt>Wi-Fi</dt><dd id="wifi">Unknown</dd></div><div><dt>Internet · manager report</dt><dd id="internet">Unknown</dd></div><div><dt>Network manager</dt><dd id="manager">Not checked</dd></div></dl><p class="hint">Internet is NetworkManager’s last connectivity report, not a new Internet probe. Unknown is never assumed connected.</p></section>
+  <div class="columns">
+    <section class="card"><div class="heading"><div><h2>Nearby Wi-Fi</h2><p>Networks visible to this Pi.</p></div><button id="scan" type="button">Scan networks</button></div><p id="scan-status" class="hint" role="status">Select Scan to find available networks.</p><div id="networks" class="networks" role="radiogroup" aria-label="Available Wi-Fi networks"></div></section>
+    <section class="card"><h2>Connect a network</h2><p class="hint">Select a network on the left, then enter its password.</p><form id="connect-form" autocomplete="off">
+      <label for="ssid">Selected network</label><input id="ssid" readonly placeholder="Choose from the scan results">
+      <label for="password">Wi-Fi password</label><input id="password" type="password" maxlength="64" autocomplete="new-password" spellcheck="false" disabled>
+      <p class="hint">Never stored by this page. A confirmed connection may be saved by the Pi’s existing OS network manager in its private local profile.</p>
+      <label for="priority">Preferred priority · 0–100</label><input id="priority" type="number" min="0" max="100" step="1" value="50">
+      <label class="check"><input id="confirm" type="checkbox">I am at this Pi and approve a temporary Wi-Fi switch. I can verify or roll back the connection.</label>
+      <button id="connect" class="wide" type="submit" disabled>Connect with rollback protection</button>
+    </form></section>
+  </div>
+  <section class="card"><div class="heading"><h2>Connection trial</h2><span id="trial-state" class="pill">Idle</span></div><p id="trial-message">No changes requested.</p><p id="countdown" class="hint"></p><div class="actions"><button id="keep" type="button" disabled>Keep this connection</button><button id="rollback" type="button" class="secondary" disabled>Roll back</button></div><p class="hint">If you do not confirm, NetworkManager’s checkpoint timer requests restoration. “Rolled back” is shown only after the original connection is observed again.</p></section>
+  <footer>Only this device · No cloud credentials · No GPS, camera or service changes<br>This is not the CentraBus administrator dashboard. Fully offline first-time provisioning and remote dashboard Wi-Fi delivery are separate integration steps.</footer>
+</main></body></html>

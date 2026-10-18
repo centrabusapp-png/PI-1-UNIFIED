@@ -4,7 +4,16 @@ Prepared locally on October 18, 2026. The folder spelling follows the requested 
 
 Read `DEVICE.md`, `AI_SETUP_INSTRUCTIONS.md`, and `GPS_STUCK_MARKER.md` first. This is a source/reference package with separately identified local candidates, not an installed or physically validated unified system.
 
-## Guided local GPS test
+## Local browser setup GUI candidate
+
+See `GUI_SETUP.md`. The new `setup-pi.py` opens a local browser setup page on
+this Pi. Default mode is scan/status only; separately approved NetworkManager
+connection trials require verified native rollback and a known-good fallback.
+`Open Setup Preview.cmd` previews the UI on Windows without scanning this laptop
+or contacting a Pi. No remote Wi-Fi agent, installer or service is enabled.
+Physical verification is pending. Existing GPS/camera runtime stays unchanged.
+
+## Guided local GPS test (unchanged)
 
 See `LOCAL_SETUP.md`. On this Pi, `python3 run-local.py` guides a separately
 approved foreground sender session using the existing monitor, private config
