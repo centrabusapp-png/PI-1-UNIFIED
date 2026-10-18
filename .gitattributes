@@ -1,0 +1,2 @@
+# Hash manifests require the original file bytes on Windows and Linux.
+* -text

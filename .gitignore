@@ -10,6 +10,8 @@
 **/__pycache__/
 **/*.pyc
 .test-tmp/
+.local-run/
+*.local-session.lock
 *connection-review*.json
 
 # New local runtime output is not part of the source/reference publication.

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import importlib.util
+import ipaddress
 import json
 import os
 import sys
@@ -22,11 +23,24 @@ def connection_helpers():
     return module
 
 
-def make_plan(backend_url, gps_json_path, queue_path):
+def make_plan(backend_url, gps_json_path, queue_path, mode="cloud"):
     defaults = json.loads((HERE / "device_settings.json").read_text(encoding="utf-8"))
     if defaults.get("device_id") != "GPS-001" or defaults.get("physical_operations_enabled") is not False:
         raise ValueError("Pi1 setup metadata is not the expected disabled candidate.")
-    origin = connection_helpers().normalize_backend_origin(backend_url, cloud=True)
+    if mode not in {"cloud", "local"}:
+        raise ValueError("Choose explicit cloud or local mode.")
+    origin = connection_helpers().normalize_backend_origin(backend_url, cloud=mode == "cloud")
+    setting = "CENTRABUS_BACKEND_URL"
+    if mode == "local":
+        from urllib.parse import urlsplit
+        host = urlsplit(origin).hostname
+        try:
+            address = ipaddress.IPv4Address(host)
+        except ipaddress.AddressValueError:
+            raise ValueError("Local mode requires the laptop's private LAN IPv4 address, not localhost or a hostname.") from None
+        if not any(address in ipaddress.IPv4Network(network) for network in ("10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16")):
+            raise ValueError("Local mode requires a private LAN IPv4 address.")
+        setting = "CENTRABUS_API_URL"
     for value in (gps_json_path, queue_path):
         if not isinstance(value, str) or not value.startswith("/") or ".." in PurePosixPath(value).parts or any(ord(char) < 32 for char in value):
             raise ValueError("Provide reviewed absolute Pi paths, not relative or traversal paths.")
@@ -35,6 +49,7 @@ def make_plan(backend_url, gps_json_path, queue_path):
     return {
         "schema_version": 1,
         "kind": "public-connection-review-only",
+        "connection_mode": mode,
         "device_id": defaults["device_id"],
         "expected_account": defaults["expected_account"],
         "expected_hostname": defaults["expected_hostname"],
@@ -43,7 +58,7 @@ def make_plan(backend_url, gps_json_path, queue_path):
         "credentials_included": False,
         "proposed_public_settings": {
             "CENTRABUS_DEVICE_ID": defaults["device_id"],
-            "CENTRABUS_BACKEND_URL": origin,
+            setting: origin,
             "CENTRABUS_GPS_JSON_PATH": gps_json_path,
             "CENTRABUS_GPS_QUEUE_PATH": queue_path,
         },
@@ -53,7 +68,7 @@ def make_plan(backend_url, gps_json_path, queue_path):
         "existing_queue_requires_independent_verification": True,
         "backend_identity_and_bus_mapping_verified": False,
         "wifi_management": {"enabled": False, "enrolled": False, "network_manager": "unverified"},
-        "remaining_gates": ["local_regressions", "approved_host_and_tls", "actual_device_paths_and_identity",
+        "remaining_gates": ["local_regressions", "approved_private_lan" if mode == "local" else "approved_host_and_tls", "actual_device_paths_and_identity",
                             "existing_queue_and_secret_preserved", "physical_freshness", "stationary_e2e"],
     }
 
@@ -79,12 +94,13 @@ def write_new_plan(path, plan):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--backend-url", required=True)
+    parser.add_argument("--mode", choices=("cloud", "local"), default="cloud")
     parser.add_argument("--gps-json-path", required=True)
     parser.add_argument("--queue-path", required=True)
     parser.add_argument("--output", required=True)
     args = parser.parse_args(argv)
     try:
-        plan = make_plan(args.backend_url, args.gps_json_path, args.queue_path)
+        plan = make_plan(args.backend_url, args.gps_json_path, args.queue_path, mode=args.mode)
         write_new_plan(args.output, plan)
     except (OSError, ValueError):
         print("REVIEW_NOT_CREATED: check the public URL, package metadata, reviewed paths and a new output filename; values redacted.", file=sys.stderr)

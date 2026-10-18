@@ -1,5 +1,27 @@
 # Local verification, October 18, 2026
 
+## Guided local-session update (latest)
+
+See `LOCAL_SETUP.md`. The guided local sender adds explicit approval, private
+config reuse without secret persistence, assigned-device checks, no duplicate
+sender sessions, bounded shutdown of its own child, existing-queue schema
+verification without migration, source freshness reporting and real-LAN backend
+readiness checks. No monitor/sender algorithm or `sources/` file changed.
+
+Final results are recorded in the workspace handoff
+`handoffs/2026-10-18-real-local-system-setup.md`. The earlier 60-test/38-entry
+connection results below are historical and superseded for the updated setup.
+
+Latest final results: **83 package tests passed, 0 failed, 0 skipped**. Both
+packages together passed **62 syntax-only compilation checks**. This package
+matched **7,001 unchanged source files and 40 manifest entries**, with no hash
+failures. Windows launcher tests passed 13/13, active frontend 470/470, backend
+335/335, deployment guards 6/6; isolated fixture-configured Vite build passed.
+The same portable cases run against both packages; none prove physical E2E.
+The original monitor/source-age issue, actual Linux service/import/permission
+checks and authenticated per-device E2E remain physical gates. Git publication
+is not installation. Camera and real Wi-Fi operations remain pending/disabled.
+
 ## Current connection-update verification
 
 The operator subsequently authorized testing. This package passed **60 tests,

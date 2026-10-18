@@ -1,5 +1,11 @@
 # Setup instructions for the receiving AI/operator
 
+Local-session update: read `LOCAL_SETUP.md`. `python3 run-local.py` now provides
+an operator-approved foreground GPS session against the unchanged installed
+monitor/queue. It is not an automatic boot/service installer. A waiting sender
+may run without a fresh fix only because all stale/invalid live posts remain
+blocked; history is history-only. Freshness remains a physical acceptance gate.
+
 2026-10-18 update: read `CLOUD_CONNECTION_SETUP.md` before preparing an endpoint
 change. The sender additionally requires sibling `backend_connection.py` and
 enforces this package's device ID. `CENTRABUS_BACKEND_URL` is an optional NEW

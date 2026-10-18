@@ -48,6 +48,38 @@ class ConnectionPreparationTests(unittest.TestCase):
         self.assertEqual(connection.resolve_backend_origin({"CENTRABUS_API_URL": "http://192.168.1.50:5000/"}),
                          "http://192.168.1.50:5000")
 
+    def test_explicit_local_review_uses_existing_lan_setting_not_cloud_setting(self):
+        plan = setup.make_plan("http://192.168.1.50:5000", defaults["reference_gps_json_path"],
+                               defaults["reference_queue_path"], mode="local")
+        self.assertEqual(plan["connection_mode"], "local")
+        self.assertEqual(plan["proposed_public_settings"]["CENTRABUS_API_URL"], "http://192.168.1.50:5000")
+        self.assertNotIn("CENTRABUS_BACKEND_URL", plan["proposed_public_settings"])
+        self.assertEqual(plan["device_id"], defaults["device_id"])
+        self.assertFalse(plan["runtime_changes_applied"])
+        self.assertFalse(plan["physical_operations_enabled"])
+
+        self.assertIn("approved_private_lan", plan["remaining_gates"])
+        self.assertNotIn("approved_host_and_tls", plan["remaining_gates"])
+
+    def test_local_mode_rejects_loopback_public_dns_and_unsafe_addresses(self):
+        for origin in ("http://localhost:5000", "http://127.0.0.1:5000", "http://0.0.0.0:5000",
+                       "http://8.8.8.8:5000", "http://pi.local:5000", "http://169.254.1.2:5000",
+                       "http://192.168.1.50:5000/api/gps/update", "http://fixture:private-value@192.168.1.50:5000"):
+            with self.subTest(origin=origin), self.assertRaises(ValueError):
+                setup.make_plan(origin, defaults["reference_gps_json_path"], defaults["reference_queue_path"], mode="local")
+
+    def test_cloud_default_still_rejects_lan_and_unknown_modes(self):
+        with self.assertRaises(ValueError):
+            setup.make_plan("http://192.168.1.50:5000", defaults["reference_gps_json_path"], defaults["reference_queue_path"])
+        with self.assertRaises(ValueError):
+            setup.make_plan("https://api.example.test", defaults["reference_gps_json_path"], defaults["reference_queue_path"], mode="automatic")
+
+    def test_lan_plan_round_trips_through_sender_origin_validation(self):
+        plan = setup.make_plan("http://10.0.0.42:5000/", defaults["reference_gps_json_path"],
+                               defaults["reference_queue_path"], mode="local")
+        self.assertEqual(connection.resolve_backend_origin(plan["proposed_public_settings"]), "http://10.0.0.42:5000")
+        self.assertEqual(plan["endpoints"]["gps"], "http://10.0.0.42:5000/api/gps/update")
+
     def test_conflicting_urls_fail_instead_of_switching_silently(self):
         with self.assertRaisesRegex(ValueError, "conflict"):
             connection.resolve_backend_origin({"CENTRABUS_BACKEND_URL": "https://api.example.test",
