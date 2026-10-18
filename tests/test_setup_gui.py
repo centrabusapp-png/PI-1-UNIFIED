@@ -116,10 +116,75 @@ class NetworkTests(unittest.TestCase):
         self.assertEqual(run.call_args.kwargs["timeout"], 40)
         self.assertFalse(run.call_args.kwargs["shell"])
 
-    def test_expired_authorization_returns_to_enable_flow_before_any_write(self):
+    def test_expired_authorization_is_renewed_before_any_connection_write(self):
         item = FakeManager(); item.permission = "auth"
-        with self.assertRaisesRegex(network.SetupError, "Enable connections"):
+        def approve(action):
+            self.assertFalse(item.checkpoints)
+            self.assertFalse(any("add" in args or "up" in args for args, _ in item.calls))
+            item.permission = "yes"
+        with patch.object(network, "authorize_permission", side_effect=approve) as auth:
+            trial = item.begin(AP, SECRET, 50)
+        auth.assert_called_once_with(network.PERMISSIONS[0])
+        self.assertTrue(item.allow_changes)
+        self.assertTrue(trial.checkpoint.alive())
+        trial.rollback()
+
+    def test_cancelled_renewal_returns_to_enable_flow_without_any_write(self):
+        item = FakeManager(); item.permission = "auth"
+        with patch.object(network, "authorize_permission", side_effect=network.SetupError("OS authorization cancelled.")):
+            with self.assertRaisesRegex(network.SetupError, "cancelled"):
+                item.begin(AP, SECRET, 50)
+        self.assertFalse(item.allow_changes)
+        self.assertFalse(item.checkpoints)
+        self.assertFalse(any("add" in args or "up" in args for args, _ in item.calls))
+
+    def test_renewal_prompts_once_and_requires_native_permission_confirmation(self):
+        item = FakeManager(); item.permission = "auth"
+        with patch.object(network, "authorize_permission") as auth:
+            with self.assertRaisesRegex(network.SetupError, "Additional OS authorization"):
+                item.begin(AP, SECRET, 50)
+        auth.assert_called_once_with(network.PERMISSIONS[0])
+        self.assertFalse(item.allow_changes)
+        self.assertFalse(item.checkpoints)
+        self.assertFalse(any("add" in args or "up" in args for args, _ in item.calls))
+
+    def test_changed_or_lost_fallback_during_renewal_never_creates_a_profile(self):
+        for connected, profile_id in [(True, "22222222-2222-4222-8222-222222222222"), (False, None)]:
+            with self.subTest(connected=connected):
+                item = FakeManager(); item.permission = "auth"
+                def approve(action):
+                    item.permission = "yes"
+                with patch.object(network, "authorize_permission", side_effect=approve), patch.object(item, "status", side_effect=[
+                        {"connected": True, "profile_id": BASE}, {"connected": connected, "profile_id": profile_id}]):
+                    with self.assertRaisesRegex(network.SetupError, "Wi-Fi changed"):
+                        item.begin(AP, SECRET, 50)
+                self.assertFalse(item.allow_changes)
+                self.assertFalse(item.checkpoints)
+                self.assertFalse(any("add" in args or "up" in args for args, _ in item.calls))
+
+    def test_existing_permission_needs_no_renewal_prompt(self):
+        item = FakeManager()
+        with patch.object(network, "authorize_permission") as auth:
+            trial = item.begin(AP, SECRET, 50)
+        auth.assert_not_called()
+        trial.rollback()
+
+    def test_expired_checkpoint_permission_is_renewed_for_the_native_caller(self):
+        item = FakeManager()
+        before = {action: "yes" for action in network.PERMISSIONS}
+        before[network.PERMISSIONS[-1]] = "auth"
+        with patch.object(item, "permissions", side_effect=[before, {action: "yes" for action in network.PERMISSIONS}]), \
+                patch.object(network, "authorize_permission") as auth:
+            trial = item.begin(AP, SECRET, 50)
+        auth.assert_called_once_with(network.PERMISSIONS[-1])
+        self.assertTrue(trial.checkpoint.alive())
+        trial.rollback()
+
+    def test_read_only_never_requests_renewal(self):
+        item = FakeManager(False); item.permission = "auth"
+        with patch.object(network, "authorize_permission") as auth, self.assertRaises(network.SetupError):
             item.begin(AP, SECRET, 50)
+        auth.assert_not_called()
         self.assertFalse(item.allow_changes)
         self.assertFalse(item.checkpoints)
 
@@ -175,9 +240,10 @@ class NetworkTests(unittest.TestCase):
             self.assertFalse(item.calls)
 
     def test_existing_permission_denial_never_creates_checkpoint_or_profile(self):
-        item = FakeManager(); item.permission = "auth"
-        with self.assertRaises(network.SetupError):
+        item = FakeManager(); item.permission = "no"
+        with patch.object(network, "authorize_permission") as auth, self.assertRaises(network.SetupError):
             item.begin(AP, SECRET, 50)
+        auth.assert_not_called()
         self.assertFalse(item.checkpoints)
         self.assertFalse(any("add" in args for args, _ in item.calls))
 
@@ -437,6 +503,17 @@ class ApplicationTests(unittest.TestCase):
         self.assertFalse(status["changesEnabled"])
         self.assertIn("desktop terminal", status["connectionMessage"])
         self.assertEqual(status["task"]["state"], "failed")
+
+    def test_cancelled_connect_renewal_replaces_stale_enabled_message(self):
+        self.manager.permission = "auth"
+        self.app.connection_message = "Connections enabled for this session."
+        with patch.object(network, "authorize_permission", side_effect=network.SetupError("OS authorization cancelled.")):
+            self.app.connect(self.payload()); self.wait_trial()
+        status = self.app.status()
+        self.assertFalse(status["changesEnabled"])
+        self.assertEqual(status["connectionMessage"], "OS authorization cancelled.")
+        self.assertEqual(status["task"]["state"], "failed")
+        self.assertFalse(self.manager.checkpoints)
 
     def test_authorize_requires_exact_explicit_approval_and_never_runs_in_preview(self):
         for payload in ({}, {"confirmed": False}, {"confirmed": True, "password": SECRET}):

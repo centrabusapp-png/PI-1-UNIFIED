@@ -219,7 +219,7 @@ class Application:
             if not network or time.monotonic() - self.scanned_at > 60:
                 raise SetupError("Scan again and choose a recently observed network.")
             self.busy = True
-            self.task = {"state": "connecting", "message": "Trying the selected network with rollback protection."}
+            self.task = {"state": "connecting", "message": "Complete any requested OS Wi-Fi authentication in the Pi dialog or authorization terminal. Then the selected network will be tried with rollback protection."}
         # The password exists only in this request/worker and nmcli stdin. It is
         # never part of task state, errors, persistence, logs or a command line.
         def worker():
@@ -247,6 +247,8 @@ class Application:
                     self.task = {"state": "unknown" if isinstance(error, RecoveryUnverified) else "failed",
                                  "message": str(error) if isinstance(error, SetupError) else
                                  "Connection did not complete. Rollback was requested; verify the original network before retrying."}
+                    if not self.manager.allow_changes:
+                        self.connection_message = self.task["message"]
             finally:
                 data["password"] = ""
                 with self.lock:

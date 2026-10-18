@@ -222,3 +222,22 @@ protected controls and avoiding repeated unauthorized polling. All 51 candidate
 hashes and 12 available GPS source-reference hashes passed; whitespace checks
 passed and protected source/GPS/camera/setup/native-Wi-Fi paths have no diff.
 These are code-level checks; device/live-operation evidence is kept locally.
+
+## Temporary Wi-Fi authorization renewal
+
+An approved Connect action now requests native OS authentication when the
+previously granted NetworkManager permission has expired. Permission confirmation
+and a check that the original fallback is still connected and unchanged precede
+checkpoint/profile creation. Authentication cancellation, denial or incomplete
+authorization blocks the trial. A failed renewal also replaces the stale
+Connections enabled message in the connection panel. Existing same-process GIO
+checkpoint handling, daemon rollback timer and protected GPS/source files remain
+unchanged.
+
+All 176 package Python tests passed. The added cases cover renewal before writes,
+the actual checkpoint-only permission pattern, cancellation, denied policy,
+incomplete authorization, a changed/disconnected fallback, read-only operation and
+the displayed failure state. All 51 candidate hashes and 12 GPS reference hashes
+passed; whitespace validation preserves the manifest's CRLF format. No UI asset
+changed, so the ten previously passing UI cases were not repeated. These mocked
+checks do not establish a real hotspot connection or physical rollback.

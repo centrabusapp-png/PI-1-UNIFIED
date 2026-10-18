@@ -264,21 +264,30 @@ class NetworkManager:
             self.native = NativeNetworkClient()
         return Checkpoint(self.native, self.interface)
 
+    def _ensure_permissions(self):
+        """Renew temporary native authorization only inside an approved operation."""
+        try:
+            permissions = self.permissions()
+            # At most one OS dialog per request, keeping the operation bounded.
+            pending = [action for action in PERMISSIONS if permissions.get(action) != "yes"]
+            if any(permissions.get(action) != "auth" for action in pending):
+                raise SetupError("OS policy denies connection or rollback access. No permissions were changed.")
+            if pending:
+                authorize_permission(pending[0])
+                permissions = self.permissions()
+                if any(permissions.get(action) != "yes" for action in PERMISSIONS):
+                    raise SetupError("Additional OS authorization is needed. Retry Enable connections locally.")
+            return bool(pending)
+        except SetupError:
+            self.allow_changes = False
+            raise
+
     def authorize(self):
         """Explicit local approval, native authentication, then an unchanged checkpoint."""
         baseline = self.status()
         if not baseline["connected"]:
             raise SetupError("Connect a known-good Wi-Fi fallback using the Pi's OS network menu first.")
-        permissions = self.permissions()
-        # At most one OS dialog per request, keeping the operation bounded.
-        pending = [action for action in PERMISSIONS if permissions.get(action) != "yes"]
-        if any(permissions.get(action) != "auth" for action in pending):
-            raise SetupError("OS policy denies connection or rollback access. No permissions were changed.")
-        if pending:
-            authorize_permission(pending[0])
-            permissions = self.permissions()
-            if any(permissions.get(action) != "yes" for action in PERMISSIONS):
-                raise SetupError("Additional OS authorization is needed. Retry Enable connections locally.")
+        self._ensure_permissions()
         checkpoint = self._create_checkpoint()
         if not checkpoint.reply(True) or self.status()["profile_id"] != baseline["profile_id"]:
             raise RecoveryUnverified("Unchanged checkpoint cleanup was not verified. Check the original Wi-Fi locally.")
@@ -319,10 +328,15 @@ class NetworkManager:
         baseline = self.status()
         if not baseline["connected"]:
             raise SetupError("A connected known-good Wi-Fi fallback is required for this first controlled trial.")
-        permissions = self.permissions()
-        if any(permissions.get(permission) != "yes" for permission in PERMISSIONS):
-            self.allow_changes = False
-            raise SetupError("OS authorization expired or is insufficient. Use Enable connections again. No policy was changed.")
+        renewed = self._ensure_permissions()
+        if renewed:
+            # A native dialog can remain open while the operator changes Wi-Fi
+            # in the OS menu. Never checkpoint a different fallback silently.
+            current = self.status()
+            if not current["connected"] or current["profile_id"] != baseline["profile_id"]:
+                self.allow_changes = False
+                raise SetupError("The original Wi-Fi changed during OS authentication. "
+                                 "Verify the fallback, then Enable connections and scan again.")
         # Connection/profile commands remain nmcli subprocesses. Check their
         # own two permissions separately; the authenticated checkpoint caller
         # stays in this process and is never substituted with a child client.

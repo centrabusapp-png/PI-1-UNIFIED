@@ -44,7 +44,11 @@ and output stay in that terminal; authorization is rechecked afterward. No
 terminal or agent is installed. Missing authorization remains visible and
 blocks trials; launch from a real Pi desktop terminal if an app-hosted process
 cannot use the desktop agent. No security policy or permission rules are edited.
-Expired OS authorization requires Enable connections again.
+OS authorization is temporary. After connections have been explicitly enabled,
+an approved Connect action requests native OS authentication again if needed,
+then rechecks permissions and the original fallback before creating a checkpoint
+or a new profile. Cancelled/denied authentication blocks the trial and returns to
+Enable connections. No OS password enters this page; no policy rule is changed.
 
 The permission check and all checkpoint operations now share a persistent,
 in-process GIO system-bus client. A separately spawned nmcli client can report

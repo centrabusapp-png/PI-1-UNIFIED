@@ -152,6 +152,14 @@ backend/Realtime availability do not establish a fresh GPS position; the dashboa
 retains last-known coordinates and their original capture times when live data
 is unavailable.
 
+OS Wi-Fi authorization has a separate, temporary lifetime. An approved Connect
+action now renews expired native authorization before creating any checkpoint or
+connection profile, rather than immediately failing after Enable connections had
+previously succeeded. Complete the Pi's OS dialog or native authorization terminal
+if requested. The existing fallback must still be connected and unchanged after
+the dialog. Cancellation or denial blocks the trial and requires Enable connections
+again. This does not change security policy or prove a physical hotspot switch.
+
 A reload clears this tab's private in-memory bearer. The UI now immediately
 explains that condition and offers **Open fresh setup window**. A server-side
 HTTP 401 also exposes this panel and locks all protected controls. The recovery
