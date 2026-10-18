@@ -362,6 +362,46 @@ class ApplicationTests(unittest.TestCase):
     def tearDown(self):
         self.app.close()
 
+    def wait_reopen(self):
+        limit = time.monotonic() + 2
+        while self.app.reopening and time.monotonic() < limit:
+            time.sleep(.005)
+        self.assertFalse(self.app.reopening)
+
+    def test_reload_recovery_opens_only_desktop_browser_and_keeps_valid_session(self):
+        token = self.app.token
+        with patch.object(server.webbrowser, 'open', return_value=True) as browser:
+            result = self.app.reopen_session('http://127.0.0.1:8765')
+            self.wait_reopen()
+        self.assertEqual(result, {'accepted': True})
+        self.assertEqual(self.app.token, token)
+        browser.assert_called_once_with('http://127.0.0.1:8765/#' + token, new=1)
+        self.assertNotIn(token, json.dumps(result))
+        self.assertEqual(self.manager.active, BASE)
+        self.assertFalse(self.manager.checkpoints)
+        self.assertIsNone(self.app.presence_session)
+
+    def test_expired_recovery_renews_only_browser_session_without_device_operations(self):
+        old = self.app.token
+        self.app.expires = time.monotonic() - 1
+        with patch.object(server.webbrowser, 'open', return_value=True) as browser, patch.object(server.secrets, 'token_urlsafe', return_value='synthetic-new-session'):
+            result = self.app.reopen_session('http://127.0.0.1:8765')
+            self.wait_reopen()
+        self.assertNotEqual(self.app.token, old)
+        self.assertGreater(self.app.expires, time.monotonic() + 1790)
+        browser.assert_called_once_with('http://127.0.0.1:8765/#synthetic-new-session', new=1)
+        self.assertEqual(result, {'accepted': True})
+        self.assertIsNone(self.app.presence_session)
+        self.assertFalse(self.manager.calls)
+
+    def test_recovery_is_rate_limited_and_unavailable_while_closing(self):
+        with patch.object(server.webbrowser, 'open', side_effect=RuntimeError('synthetic-private-url')) as browser:
+            self.app.reopen_session('http://127.0.0.1:8765'); self.wait_reopen()
+            with self.assertRaises(network.SetupError): self.app.reopen_session('http://127.0.0.1:8765')
+            self.app.stopping = True
+            with self.assertRaises(network.SetupError): self.app.reopen_session('http://127.0.0.1:8765')
+        browser.assert_called_once()
+
     def payload(self):
         choices = self.app.scan()["networks"]
         target = next(row for row in choices if row["security"] != "unsupported")
@@ -524,10 +564,12 @@ class HttpTests(unittest.TestCase):
     def tearDownClass(cls):
         cls.http.shutdown(); cls.http.server_close(); cls.app.close(); cls.thread.join(2)
 
-    def request(self, path="/api/status", data=None, headers=None, method="POST", raw=None):
+    def request(self, path="/api/status", data=None, headers=None, method="POST", raw=None, authenticated=True):
         conn = http.client.HTTPConnection("127.0.0.1", self.http.server_port, timeout=2)
         body = json.dumps(data or {}) if raw is None else raw
-        values = {"Origin": self.http.origin, "Authorization": "Bearer " + self.app.token, "Content-Type": "application/json"}
+        values = {"Origin": self.http.origin, "Content-Type": "application/json"}
+        if authenticated:
+            values['Authorization'] = 'Bearer ' + self.app.token
         values.update(headers or {})
         conn.request(method, path, body if method == "POST" else None, values)
         response = conn.getresponse(); result = (response.status, response.read(), dict(response.getheaders())); conn.close()
@@ -547,6 +589,27 @@ class HttpTests(unittest.TestCase):
         for headers in ({"Authorization": "Bearer wrong"}, {"Origin": "http://attacker.invalid"},
                         {"Host": "attacker.invalid"}, {"Origin": "null"}):
             self.assertIn(self.request(headers=headers)[0], (401, 403))
+
+    def test_recovery_without_bearer_opens_desktop_but_never_returns_session_token(self):
+        self.app.last_reopen = None
+        self.app.expires = time.monotonic() - 1
+        with patch.object(server.webbrowser, 'open', return_value=True) as browser:
+            status, body, _ = self.request('/api/session/reopen', authenticated=False)
+            limit = time.monotonic() + 2
+            while self.app.reopening and time.monotonic() < limit: time.sleep(.005)
+        self.assertEqual(status, 200)
+        self.assertEqual(json.loads(body), {'accepted': True})
+        self.assertNotIn(self.app.token.encode(), body)
+        browser.assert_called_once_with(self.http.origin + '/#' + self.app.token, new=1)
+        self.assertEqual(self.request(authenticated=False)[0], 401)
+
+    def test_recovery_requires_exact_local_origin_host_and_empty_json(self):
+        with patch.object(server.webbrowser, 'open') as browser:
+            for headers in ({'Origin':'http://attacker.invalid'}, {'Origin':'null'}, {'Host':'attacker.invalid'}):
+                self.assertEqual(self.request('/api/session/reopen', headers=headers, authenticated=False)[0], 403)
+            self.assertEqual(self.request('/api/session/reopen', data={'token':'synthetic'}, authenticated=False)[0], 409)
+            self.assertEqual(self.request('/api/session/reopen', raw='[]', authenticated=False)[0], 409)
+        browser.assert_not_called()
 
     def test_no_traversal_or_unknown_paths(self):
         self.assertEqual(self.request("/../../network.py", method="GET")[0], 404)

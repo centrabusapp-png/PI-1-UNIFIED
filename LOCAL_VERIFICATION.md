@@ -204,3 +204,21 @@ visibility remain pending explicit operator authorization and acceptance. These
 mocked checks do not establish GPS freshness, authenticated bus mapping, database
 ingestion or physical Wi-Fi rollback. Existing GPS capture times/10-second gates,
 queues, credentials and working boot remain unchanged.
+
+## Browser reload and session recovery
+
+The missing-token startup path now displays recovery immediately rather than
+remaining at Opening. HTTP 401 locks protected controls, including Keep/Roll back,
+and exposes the same recovery action. The new endpoint validates the exact
+loopback Host/Origin, framing and empty JSON before requesting a desktop browser
+window. Its HTTP response contains only an accepted flag. It reuses a valid
+browser session, renews an expired one, limits repeated window requests, and
+does not start a presence worker or any device operation.
+
+All 169 package Python tests and ten actual UI behavior cases passed. Recovery
+tests use mocked browser launches and loopback HTTP only; they cover missing
+bearers, expiry, token non-disclosure, rate limits, rejected origins/payloads,
+protected controls and avoiding repeated unauthorized polling. All 51 candidate
+hashes and 12 available GPS source-reference hashes passed; whitespace checks
+passed and protected source/GPS/camera/setup/native-Wi-Fi paths have no diff.
+These are code-level checks; device/live-operation evidence is kept locally.

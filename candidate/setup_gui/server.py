@@ -44,6 +44,33 @@ class Application:
         self.presence_session = None
         self.observation = {"wifiConnected": None, "internet": "unknown"}
         self.observed_at = 0
+        self.reopening = False
+        self.last_reopen = None
+
+    def reopen_session(self, origin):
+        """Deliver a session only to this Pi's desktop browser, never HTTP callers."""
+        with self.lock:
+            now = time.monotonic()
+            if self.stopping:
+                raise SetupError("Setup is closing. Relaunch it from this Pi's desktop terminal.")
+            if self.reopening or self.last_reopen is not None and now - self.last_reopen < 5:
+                raise SetupError("A fresh setup window was just requested. Switch to that window or wait five seconds.")
+            if now >= self.expires:
+                self.token = secrets.token_urlsafe(32)
+                self.expires = now + 1800
+            url = origin + "/#" + self.token
+            self.last_reopen, self.reopening = now, True
+
+        def open_window():
+            try:
+                webbrowser.open(url, new=1)
+            except Exception:
+                pass  # Browser errors must not print the private launch URL.
+            finally:
+                with self.lock:
+                    self.reopening = False
+        threading.Thread(target=open_window, daemon=True).start()
+        return {"accepted": True}
 
     def status(self):
         observation = {"connected": None, "internet": "unknown", "manager": "Unavailable", "interface": None}
@@ -329,7 +356,10 @@ class Handler(BaseHTTPRequestHandler):
         app = self.server.app
         if not self.valid_host() or self.headers.get_all("Origin", []) != [self.server.origin]:
             return self.reply(403, {"error": "Same-origin local browser required."})
-        if len(self.headers.get_all("Authorization", [])) != 1 or time.monotonic() >= app.expires or not hmac.compare_digest(self.headers.get("Authorization", ""), "Bearer " + app.token):
+        # Recovery may open the desktop browser, but cannot return a bearer or
+        # perform device operations. Host/Origin/framing checks still apply.
+        recovery = self.path == "/api/session/reopen"
+        if not recovery and (len(self.headers.get_all("Authorization", [])) != 1 or time.monotonic() >= app.expires or not hmac.compare_digest(self.headers.get("Authorization", ""), "Bearer " + app.token)):
             return self.reply(401, {"error": "Setup session expired or unauthorized. Reopen the local setup app."})
         try:
             if self.headers.get("Transfer-Encoding") or len(self.headers.get_all("Content-Length", [])) != 1:
@@ -353,7 +383,9 @@ class Handler(BaseHTTPRequestHandler):
             if self.path not in ("/api/connect", "/api/authorize", "/api/backend-check", "/api/presence/start") and data:
                 raise SetupError("Unexpected request fields.")
             methods = {"/api/status": app.status, "/api/scan": app.scan, "/api/keep": app.keep, "/api/rollback": app.rollback}
-            if self.path == "/api/connect":
+            if recovery:
+                result = app.reopen_session(self.server.origin)
+            elif self.path == "/api/connect":
                 result = app.connect(data)
             elif self.path == "/api/authorize":
                 result = app.authorize(data)

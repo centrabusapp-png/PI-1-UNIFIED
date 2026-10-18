@@ -103,8 +103,14 @@ See GUI_SETUP.md and DASHBOARD_ALIGNMENT.md. Live check-ins remain untested.
 - A generated 30-minute bearer is passed only to the local browser via URL
   fragment, immediately removed from browser history, held in JS memory only.
   Never printed, logged, sent in a query string or persisted. No cookies/storage.
-  Reopening only the printed base URL is intentionally not authenticated; close
-  and relaunch the app to open a new authenticated browser session.
+  Reloading or reopening the printed base URL shows a recovery panel instead of
+  remaining at Opening. Click **Open fresh setup window** to open the authorized
+  window on this Pi's desktop. A valid session is reused; an expired session is
+  renewed. The HTTP caller receives only an accepted flag, never a bearer or URL.
+  Recovery retains exact loopback Host/Origin, JSON/framing and rate-limit checks.
+  It performs no device operation or automatic presence start. An expired
+  presence worker is not renewed automatically: check the API and approve Start
+  check-ins again. If no browser opens, close and relaunch the foreground app.
 - Explicit Host, Origin, Authorization, body-size/type and duplicate-field
   checks; no CORS; frame/embedding protection and self-only CSP. Fixed assets,
   no traversal, no external scripts/fonts, no access log or arbitrary commands.

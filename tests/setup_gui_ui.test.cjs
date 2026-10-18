@@ -17,8 +17,9 @@ class Element {
   querySelectorAll() { return this.children; }
   focus() {}
 }
-async function fixture(overrides = {}) {
+async function fixture(overrides = {}, options = {}) {
   let monotonic = 0;
+  const unauthorized = new Set();
   const elements = Object.fromEntries([...html.matchAll(/id="([^"]+)"/g)].map((match) => [match[1], new Element()]));
   elements.priority.value = '50';
   let status = { deviceId: 'GPS-001', preview: false, changesEnabled: false, scanAvailable: true,
@@ -30,13 +31,15 @@ async function fixture(overrides = {}) {
   const intervals = [];
   const document = { hidden: false, getElementById(id) { assert.ok(elements[id], `missing HTML element ${id}`); return elements[id]; },
     createElement() { return new Element(); }, addEventListener() {} };
-  const sandbox = { document, location: { hash: '#synthetic-session', pathname: '/' }, history: { replaceState() {} },
+  const sandbox = { document, location: { hash: options.hash ?? '#synthetic-session', pathname: '/' }, history: { replaceState() {} },
     window: { addEventListener() {} }, AbortController, Date, Set, performance: { now() { return monotonic; } },
     setTimeout() { return 1; }, clearTimeout() {}, clearInterval() {}, setInterval(fn) { intervals.push(fn); return intervals.length; },
     async fetch(url, options) {
-      const body = JSON.parse(options.body); requests.push({ url, body });
+      const body = JSON.parse(options.body); requests.push({ url, body, headers: options.headers });
+      if (unauthorized.has(url)) return {status:401,ok:false,async json(){return {};}};
       let result = {};
       if (url === '/api/status') result = status;
+      if (url === '/api/session/reopen') result = { accepted: true };
       if (url === '/api/authorize') { status = { ...status, changesEnabled: true }; result = { accepted: true }; }
       if (url === '/api/scan') result = { networks: [
         { id: 'chosen', ssid: 'Depot', security: 'wpa2-personal', signal: 80, connected: false },
@@ -50,7 +53,7 @@ async function fixture(overrides = {}) {
   vm.runInNewContext(source, sandbox, { filename: 'app.js' });
   const settle = () => new Promise((resolve) => setImmediate(resolve));
   await settle();
-  return { elements, requests, intervals, settle, advance(ms) { monotonic += ms; }, update(next) { status = { ...status, ...next }; },
+  return { elements, requests, intervals, settle, unauthorize(url) { unauthorized.add(url); }, advance(ms) { monotonic += ms; }, update(next) { status = { ...status, ...next }; },
     async fire(id, event = 'click') { assert.ok(elements[id].events[event], `missing handler ${id}`); await elements[id].events[event]({ preventDefault() {} }); await settle(); } };
 }
 
@@ -147,4 +150,35 @@ test('setup online expires locally without waiting for a status poll', async () 
   assert.equal(f.elements['presence-state'].textContent, 'Setup online');
   f.advance(1001); f.intervals[1]();
   assert.equal(f.elements['presence-state'].textContent, 'Expired');
+});
+
+test('reload without a token shows recovery immediately instead of Opening forever', async () => {
+  const f = await fixture({}, { hash: '' });
+  assert.equal(f.requests.length, 0);
+  assert.equal(f.elements['session-recovery'].hidden, false);
+  assert.match(f.elements.notice.textContent, /Reloading cleared/);
+  assert.equal(f.elements.refresh.disabled, true);
+  assert.equal(f.elements.scan.disabled, true);
+  assert.equal(f.elements['session-reopen'].disabled, false);
+  await f.fire('session-reopen');
+  assert.equal(f.requests[0].url, '/api/session/reopen');
+  assert.equal(f.requests[0].headers.Authorization, undefined);
+  assert.deepEqual(f.requests[0].body, {});
+  assert.match(f.elements['session-message'].textContent, /newly opened window/);
+  assert.equal(f.elements.scan.disabled, true);
+});
+
+test('expired session disables protected controls and exposes recovery', async () => {
+  const f = await fixture({ task: { state: 'awaiting_confirmation', deadlineEpoch: Date.now() / 1000 + 30 },
+    presence: { state: 'online', running: true, expiresInSeconds: 30 } });
+  assert.equal(f.elements.keep.disabled, false);
+  f.unauthorize('/api/status');
+  await f.fire('refresh');
+  for (const id of ['refresh', 'scan', 'connect', 'keep', 'rollback', 'presence-stop', 'backend-check']) assert.equal(f.elements[id].disabled, true, id);
+  assert.equal(f.elements['session-recovery'].hidden, false);
+  assert.match(f.elements.notice.textContent, /session expired/);
+  assert.equal(f.elements['session-reopen'].disabled, false);
+  const before = f.requests.length;
+  await f.intervals[0](); await f.settle();
+  assert.equal(f.requests.length, before);
 });

@@ -143,3 +143,21 @@ is started. API checks do not authorize check-ins or enable GPS writes.
 These candidate edits have not been applied to the running desktop setup session.
 No actual private configuration was read and no live check-in or production write
 was sent during preparation; mocked protocol tests do not prove integration.
+
+## Reload and expired-session recovery
+
+The setup UI is a local maintenance console for Wi-Fi, API readiness and
+authenticated setup presence. It does not enable GPS uploads. Setup online and
+backend/Realtime availability do not establish a fresh GPS position; the dashboard
+retains last-known coordinates and their original capture times when live data
+is unavailable.
+
+A reload clears this tab's private in-memory bearer. The UI now immediately
+explains that condition and offers **Open fresh setup window**. A server-side
+HTTP 401 also exposes this panel and locks all protected controls. The recovery
+button opens the authorized window on the Pi desktop without requiring a terminal
+restart; it does not return a token to the requesting tab. No browser cookies or
+storage are introduced. Host/Origin, empty JSON, framing, local bind and rate-limit
+checks remain required. Valid sessions/presence are preserved. Expired sessions
+get a new 30-minute browser bearer; expired check-ins require a fresh API check
+and explicit Start approval. Wi-Fi/GPS services are not restarted by recovery.

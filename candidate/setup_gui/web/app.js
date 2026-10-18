@@ -12,9 +12,19 @@
   let backendBusy = false;
   let backendPrefilled = false;
   let presenceDeadline = 0;
+  let reopening = false;
   const controllers = new Set();
   const notice = (message, error = false) => { byId('notice').textContent = message; byId('notice').classList.toggle('error', error); };
   const clearPassword = () => { byId('password').value = ''; };
+
+  function lockSession(message) {
+    token = ''; clearPassword();
+    byId('presence-confirm').checked = false;
+    byId('enable-confirm').checked = false;
+    byId('session-recovery').hidden = false;
+    byId('session-message').textContent = message;
+    notice(message, true); controls();
+  }
 
   async function api(path, data = {}) {
     if (!token || stopped) throw new Error('Reopen the setup app from this Pi’s local launcher.');
@@ -23,7 +33,7 @@
     try {
       const response = await fetch(path, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
         credentials: 'omit', cache: 'no-store', redirect: 'error', body: JSON.stringify(data), signal: controller.signal });
-      if (response.status === 401) { token = ''; clearPassword(); throw new Error('Session expired. Reopen the local setup app.'); }
+      if (response.status === 401) { const message = 'Setup session expired. Click Open fresh setup window to continue on this Pi.'; lockSession(message); throw new Error(message); }
       const body = await response.json();
       if (!response.ok) throw new Error(typeof body.error === 'string' ? body.error : 'The operation did not complete.');
       return body;
@@ -31,23 +41,27 @@
   }
 
   function controls() {
-    const trial = !token || stopped || ['authorizing', 'connecting', 'awaiting_confirmation', 'unknown'].includes(state?.task?.state);
+    const locked = !token || stopped;
+    const trial = locked || ['authorizing', 'connecting', 'awaiting_confirmation', 'unknown'].includes(state?.task?.state);
+    byId('refresh').disabled = busy || locked;
+    byId('session-reopen').disabled = reopening || stopped;
     byId('scan').disabled = busy || trial || !state?.scanAvailable;
     byId('connect').disabled = busy || trial || !state?.changesEnabled || !selected || selected.connected || selected.security === 'unsupported';
     byId('password').disabled = busy || trial || !state?.changesEnabled || !selected || selected.security === 'unsupported';
-    byId('keep').disabled = busy || state?.task?.state !== 'awaiting_confirmation';
-    byId('rollback').disabled = busy || state?.task?.state !== 'awaiting_confirmation';
+    byId('keep').disabled = busy || locked || state?.task?.state !== 'awaiting_confirmation';
+    byId('rollback').disabled = busy || locked || state?.task?.state !== 'awaiting_confirmation';
     byId('enable').disabled = busy || trial || !state?.scanAvailable || state?.changesEnabled || !byId('enable-confirm').checked;
     byId('enable-panel').hidden = !!state?.changesEnabled;
     byId('confirm').disabled = busy || trial || !state?.changesEnabled;
     byId('priority').disabled = busy || trial || !state?.changesEnabled;
-    byId('backend-check').disabled = backendBusy || !state || state.preview || !token;
+    byId('backend-check').disabled = backendBusy || !state || state.preview || locked;
     byId('presence-start').disabled = busy || backendBusy || trial || !state?.presence?.canStart || !byId('presence-confirm').checked || byId('backend-origin').value.trim() !== state?.backend?.origin;
-    byId('presence-stop').disabled = busy || !state?.presence?.running || !token;
+    byId('presence-stop').disabled = busy || !state?.presence?.running || locked;
     byId('connect').textContent = selected?.connected ? 'Already connected' : !state?.changesEnabled ? 'Enable connections first' : !selected ? 'Select a network first' : 'Connect with rollback protection';
   }
 
   function renderStatus(next) {
+    if (!token || stopped) return;
     state = next;
     byId('identity').textContent = `${next.deviceId} · ${next.preview ? 'WINDOWS PREVIEW — NO PI CONNECTED' : 'This Raspberry Pi only'}`;
     byId('wifi').textContent = next.wifiConnected === true ? 'Connected' : next.wifiConnected === false ? 'Disconnected' : 'Unknown';
@@ -132,6 +146,20 @@
   });
   byId('scan').addEventListener('click', scan);
   byId('refresh').addEventListener('click', refresh);
+  byId('session-reopen').addEventListener('click', async () => {
+    if (byId('session-reopen').disabled) return;
+    reopening = true; controls();
+    const controller = new AbortController(); controllers.add(controller);
+    const timer = setTimeout(() => controller.abort(), 25000);
+    try {
+      const response = await fetch('/api/session/reopen', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        credentials: 'omit', cache: 'no-store', redirect: 'error', body: '{}', signal: controller.signal });
+      const result = await response.json();
+      if (!response.ok || result.accepted !== true) throw new Error(result.error || 'Setup window could not be opened.');
+      byId('session-message').textContent = 'A setup window was requested on this Pi. Switch to the newly opened window. If none opens, close and relaunch setup-pi.py from the Pi desktop terminal.';
+    } catch (error) { byId('session-message').textContent = error.message || 'Close and relaunch setup-pi.py from the Pi desktop terminal.'; }
+    finally { clearTimeout(timer); controllers.delete(controller); reopening = false; controls(); }
+  });
   byId('enable-confirm').addEventListener('change', controls);
   byId('presence-confirm').addEventListener('change', controls);
   byId('backend-origin').addEventListener('input', () => { byId('presence-confirm').checked = false; controls(); });
@@ -194,5 +222,8 @@
   const ageTimer = setInterval(countdown, 1000);
   document.addEventListener('visibilitychange', () => { if (document.hidden) clearPassword(); else refresh(); });
   window.addEventListener('pagehide', () => { stopped = true; token = ''; clearPassword(); controllers.forEach((controller) => controller.abort()); clearInterval(pollTimer); clearInterval(ageTimer); });
-  controls(); refresh();
+  byId('session-recovery').hidden = !!token;
+  controls();
+  if (token) refresh();
+  else lockSession('Reloading cleared this tab’s private setup session. Click Open fresh setup window to continue on this Pi.');
 })();

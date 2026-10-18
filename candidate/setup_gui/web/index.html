@@ -4,6 +4,11 @@
   <header><div class="brand">Centra<span>BUS</span></div><span class="pill">Local device setup</span></header>
   <section class="intro"><p class="eyebrow" id="identity">Raspberry Pi configuration</p><h1>Let’s get connected.</h1><p>Choose a Wi-Fi network for this Pi. GPS monitoring stays untouched.</p></section>
   <p id="notice" class="notice" role="status">Opening your local setup session…</p>
+  <section id="session-recovery" class="card" hidden><h2>Reopen your setup session</h2>
+    <p id="session-message" role="status">Reloading clears this tab’s private session. Open a fresh setup window on this Pi to continue.</p>
+    <button id="session-reopen" type="button">Open fresh setup window</button>
+    <p class="hint">The new window opens on this Pi. If no window opens, close the setup process and launch setup-pi.py again from the Pi desktop terminal. Wi-Fi and GPS services stay unchanged.</p>
+  </section>
   <section class="card"><div class="heading"><h2>Connection overview</h2><button id="refresh" class="secondary" type="button">Refresh status</button></div><dl class="status-grid"><div><dt>Wi-Fi</dt><dd id="wifi">Unknown</dd></div><div><dt>Internet · manager report</dt><dd id="internet">Unknown</dd></div><div><dt>Network manager</dt><dd id="manager">Not checked</dd></div></dl><p class="hint">Internet is NetworkManager’s last connectivity report, not a new Internet probe. Unknown is never assumed connected.</p></section>
   <div class="columns">
     <section class="card"><div class="heading"><div><h2>Nearby Wi-Fi</h2><p>Networks visible to this Pi.</p></div><button id="scan" type="button">Scan networks</button></div><p id="scan-status" class="hint" role="status">Select Scan to find available networks.</p><div id="networks" class="networks" role="radiogroup" aria-label="Available Wi-Fi networks"></div></section>
