@@ -1,0 +1,220 @@
+{
+  "images": 130,
+  "cases": 780,
+  "quality": {
+    "REVIEW": 456,
+    "SUCCESS": 324
+  },
+  "valid_lines": 780,
+  "supported_estimates": 600,
+  "unavailable_numbers": 180,
+  "published_values": 324,
+  "review_estimates": 276,
+  "geometry_changes": 18,
+  "angle_changes": 17,
+  "supported_value_changes": 17,
+  "angle_based_status_changes": 0,
+  "registration_changes": 0,
+  "new_failures": 0,
+  "publication_downgrades": 36,
+  "by_dataset": {
+    "original30": {
+      "images": 30,
+      "cases": 180,
+      "quality": {
+        "REVIEW": 150,
+        "SUCCESS": 30
+      },
+      "valid_lines": 180,
+      "supported_estimates": 30,
+      "unavailable_numbers": 150,
+      "published_values": 30,
+      "review_estimates": 0,
+      "geometry_changes": 0,
+      "angle_changes": 0,
+      "supported_value_changes": 0,
+      "angle_based_status_changes": 0,
+      "registration_changes": 0,
+      "new_failures": 0,
+      "publication_downgrades": 0
+    },
+    "additional50": {
+      "images": 50,
+      "cases": 300,
+      "quality": {
+        "REVIEW": 160,
+        "SUCCESS": 140
+      },
+      "valid_lines": 300,
+      "supported_estimates": 270,
+      "unavailable_numbers": 30,
+      "published_values": 140,
+      "review_estimates": 130,
+      "geometry_changes": 4,
+      "angle_changes": 4,
+      "supported_value_changes": 4,
+      "angle_based_status_changes": 0,
+      "registration_changes": 0,
+      "new_failures": 0,
+      "publication_downgrades": 0
+    },
+    "latest50": {
+      "images": 50,
+      "cases": 300,
+      "quality": {
+        "SUCCESS": 154,
+        "REVIEW": 146
+      },
+      "valid_lines": 300,
+      "supported_estimates": 300,
+      "unavailable_numbers": 0,
+      "published_values": 154,
+      "review_estimates": 146,
+      "geometry_changes": 14,
+      "angle_changes": 13,
+      "supported_value_changes": 13,
+      "angle_based_status_changes": 0,
+      "registration_changes": 0,
+      "new_failures": 0,
+      "publication_downgrades": 36
+    }
+  },
+  "by_gauge": {
+    "fuel": {
+      "images": 130,
+      "cases": 130,
+      "quality": {
+        "REVIEW": 49,
+        "SUCCESS": 81
+      },
+      "valid_lines": 130,
+      "supported_estimates": 94,
+      "unavailable_numbers": 36,
+      "published_values": 81,
+      "review_estimates": 13,
+      "geometry_changes": 0,
+      "angle_changes": 0,
+      "supported_value_changes": 0,
+      "angle_based_status_changes": 0,
+      "registration_changes": 0,
+      "new_failures": 0,
+      "publication_downgrades": 7
+    },
+    "coolant": {
+      "images": 130,
+      "cases": 130,
+      "quality": {
+        "SUCCESS": 119,
+        "REVIEW": 11
+      },
+      "valid_lines": 130,
+      "supported_estimates": 129,
+      "unavailable_numbers": 1,
+      "published_values": 119,
+      "review_estimates": 10,
+      "geometry_changes": 0,
+      "angle_changes": 0,
+      "supported_value_changes": 0,
+      "angle_based_status_changes": 0,
+      "registration_changes": 0,
+      "new_failures": 0,
+      "publication_downgrades": 7
+    },
+    "front": {
+      "images": 130,
+      "cases": 130,
+      "quality": {
+        "REVIEW": 127,
+        "SUCCESS": 3
+      },
+      "valid_lines": 130,
+      "supported_estimates": 95,
+      "unavailable_numbers": 35,
+      "published_values": 3,
+      "review_estimates": 92,
+      "geometry_changes": 17,
+      "angle_changes": 17,
+      "supported_value_changes": 17,
+      "angle_based_status_changes": 0,
+      "registration_changes": 0,
+      "new_failures": 0,
+      "publication_downgrades": 5
+    },
+    "rear": {
+      "images": 130,
+      "cases": 130,
+      "quality": {
+        "REVIEW": 114,
+        "SUCCESS": 16
+      },
+      "valid_lines": 130,
+      "supported_estimates": 95,
+      "unavailable_numbers": 35,
+      "published_values": 16,
+      "review_estimates": 79,
+      "geometry_changes": 1,
+      "angle_changes": 0,
+      "supported_value_changes": 0,
+      "angle_based_status_changes": 0,
+      "registration_changes": 0,
+      "new_failures": 0,
+      "publication_downgrades": 5
+    },
+    "battery": {
+      "images": 130,
+      "cases": 130,
+      "quality": {
+        "REVIEW": 45,
+        "SUCCESS": 85
+      },
+      "valid_lines": 130,
+      "supported_estimates": 95,
+      "unavailable_numbers": 35,
+      "published_values": 85,
+      "review_estimates": 10,
+      "geometry_changes": 0,
+      "angle_changes": 0,
+      "supported_value_changes": 0,
+      "angle_based_status_changes": 0,
+      "registration_changes": 0,
+      "new_failures": 0,
+      "publication_downgrades": 7
+    },
+    "oil": {
+      "images": 130,
+      "cases": 130,
+      "quality": {
+        "REVIEW": 110,
+        "SUCCESS": 20
+      },
+      "valid_lines": 130,
+      "supported_estimates": 92,
+      "unavailable_numbers": 38,
+      "published_values": 20,
+      "review_estimates": 72,
+      "geometry_changes": 0,
+      "angle_changes": 0,
+      "supported_value_changes": 0,
+      "angle_based_status_changes": 0,
+      "registration_changes": 0,
+      "new_failures": 0,
+      "publication_downgrades": 5
+    }
+  },
+  "v5_quality": {
+    "REVIEW": 419,
+    "SUCCESS": 360,
+    "FAILED": 1
+  },
+  "v5_published_values": 360,
+  "v5_supported_estimates": 599,
+  "previous_annotation_differences": 0,
+  "fresh_images_checked": 16,
+  "fresh_seconds_median": 2.2643036644999484,
+  "fresh_seconds_p95": 5.334646077499883,
+  "all_images_use_same_pipeline": true,
+  "v5_caches_verified": 130,
+  "camera_used": false,
+  "independent_accuracy_measured": false,
+  "stage_errors": []
+}

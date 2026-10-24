@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "reference_image_sha256": "87a9a17e33cab32f6604a58cbc235cda5e0045b89eb32192651ae7b27ee09764",
+  "angle_space": "reference_image_line_degrees",
+  "semantics": "dial_position_only",
+  "increasing_reading_direction": "decreasing_angle",
+  "gauges": {
+    "fuel": {
+      "enabled": false,
+      "reason": "E warning-mark edges and finite F region not measured or approved; endpoint rays alone do not define EMPTY/FULL regions.",
+      "approval": null,
+      "angle_uncertainty_deg": null,
+      "angle_uncertainty_source": null,
+      "regions": []
+    },
+    "battery": {
+      "enabled": false,
+      "reason": "L/H endpoints and two interior ticks visible; no manufacturer or operator reference establishes Low/Normal/High boundaries.",
+      "approval": null,
+      "angle_uncertainty_deg": null,
+      "angle_uncertainty_source": null,
+      "regions": []
+    },
+    "coolant": {
+      "enabled": false,
+      "reason": "Hot colour transition has exploratory ray 66.57711223475177 deg; unapproved pivot/transition uncertainty; Cold-to-Normal boundary absent.",
+      "approval": null,
+      "angle_uncertainty_deg": null,
+      "angle_uncertainty_source": null,
+      "regions": []
+    },
+    "oil": {
+      "enabled": false,
+      "reason": "Low colour/white-arc transition has exploratory ray 124.33965170546468 deg; white arc alone does not establish Normal or High regions.",
+      "approval": null,
+      "angle_uncertainty_deg": null,
+      "angle_uncertainty_source": null,
+      "regions": []
+    }
+  }
+}

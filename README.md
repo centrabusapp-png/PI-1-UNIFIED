@@ -57,7 +57,7 @@ validate physical imports, real Wi-Fi management or installation.
 - `sources/camera/`: complete, unchanged copy of the supplied `Downloads/PI-2-main/PI-2-main` (6,989 files, approximately 1.74 GB).
 - `sources/gps/`: complete, unchanged copy of `Downloads/pi2_gps-main/pi2_gps-main` (12 files).
 - `candidate/gps/`: production-baseline-derived monitor/sender with tested freshness/recovery corrections and required helper modules. Device-specific defaults are listed in `DEVICE.md`.
-- `candidate/camera/`: six original V5 runtime Python files, the actual calibration0 directory, and an additional read-only test-status reporter. V5 is a review/test candidate; the team's canonical installed camera version remains to be confirmed.
+- `candidate/camera/`: the original V5 review/test candidate plus a separate, unchanged V6 detector snapshot and a Pi1-specific RAM preview/analysis session candidate. See [V6 Pi1 port notes](candidate/camera/V6_PI1_PORT.md): no CAM-001 enrollment, physical calibration, installation or activation is included.
 - `tests/`: mocked GPSD/HTTP/camera-control regressions; no real camera, receiver, network or production database access.
 - `SOURCE_SHA256.csv`: expected source file hashes for verifying complete copies.
 - `CANDIDATE_SHA256.csv`: candidate file hashes; these do not certify physical behavior.
