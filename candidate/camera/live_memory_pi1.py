@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 """Opt-in Pi1 camera: one owner, independent RAM-only preview/analysis.
 
-No pictures, annotated frames, recordings, temporary images, logs or state files
-are written. Only a browser Capture click may request an image download.
-This Pi1 port never starts GPS or changes services, Wi-Fi, receiver, or queue state.
+No pictures, annotated frames, recordings or temporary images are written.
+Explicit readings mode persists numeric/status history in its separate outbox;
+preview/no-write mode never creates it. Browser Capture is separately manual.
+This Pi1 port never starts GPS or changes services, Wi-Fi, receiver, or GPS queues.
 """
 from __future__ import annotations
 import argparse
+import errno
 import getpass
+import hashlib
 import hmac
 import http.client
 import importlib.util
@@ -15,8 +18,10 @@ import ipaddress
 import json
 import os
 from pathlib import Path
+import re
 import socket
 import signal
+import sqlite3
 import sys
 import threading
 import time
@@ -30,8 +35,11 @@ PROCESSOR = 'centrabus-v6-76c4acf-ram-v1'
 EXPECTED_HOST = 'centrabus1-pi'
 EXPECTED_USER = 'centrabus1'
 EXPECTED_DEVICE_ID = 'GPS-001'
+OUTBOX_MODULE = None
+_OUTBOX_MODULE_CACHE = {}
 EXPECTED_CAMERA_ID = 'CAM-001'
 CAMERA_LOCK = '\0centrabus1-ram-camera-v1'
+CLOUD_BACKEND = 'https://centrabus-backend.onrender.com'
 
 
 def validate_pi1_identity(config, *, host=None, user=None, posix=None):
@@ -46,24 +54,46 @@ def validate_pi1_identity(config, *, host=None, user=None, posix=None):
 
 
 def mode_error(*, check, approve_live_preview, preview_only, analysis_no_write,
-               approve_camera_observation_writes, seconds, continuous):
+               approve_camera_observation_writes, seconds, continuous,
+               full_system_backend=False, cloud_backend=False):
     """Return a safe CLI-mode error, or None for one explicit valid mode."""
     if type(seconds) is not int or not 1 <= seconds <= 90:
         return 'seconds must be 1..90'
     if check:
-        if approve_live_preview or preview_only or analysis_no_write or approve_camera_observation_writes or continuous:
+        if (approve_live_preview or preview_only or analysis_no_write or approve_camera_observation_writes
+                or continuous or full_system_backend or cloud_backend):
             return '--check cannot be combined with runtime approvals or modes'
         return None
     if not approve_live_preview:
         return 'runtime requires explicit --approve-live-preview'
+    if cloud_backend and full_system_backend:
+        return 'choose cloud-backend or the local full-system-backend, not both'
     if sum((bool(preview_only), bool(analysis_no_write), bool(approve_camera_observation_writes))) != 1:
         return 'choose exactly one of --preview-only, --analysis-no-write, or --approve-camera-observation-writes'
+    if full_system_backend and preview_only:
+        return '--full-system-backend requires --analysis-no-write or --approve-camera-observation-writes'
     return None
 
 
-def session_config(config, backend_url=None):
-    """A public LAN origin override for this process; never rewrite secrets."""
+def cloud_origin(value):
+    """Pi1 opt-in is limited to this already reviewed production backend."""
+    url = urlsplit(value)
+    if (url.scheme != 'https' or url.hostname != 'centrabus-backend.onrender.com'
+            or url.port not in (None, 443) or url.username is not None or url.password is not None
+            or url.path not in ('', '/') or url.query or url.fragment):
+        raise ValueError('Reviewed CentraBus HTTPS cloud origin required')
+    return CLOUD_BACKEND
+
+
+def session_config(config, backend_url=None, *, cloud_backend=False):
+    """An explicit process-only origin override; never rewrite private files."""
     result = dict(config)
+    if cloud_backend:
+        if not isinstance(backend_url, str):
+            raise ValueError('Cloud mode needs an explicit reviewed backend URL')
+        result['backend_url'] = cloud_origin(backend_url)
+        result['allow_trusted_lan_http'] = False
+        return result
     if backend_url is None:
         return result
     url = urlsplit(backend_url)
@@ -86,14 +116,17 @@ class BackendReadinessError(Exception):
         self.retryable = retryable
 
 
-def camera_backend_ready(config, full_system, opener=None):
+def camera_backend_ready(config, full_system, opener=None, *, ephemeral_preview=False,
+                         full_system_backend=False, cloud_backend=False):
     class NoRedirect(urllib.request.HTTPRedirectHandler):
         def redirect_request(self, *_args, **_kwargs):
             raise BackendReadinessError('REDIRECT_REJECTED')
 
     opener = opener or urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect())
+    if cloud_backend:
+        cloud_origin(config['backend_url'])
     try:
-        with opener.open(config['backend_url'] + '/readyz', timeout=3) as response:
+        with opener.open(config['backend_url'] + '/readyz', timeout=10 if cloud_backend else 3) as response:
             body = response.read(8193)
             if response.status != 200:
                 raise BackendReadinessError('HTTP_' + str(response.status), response.status in (408, 429, 500, 502, 503, 504))
@@ -109,25 +142,98 @@ def camera_backend_ready(config, full_system, opener=None):
         data = json.loads(body)
     except (ValueError, UnicodeError):
         raise BackendReadinessError('INVALID_REPORT') from None
-    expected = dict(ready=True, cameraLiveMemoryEnabled=True, cameraFramesEnabled=True,
-                    gpsPersistenceEnabled=full_system, simulation=False)
-    if full_system:
-        expected['localFullSystem'] = True
-    if not isinstance(data, dict) or any(data.get(key) is not value for key, value in expected.items()):
+    if not isinstance(data, dict):
+        raise BackendReadinessError('BACKEND_MODE_REJECTED')
+    if cloud_backend:
+        expected = dict(ready=True, mode='cloud', simulation=False, scope='backend-process-only',
+                        stateMode='single-instance', gpsPersistenceEnabled=True,
+                        cameraFramesEnabled=True, cameraPreviewEnabled=True,
+                        cameraLiveMemoryEnabled=True, wifiManagementEnabled=False,
+                        cameraEnabled=False)
+    elif full_system_backend:
+        # Like Pi2, durable publication requires the explicit full-system API.
+        # Camera mode/approval, not GPS capability, decides whether to POST frames.
+        expected = dict(ready=True, mode='real-lan', simulation=False,
+                        gpsPersistenceEnabled=True, localFullSystem=True,
+                        cameraFramesEnabled=True, cameraPreviewEnabled=True,
+                        cameraLiveMemoryEnabled=True)
+    elif ephemeral_preview:
+        # Standalone preview accepts only the dedicated no-persistence API.
+        expected = dict(ready=True, mode='local-camera-preview', cameraPreviewEnabled=True,
+                        cameraFramePersistenceEnabled=False,
+                        cameraObservationWritesEnabled=False,
+                        gpsPersistenceEnabled=False, simulation=False)
+    else:
+        expected = dict(ready=True, cameraLiveMemoryEnabled=True, cameraFramesEnabled=True,
+                        gpsPersistenceEnabled=full_system, simulation=False)
+        if full_system:
+            expected['localFullSystem'] = True
+    if any(type(data.get(key)) is not type(value) or data.get(key) != value
+           for key, value in expected.items()):
         raise BackendReadinessError('BACKEND_MODE_REJECTED')
 
 
-def wait_camera_backend(config, full_system, *, opener=None, attempts=4, sleep=time.sleep, emit=print):
+def wait_camera_backend(config, full_system, *, ephemeral_preview=False, opener=None,
+                        full_system_backend=False, cloud_backend=False,
+                        attempts=4, sleep=time.sleep, emit=print,
+                        allow_retryable_offline=False):
     for attempt in range(attempts):
         try:
-            camera_backend_ready(config, full_system, opener)
+            camera_backend_ready(config, full_system, opener, ephemeral_preview=ephemeral_preview,
+                                 full_system_backend=full_system_backend, cloud_backend=cloud_backend)
             emit('RAM_CAMERA_BACKEND_READY=PASS; IMAGE_FILES_WRITTEN=false')
-            return
+            # Readings startup branches on this result. An implicit None here
+            # incorrectly selects offline mode even after a successful GET.
+            return True
         except BackendReadinessError as error:
             if not error.retryable or attempt + 1 == attempts:
+                if error.retryable and allow_retryable_offline:
+                    emit('RAM_CAMERA_BACKEND=OFFLINE_QUEUE_MODE; verified camera context available; replay paused')
+                    return False
                 raise
             emit(f'RAM_CAMERA_BACKEND=RETRY; REASON={error}; ATTEMPT={attempt + 1}')
             sleep(min(attempt + 1, 3))
+
+
+def startup_failure(phase, error):
+    """Actionable allowlisted diagnostics; never echo exception/config text."""
+    reason, retryable = 'LOCAL_VALIDATION_FAILED', False
+    if isinstance(error, BackendReadinessError):
+        value = str(error)
+        allowed = {'REDIRECT_REJECTED', 'REPORT_TOO_LARGE', 'NETWORK_UNREACHABLE',
+                   'INVALID_REPORT', 'BACKEND_MODE_REJECTED'}
+        if value in allowed or re.fullmatch(r'HTTP_[1-5][0-9]{2}', value):
+            reason = 'BACKEND_' + value
+        retryable = error.retryable is True
+    elif type(error).__name__ == 'HistoryError':
+        value = getattr(error, 'reason', None)
+        allowed = {'backend_origin_rejected', 'camera_identity_rejected', 'request_too_large',
+                   'network_unavailable', 'response_too_large', 'invalid_response',
+                   'context_contract_rejected', 'context_proof_rejected',
+                   'context_identity_or_expiry_rejected'}
+        reason = 'HISTORY_CONTRACT_REJECTED'
+        if isinstance(value, str) and (value in allowed or re.fullmatch(r'http_[1-5][0-9]{2}', value)):
+            reason = 'HISTORY_' + value.upper()
+        retryable = getattr(error, 'retryable', False) is True
+    elif type(error).__name__ in ('OutboxError', 'CapacityExceeded'):
+        reason = 'OUTBOX_VALIDATION_FAILED'
+    elif isinstance(error, HTTPError):
+        reason = 'CAMERA_HTTP_' + str(error.code)
+        retryable = error.code in (408, 429, 500, 502, 503, 504)
+    elif isinstance(error, OSError):
+        reason = {errno.EADDRINUSE: 'CAMERA_SESSION_ALREADY_RUNNING',
+                  errno.EACCES: 'FILE_OR_DEVICE_PERMISSION_DENIED',
+                  errno.EPERM: 'FILE_OR_DEVICE_PERMISSION_DENIED',
+                  errno.ENOENT: 'REQUIRED_FILE_OR_DEVICE_MISSING'}.get(error.errno, 'LOCAL_IO_FAILED')
+    action = ('CHECK_CAM_001_ENROLLMENT_AND_EXPIRY' if reason == 'HISTORY_HTTP_403'
+              else 'CHECK_CAM_001_CREDENTIAL_PAIR' if reason == 'HISTORY_HTTP_401'
+              else 'CHECK_HISTORY_API_AND_DATABASE_CONTRACT' if phase == 'HISTORY_CONTEXT'
+              else 'CHECK_BACKEND_MODE_AND_CONNECTION' if phase == 'BACKEND_READINESS'
+              else 'CHECK_OUTBOX_OWNER_SCHEMA_AND_DISK' if phase == 'OPEN_OUTBOX'
+              else 'CHECK_CAMERA_OWNER_CABLE_AND_OS' if phase == 'OPEN_CAMERA'
+              else 'REVIEW_THIS_STARTUP_PHASE')
+    return (f'RAM_CAMERA=STOP; PHASE={phase}; REASON={reason}; '
+            f'RETRYABLE={str(retryable).lower()}; ACTION={action}; credentials_withheld=true')
 
 
 class PreviewUnavailable(Exception):
@@ -279,6 +385,23 @@ class MemoryCamera:
             self.camera.close()
 
 
+def gauge_quality_message(diagnostic):
+    """Explain abstention without weakening registration or inventing values."""
+    if not isinstance(diagnostic, dict):
+        return None
+    detected = diagnostic.get('detected')
+    if type(detected) is not int or not 0 <= detected <= 6:
+        return None
+    registration = diagnostic.get('registration')
+    quality = registration.get('quality') if isinstance(registration, dict) else None
+    if quality != 'good':
+        return (f'RAM_GAUGE_QUALITY=ALIGNMENT_REQUIRED; detected_latest={detected}/6; '
+                'ACTION=CHECK_FOCUS_GLARE_CAMERA_POSITION_AND_REFERENCE; unsupported_values_withheld=true')
+    state = 'DETECTED' if detected == 6 else 'PARTIAL' if detected else 'NEEDLE_CHECK_REQUIRED'
+    return (f'RAM_GAUGE_QUALITY={state}; detected_latest={detected}/6; '
+            'registration=good; unsupported_values_withheld=true; physical_accuracy_unverified=true')
+
+
 def pressure_report(diagnostic):
     if not isinstance(diagnostic, dict) or not diagnostic.get('gauge_checks'):
         return None
@@ -288,7 +411,8 @@ def pressure_report(diagnostic):
             for key in ('front', 'rear')}
 
 
-def deliver_analysis(selected, transport, wrapper, config, *, publish_observations):
+def deliver_analysis(selected, transport, wrapper, config, *, publish_observations,
+                     outbox=None, boot_id=None, live_delivery=None):
     """Keep local analysis separate from durable observation publication."""
     if not selected:
         return None
@@ -301,31 +425,68 @@ def deliver_analysis(selected, transport, wrapper, config, *, publish_observatio
     frame = wrapper.make_snapshot(transport, config, source['session'], source['sequence'],
         source['preview_jpeg'], source['stamp'], selected['gauges'])
     frame['processor_version'] = PROCESSOR
-    transport.send(config, frame)
-    return dict(kind='published', frame=frame)
+    if outbox is not None:
+        # Persist numeric observations before network I/O. The outbox adapter
+        # deliberately strips frame.image (including its base64 JPEG).
+        context = outbox.cached_context()
+        if live_delivery is None:
+            outbox.enqueue_frame(frame, boot_id)
+        else:
+            outbox.enqueue_frame(frame, boot_id, context=context)
+        if live_delivery is not None:
+            # This is a local commit, never an HTTP call or a network ACK.
+            live_delivery.offer(frame, context)
+            status = outbox.status(context, full_check=False)
+            return dict(kind='queued', frame=frame, pending=status['pending'],
+                        blocked_epoch=status['blocked_epoch'])
+    try:
+        transport.send(config, frame)
+    except Exception as error:
+        if outbox is not None and temporary_observation_failure(error):
+            context = outbox.cached_context()
+            status = outbox.status(context)
+            return dict(kind='queued', frame=frame, pending=status['pending'],
+                        blocked_epoch=status['blocked_epoch'])
+        raise
+    pending = None
+    if outbox is not None:
+        # A v1 live-frame ACK does not prove the independent v2 history row was
+        # durably committed. Keep it until HistoryClient verifies the signed
+        # batch ACK; the backend migration makes v1->v2 replay idempotent.
+        pending = outbox.status(outbox.cached_context())['pending']
+    if outbox is None:
+        return dict(kind='published', frame=frame)
+    return dict(kind='live-ack', frame=frame, pending=pending)
 
 
 def run_session(camera, analyzer, publisher, transport, wrapper, config, *, seconds=60, fps=8,
                 clock=time.monotonic, wall=time.time, emit=print, stop_event=None,
-                publish_observations=True):
+                publish_observations=True, outbox=None, boot_id=None, live_delivery=None):
     previews, analyses = LatestSlot(), LatestSlot()
     stop = stop_event if stop_event is not None else threading.Event()
     analysis_disabled = threading.Event()
     if analyzer is None:
         analysis_disabled.set()
-    stats = dict(captured=0, preview_ack=0, observations_ack=0, local_analyses=0,
+    stats = dict(captured=0, preview_ack=0, observations_ack=0, observations_queued=0,
+                 outbox_pending=0, outbox_blocked_epoch=0, local_analyses=0,
                  local_detected=0, rejected=0, failure=False,
                  preview_age_max_ms=0, preview_upload_ms=0, preview_unavailable=0,
                  preview_discarded=0, analysis_failure=False, analysis_started=0,
                  analysis_completed=0, analysis_stale=0, analysis_last_ms=0,
-                 analysis_last=None, observation_unavailable=0, analysis_error_phase=None)
+                 analysis_last=None, observation_unavailable=0, analysis_error_phase=None,
+                 recording_gaps=0, preview_held=False)
     analysis_started_at = [None]
+    last_quality_message = [None]
+    last_queue_report = [0.0]
+    preview_retry_delay = [0.25]
 
     def preview_worker():
         try:
             while not stop.is_set():
                 frame = previews.get()
                 if frame is None:
+                    continue
+                if stats['preview_held']:
                     continue
                 if not -2 <= wall() - frame['epoch'] <= 2:
                     continue
@@ -336,18 +497,27 @@ def run_session(camera, analyzer, publisher, transport, wrapper, config, *, seco
                     stats['preview_unavailable'] += 1
                     if stats['preview_unavailable'] == 1:
                         emit('RAM_PREVIEW=RECONNECTING; old frames discarded')
-                    stop.wait(.25)
+                    stop.wait(preview_retry_delay[0])
+                    preview_retry_delay[0] = min(5.0, preview_retry_delay[0] * 2)
                     continue
                 except PreviewFrameDropped:
                     stats['preview_discarded'] += 1
                     continue
+                except Exception:
+                    if outbox is None:
+                        raise
+                    stats['preview_held'] = True
+                    emit('RAM_PREVIEW=HELD_FOR_REVIEW; local detection and SQLite saving continue; no image uploaded')
+                    continue
                 stats['preview_upload_ms'] += round((clock() - upload_started) * 1000)
+                preview_retry_delay[0] = 0.25
                 stats['preview_age_max_ms'] = max(stats['preview_age_max_ms'], round((wall() - frame['epoch']) * 1000))
                 stats['preview_ack'] += 1
-        except Exception:
+        except Exception as error:
             stats['failure'] = True
             stop.set()
             emit('RAM_PREVIEW=UNCONFIRMED_STOP; details withheld')
+            emit(startup_failure('PREVIEW_DELIVERY', error).replace('RAM_CAMERA=STOP;', 'RAM_PREVIEW_DIAGNOSTIC=BLOCKED;', 1))
 
     def analysis_worker():
         phase = 'detector'
@@ -367,6 +537,10 @@ def run_session(camera, analyzer, publisher, transport, wrapper, config, *, seco
                 analysis_started_at[0] = None
                 stats['analysis_completed'] += 1
                 stats['analysis_last'] = getattr(analyzer, 'last_diagnostic', None)
+                quality_message = gauge_quality_message(stats['analysis_last'])
+                if quality_message and quality_message != last_quality_message[0]:
+                    emit(quality_message)
+                    last_quality_message[0] = quality_message
                 if not selected:
                     stats['rejected'] += 1
                     continue
@@ -385,23 +559,49 @@ def run_session(camera, analyzer, publisher, transport, wrapper, config, *, seco
                 phase = 'delivery'
                 try:
                     result = deliver_analysis(selected, transport, wrapper, config,
-                        publish_observations=True)
+                        publish_observations=True, outbox=outbox, boot_id=boot_id,
+                        live_delivery=live_delivery)
                 except Exception as error:
+                    storage_error = (outbox is not None and
+                        (isinstance(error, (sqlite3.Error, OSError)) or
+                         isinstance(error, load_sibling('observation_outbox_pi1').OutboxError)))
+                    if storage_error:
+                        stats['recording_gaps'] += 1
+                        if stats['recording_gaps'] == 1 or stats['recording_gaps'] % 30 == 0:
+                            emit('RAM_GAUGE_OUTBOX=RECORDING_GAP; existing rows retained; detection continues; review storage/clock/assignment')
+                        continue
                     if not temporary_observation_failure(error):
                         raise
                     stats['observation_unavailable'] += 1
-                    emit('RAM_GAUGES=DELIVERY_UNAVAILABLE; frame discarded; next current capture only')
+                    emit('RAM_GAUGES=DELIVERY_UNAVAILABLE; outbox unchanged; review required')
                     stop.wait(.25)
                     continue
-                stats['observations_ack'] += 1
-                emit('RAM_GAUGES=ACKNOWLEDGED capture_id=' + result['frame']['capture_id'])
-        except Exception:
+                if result['kind'] == 'queued':
+                    stats['observations_queued'] += 1
+                    stats['outbox_pending'] = result['pending']
+                    stats['outbox_blocked_epoch'] = result['blocked_epoch']
+                    if clock() - last_queue_report[0] >= 5:
+                        emit(('RAM_GAUGES=LOCAL_SAVED; pending=' if live_delivery is not None
+                              else 'RAM_GAUGES=QUEUED_OFFLINE; pending=') + str(result['pending'])
+                             + '; blocked_epoch=' + str(result['blocked_epoch'])
+                             + '; numeric_only=true; images_saved=false')
+                        last_queue_report[0] = clock()
+                else:
+                    stats['observations_ack'] += 1
+                    pending = result.get('pending')
+                    if pending is not None:
+                        stats['outbox_pending'] = pending
+                    emit('RAM_GAUGES=LIVE_ACK; capture_id=' + result['frame']['capture_id']
+                         + ('; history_pending=' + str(pending) if pending is not None else '')
+                         + '; remove_after_signed_v2_history_ack=true')
+        except Exception as error:
             analysis_started_at[0] = None
             stats['analysis_failure'] = True
             stats['analysis_error_phase'] = phase
             analysis_disabled.set()
             analyses.close()
             emit('RAM_ANALYSIS=UNAVAILABLE; phase=' + phase + '; preview continues; details withheld')
+            emit(startup_failure('ANALYSIS_' + phase.upper(), error).replace('RAM_CAMERA=STOP;', 'RAM_ANALYSIS_DIAGNOSTIC=BLOCKED;', 1))
 
     workers = [threading.Thread(target=preview_worker, name='ram-preview', daemon=True)]
     if analyzer is not None:
@@ -430,8 +630,15 @@ def run_session(camera, analyzer, publisher, transport, wrapper, config, *, seco
                     main_frame=main_frame, preview_jpeg=jpeg))
                 next_analysis = tick + 1
             if clock() >= next_report:
+                if live_delivery is not None:
+                    stats['observations_ack'] = live_delivery.acknowledged
                 emit('RAM_CAMERA_PROGRESS=' + json.dumps(dict(captured=stats['captured'],
                     preview_ack=stats['preview_ack'], observations_ack=stats['observations_ack'],
+                    observations_queued=stats['observations_queued'],
+                    recording_gaps=stats['recording_gaps'],
+                    preview_held=stats['preview_held'],
+                    outbox_pending=stats['outbox_pending'],
+                    outbox_blocked_epoch=stats['outbox_blocked_epoch'],
                     local_analyses=stats['local_analyses'], local_detected=stats['local_detected'],
                     analysis_failure=stats['analysis_failure'], preview_dropped=previews.dropped,
                     preview_unavailable=stats['preview_unavailable'],
@@ -470,13 +677,26 @@ def run_session(camera, analyzer, publisher, transport, wrapper, config, *, seco
 
 def load_sibling(name):
     path = Path(__file__).with_name(name + '.py')
+    if name == 'observation_outbox_pi1' and OUTBOX_MODULE is not None:
+        path = OUTBOX_MODULE
+        match = re.fullmatch(r'observation_outbox_pi1_([a-f0-9]{64})\.py', path.name)
+        if (not match or path.parent.resolve() != Path(__file__).resolve().parent
+                or path.is_symlink() or not path.is_file()
+                or hashlib.sha256(path.read_bytes()).hexdigest() != match[1]):
+            raise ValueError('Versioned outbox companion verification failed')
+    key = str(path.resolve())
+    if name == 'observation_outbox_pi1' and key in _OUTBOX_MODULE_CACHE:
+        return _OUTBOX_MODULE_CACHE[key]
     spec = importlib.util.spec_from_file_location('_ram_' + name, path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
+    if name == 'observation_outbox_pi1':
+        _OUTBOX_MODULE_CACHE[key] = module
     return module
 
 
 def main(args=None):
+    global OUTBOX_MODULE
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--runtime-dir', type=Path, required=True)
     parser.add_argument('--private-config', type=Path, required=True)
@@ -491,13 +711,23 @@ def main(args=None):
     parser.add_argument('--seconds', type=int, default=60)
     parser.add_argument('--continuous', action='store_true', help='Foreground session until Ctrl+C; no 60-second cutoff')
     parser.add_argument('--preview-only', action='store_true', help='Test preview without loading/running the detector')
+    parser.add_argument('--full-system-backend', action='store_true',
+                        help='Use the approved GPS+camera API; observation writes still require their separate flag')
+    parser.add_argument('--cloud-backend', action='store_true',
+                        help='Explicit opt-in to the reviewed cloud API via a process-only HTTPS URL')
+    parser.add_argument('--camera-outbox', type=Path, default=None,
+                        help='Pi1 numeric gauge-history SQLite outbox; used only with explicit observation-write approval')
+    parser.add_argument('--outbox-module', type=Path, help='Hash-named public companion in this runner directory')
     parsed = parser.parse_args(args)
+    OUTBOX_MODULE = parsed.outbox_module
     error = mode_error(check=parsed.check, approve_live_preview=parsed.approve_live_preview,
         preview_only=parsed.preview_only, analysis_no_write=parsed.analysis_no_write,
         approve_camera_observation_writes=parsed.approve_camera_observation_writes,
-        seconds=parsed.seconds, continuous=parsed.continuous)
+        seconds=parsed.seconds, continuous=parsed.continuous,
+        full_system_backend=parsed.full_system_backend, cloud_backend=parsed.cloud_backend)
     if error:
         parser.error(error)
+    phase = 'VERIFY_PACKAGE'
     try:
         signer = load_sibling('preview_v5')
         wrapper = signer.load_wrapper(Path(__file__).with_name('publish_v5.py'))
@@ -507,7 +737,8 @@ def main(args=None):
         if parsed.private_config.is_symlink() or os.name != 'posix' \
                 or parsed.private_config.stat().st_uid != os.getuid():
             raise ValueError('Use the reviewed Pi1 account-owned config file')
-        config = session_config(transport.load_config(parsed.private_config), parsed.backend_url)
+        config = session_config(transport.load_config(parsed.private_config), parsed.backend_url,
+                                cloud_backend=parsed.cloud_backend)
         validate_pi1_identity(config)
         wrapper.verify_baseline(Path(__file__).resolve().parent)
         wrapper.verify_dependencies()
@@ -516,6 +747,7 @@ def main(args=None):
             print('REQUIRED_ENROLLED_PROCESSOR=' + PROCESSOR + '; DEVICE=GPS-001; CAMERA=CAM-001', flush=True)
             return 0
         # Abstract UNIX socket lock is kernel RAM, no lock file or filesystem IO.
+        phase = 'CAMERA_LOCK'
         with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as lock:
             lock.bind(CAMERA_LOCK)
             for name in ('SIGINT', 'SIGTERM', 'SIGHUP'):
@@ -528,10 +760,53 @@ def main(args=None):
             import cv2
             cv2.setNumThreads(1)
             analyzer = None
+            phase = 'LOAD_DETECTOR'
             if not parsed.preview_only:
                 analyzer = memory.MemoryReader(runtime)
-            wait_camera_backend(config, full_system=False)
+            outbox = history_client = history_replayer = live_delivery = boot_id = None
+            if parsed.approve_camera_observation_writes:
+                phase = 'OPEN_OUTBOX'
+                outbox_module = load_sibling('observation_outbox_pi1')
+                boot_id = outbox_module.boot_id_from_kernel()
+                outbox = outbox_module.ObservationOutbox(
+                    parsed.camera_outbox or outbox_module.DEFAULT_PATH)
+                history_client = outbox_module.HistoryClient(config, outbox)
+                cached_context = outbox.cached_context()
+                phase = 'BACKEND_READINESS'
+                backend_ready = wait_camera_backend(
+                    config, full_system=parsed.full_system_backend,
+                    ephemeral_preview=False, full_system_backend=parsed.full_system_backend,
+                    cloud_backend=parsed.cloud_backend, allow_retryable_offline=bool(cached_context))
+                if backend_ready:
+                    phase = 'HISTORY_CONTEXT'
+                    try:
+                        verified_context = history_client.fetch_context()
+                        print('RAM_GAUGE_HISTORY=CONTEXT_VERIFIED; new captures bind to the current assignment', flush=True)
+                    except outbox_module.HistoryError as error:
+                        if not error.retryable or cached_context is None:
+                            raise
+                        verified_context = cached_context
+                        print('RAM_GAUGE_HISTORY=OFFLINE; cached verified assignment retained; replay paused', flush=True)
+                else:
+                    verified_context = cached_context
+                if verified_context is None:
+                    raise ValueError('Previously verified camera assignment required for offline capture')
+                phase = 'OPEN_OUTBOX'
+                queue_status = outbox.status(verified_context)
+                print('RAM_GAUGE_OUTBOX=READY; pending=' + str(queue_status['pending'])
+                      + '; blocked_epoch=' + str(queue_status['blocked_epoch'])
+                      + '; integrity=' + str(queue_status['integrity'])
+                      + '; max_rows=' + str(queue_status['max_rows'])
+                      + '; max_payload_bytes=' + str(queue_status['max_payload_bytes'])
+                      + '; separate_from_gps_queue=true; images_saved=false', flush=True)
+            else:
+                phase = 'BACKEND_READINESS'
+                wait_camera_backend(config, full_system=parsed.full_system_backend,
+                                    ephemeral_preview=parsed.preview_only or parsed.analysis_no_write,
+                                    full_system_backend=parsed.full_system_backend,
+                                    cloud_backend=parsed.cloud_backend)
             publisher = LiveSender(config, signer)
+            phase = 'OPEN_CAMERA'
             camera = MemoryCamera(wrapper)
             print('RAM_CAMERA=OPEN; PREVIEW_TARGET_FPS=8; ANALYSIS_TARGET_HZ=1; IMAGE_FILES_WRITTEN=false', flush=True)
             observation_mode = ('APPROVED_SUCCESS_ONLY' if parsed.approve_camera_observation_writes
@@ -539,17 +814,42 @@ def main(args=None):
             print('RAM_CAMERA_MODE=' + ('CONTINUOUS_UNTIL_CTRL_C' if parsed.continuous else 'BOUNDED_TRIAL')
                   + '; ANALYSIS=' + ('OFF' if analyzer is None else 'V6_76c4acf')
                   + '; OBSERVATIONS=' + observation_mode + '; CALIBRATION=UNVERIFIED', flush=True)
-            stats = run_session(camera, analyzer, publisher, transport, wrapper, config,
-                seconds=None if parsed.continuous else parsed.seconds, emit=lambda text: print(text, flush=True),
-                publish_observations=parsed.approve_camera_observation_writes)
+            if parsed.full_system_backend:
+                print('RAM_CAMERA_BACKEND_SCOPE=FULL_SYSTEM; CAMERA_OBSERVATION_WRITES='
+                      + str(parsed.approve_camera_observation_writes).lower(), flush=True)
+            try:
+                phase = 'RUNNING'
+                if history_client is not None:
+                    history_replayer = load_sibling('observation_outbox_pi1').HistoryReplayer(
+                        history_client, emit=lambda text: print(text, flush=True))
+                    history_replayer.start()
+                    live_delivery = load_sibling('observation_outbox_pi1').LiveDelivery(
+                        history_client, emit=lambda text: print(text, flush=True))
+                    live_delivery.start()
+                stats = run_session(camera, analyzer, publisher, transport, wrapper, config,
+                    seconds=None if parsed.continuous else parsed.seconds, emit=lambda text: print(text, flush=True),
+                    publish_observations=parsed.approve_camera_observation_writes,
+                    outbox=outbox, boot_id=boot_id, live_delivery=live_delivery)
+            finally:
+                if live_delivery is not None and not live_delivery.close():
+                    print('RAM_GAUGES=STOP_TIMEOUT; queued_rows_retained=true', flush=True)
+                if history_replayer is not None and not history_replayer.close():
+                    print('RAM_GAUGE_HISTORY=STOP_TIMEOUT; queued_rows_retained=true', flush=True)
+            if outbox is not None:
+                final_status = outbox.status(outbox.cached_context())
+                stats.update(outbox_pending=final_status['pending'],
+                             outbox_blocked_epoch=final_status['blocked_epoch'],
+                             outbox_integrity=final_status['integrity'])
+                stats.update(observations_ack=live_delivery.acknowledged,
+                             upload_failures=live_delivery.failures, upload_held=live_delivery.blocked)
         print('RAM_CAMERA_SESSION=' + json.dumps(stats, separators=(',', ':')), flush=True)
         analysis_ok = analyzer is None or not stats['analysis_failure']
         return 0 if stats['preview_ack'] and not stats['failure'] and analysis_ok else 1
     except KeyboardInterrupt:
         print('RAM_CAMERA=STOPPED_BY_OPERATOR', flush=True)
         return 130
-    except Exception:
-        print('RAM_CAMERA=STOP; review ownership, baseline, config and connectivity; details withheld', flush=True)
+    except Exception as error:
+        print(startup_failure(phase, error), flush=True)
         return 1
 
 

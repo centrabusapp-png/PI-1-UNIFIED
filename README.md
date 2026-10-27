@@ -23,6 +23,16 @@ Physical verification is pending. Existing GPS/camera runtime stays unchanged.
 
 ## Guided local GPS test (unchanged)
 
+October 25 local saved-history change: regular history uses original capture
+time, defaults to 10 seconds moving and 45 seconds explicitly stopped, and has
+a 10-second minimum interval. Distance/state changes no longer bypass the
+history interval; live cadence and its immediate state-change updates remain
+unchanged. The same history selection applies online and offline. This trades
+per-second historical detail for smaller logs; it does not downsample the
+newest-live observation slot, edit old queue rows, or change capture timestamps.
+Legacy `GPS_HISTORY_DISTANCE_METERS` is accepted for compatibility but no longer
+triggers history saves. This is candidate source only, not a Pi installation.
+
 See `LOCAL_SETUP.md`. On this Pi, `python3 run-local.py` guides a separately
 approved foreground sender session using the existing monitor, private config
 and queue. It does not install services, change boot/GNSS, enable camera/Wi-Fi,
@@ -57,7 +67,8 @@ validate physical imports, real Wi-Fi management or installation.
 - `sources/camera/`: complete, unchanged copy of the supplied `Downloads/PI-2-main/PI-2-main` (6,989 files, approximately 1.74 GB).
 - `sources/gps/`: complete, unchanged copy of `Downloads/pi2_gps-main/pi2_gps-main` (12 files).
 - `candidate/gps/`: production-baseline-derived monitor/sender with tested freshness/recovery corrections and required helper modules. Device-specific defaults are listed in `DEVICE.md`.
-- `candidate/camera/`: the original V5 review/test candidate plus a separate, unchanged V6 detector snapshot and a Pi1-specific RAM preview/analysis session candidate. See [V6 Pi1 port notes](candidate/camera/V6_PI1_PORT.md): no CAM-001 enrollment, physical calibration, installation or activation is included.
+- `candidate/camera/`: the original V5 review/test candidate plus a separate, unchanged V6 detector snapshot and a Pi1-specific RAM session. The laptop launchers offer separately approved CAM-001 dashboard readings or explicit no-write analysis, using the same V6 detector/reference as Pi2. The approved-reading candidate now has a separate numeric-only SQLite offline history outbox; its v2 cloud replay requires the unapplied shared API/database migration. See [V6 Pi1 port notes](candidate/camera/V6_PI1_PORT.md). No Pi installation, enrollment renewal, physical calibration or activation is included in this local update.
+- `candidate/setup/prepare_pi1_v6_camera_enrollment.py`: offline-only helper for preparing a separate CAM-001/GPS-001 V6 credential pair. It writes a private config and a private, 24-hour-on-execution Supabase SQL transaction under ignored `.local-run/`; it never contacts Supabase or a Pi. Review both files, protect them, and execute SQL only after explicit operator approval.
 - `tests/`: mocked GPSD/HTTP/camera-control regressions; no real camera, receiver, network or production database access.
 - `SOURCE_SHA256.csv`: expected source file hashes for verifying complete copies.
 - `CANDIDATE_SHA256.csv`: candidate file hashes; these do not certify physical behavior.
@@ -80,6 +91,6 @@ Candidate GPS Linux runtime dependencies are `requests`, the installed Python GP
 
 ## What is integrated and what is pending
 
-Both source projects are packaged together, and device-specific GPS candidates plus camera state/retry tests are provided. This does not connect camera numerical readings to Supabase or activate cloud ingestion. The six-gauge camera output remains TEST/unverified, including its physical units and alerts. No receiver tuning, boot change, automatic service installer, real Wi-Fi agent or credential file is included.
+Both source projects are packaged together, and device-specific GPS candidates plus camera state/retry and offline-outbox tests are provided. The Pi1 camera candidate can queue approved numeric gauge observations locally, but it is not installed; synchronization depends on reviewing/applying the shared gauge-history SQL migration and verifying a signed cloud receipt. The six-gauge camera output remains TEST/unverified, including physical units and alerts. No receiver tuning, boot change, automatic service installer, real Wi-Fi agent or generated credential file is included.
 
 Do not claim that copying these scripts resolves Pi1's measured 15-16s receiver-source age. That issue is upstream of the monitor and exceeds the unchanged 10s GPS gate. It must pass its own physical freshness check before candidate monitor/sender installation or live GPS testing.

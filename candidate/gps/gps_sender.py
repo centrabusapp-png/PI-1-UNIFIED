@@ -40,8 +40,10 @@ DEFAULT_GPS_MAX_FUTURE_SKEW_SECONDS = 30.0
 DEFAULT_GPS_MAX_HISTORY_AGE_SECONDS = 30.0 * 24 * 60 * 60
 HEARTBEAT_INTERVAL_SECONDS = 5.0
 DEFAULT_QUEUE_PATH = "/home/centrabus1/centrabus-device/gps_offline_queue.sqlite3"
-DEFAULT_HISTORY_BATCH_SIZE = 25
+DEFAULT_HISTORY_BATCH_SIZE = 5
+MAX_HISTORY_BATCH_SIZE = 5
 DEFAULT_HISTORY_SYNC_INTERVAL_SECONDS = 2.0
+MIN_HISTORY_SYNC_INTERVAL_SECONDS = 2.0
 DEFAULT_HISTORY_LAG_SECONDS = 5.0
 LIVE_SUCCESS_FRESH_SECONDS = 3.0
 ROUTE_STATUSES = {
@@ -555,7 +557,14 @@ class OfflineGpsQueue:
 
     def _connect(self) -> sqlite3.Connection:
         connection = sqlite3.connect(str(self.path), timeout=5.0)
-        connection.execute("PRAGMA busy_timeout=5000")
+        try:
+            connection.execute("PRAGMA busy_timeout=5000")
+            # synchronous is connection-local: protect every queue commit, not
+            # only the initialization connection. Never replace an existing DB.
+            connection.execute("PRAGMA synchronous=FULL")
+        except Exception:
+            connection.close()
+            raise
         return connection
 
     @contextmanager
@@ -569,8 +578,9 @@ class OfflineGpsQueue:
 
     def _initialize(self) -> None:
         with self._connection() as connection:
-            connection.execute("PRAGMA journal_mode=WAL")
-            connection.execute("PRAGMA synchronous=NORMAL")
+            mode = connection.execute("PRAGMA journal_mode=WAL").fetchone()
+            if not mode or str(mode[0]).lower() != "wal":
+                raise RuntimeError("GPS offline queue could not enable WAL mode")
             connection.execute(
                 """
                 CREATE TABLE IF NOT EXISTS gps_queue (
@@ -586,6 +596,9 @@ class OfflineGpsQueue:
                 "CREATE INDEX IF NOT EXISTS idx_gps_queue_captured_at_ms "
                 "ON gps_queue(captured_at_ms)"
             )
+            integrity = connection.execute("PRAGMA quick_check(1)").fetchone()
+            if not integrity or integrity[0] != "ok":
+                raise RuntimeError("GPS offline queue failed its SQLite integrity check")
 
     def prepare_payload(self, sample: GPSSample) -> dict:
         captured_at, captured_at_ms = _canonical_capture_time(sample)
@@ -707,10 +720,10 @@ class GPSSender:
         self.queue = OfflineGpsQueue(queue_path, config.device_id)
         self.history_batch_size = max(
             1,
-            min(100, int(_env_float("CENTRABUS_GPS_HISTORY_BATCH_SIZE", DEFAULT_HISTORY_BATCH_SIZE))),
+            min(MAX_HISTORY_BATCH_SIZE, int(_env_float("CENTRABUS_GPS_HISTORY_BATCH_SIZE", DEFAULT_HISTORY_BATCH_SIZE))),
         )
         self.history_sync_interval = max(
-            0.5,
+            MIN_HISTORY_SYNC_INTERVAL_SECONDS,
             _env_float("CENTRABUS_GPS_HISTORY_SYNC_INTERVAL_SECONDS", DEFAULT_HISTORY_SYNC_INTERVAL_SECONDS),
         )
         self.history_lag_seconds = max(
@@ -910,16 +923,17 @@ class GPSSender:
                     if _parse_timestamp(_canonical_capture_time(item)[0]) > capture
                 ]
             return True
-        # Once transport fails, retain every observed offline sample instead of
-        # downsampling trip reconstruction. Do not drain any queue here.
+        # Transport failure does not change saved-history sampling. Preserve
+        # any legacy pending entries without draining the durable queue here.
         with self.live_state_lock:
             self.last_live_success_monotonic = None
         self._flush_pending_history()
         return False
 
     def _flush_pending_history(self) -> None:
-        # Rescue the interval between last confirmed success and outage
-        # detection. Insert before removing; a local SQLite failure is retryable.
+        # Compatibility for any pending in-memory entries. New history is
+        # sampled directly into SQLite, independent of transport health.
+        # Insert before removing; a local SQLite failure remains retryable.
         while True:
             with self.live_state_lock:
                 sample = self.pending_history_samples[0] if self.pending_history_samples else None
@@ -986,6 +1000,8 @@ class GPSSender:
                         deleted,
                         self.queue.count(),
                     )
+                # At most 5 historical rows per 2 seconds per Pi, including
+                # after a successful batch. Live GPS/heartbeat remain separate.
                 self.delivery_stop_event.wait(self.history_sync_interval)
             except Exception as error:
                 LOGGER.error("GPS history sync worker failed: %s", type(error).__name__)
@@ -1019,20 +1035,16 @@ class GPSSender:
                 return
             with self.live_state_lock:
                 self.current_live_sample = live_payload
-            # Full-rate queue while offline/unconfirmed; sparse history only
-            # while recent live delivery proves transport is working. Existing
-            # pending rows are never thinned or rewritten by this policy.
+            # Only saved history is sampled. Every valid observation still
+            # replaces the newest-live slot above and wakes the live worker.
+            # Use the same capture-time schedule online and offline; existing
+            # queued rows, IDs, timestamps and replay acknowledgements are intact.
             clock = time.monotonic()
-            online = self._live_recently_successful()
-            store_history = not online or self.history_policy.due(live_payload, clock)
+            store_history = self.history_policy.due(live_payload, clock)
             self.new_sample_event.set()
             if not store_history:
-                with self.live_state_lock:
-                    self.pending_history_samples.append(sample)
                 self.last_observed_sample_id = live_payload["sampleId"]
                 return
-            if not online:
-                self._flush_pending_history()
             inserted = self.queue.enqueue(sample)
             self.last_observed_sample_id = live_payload["sampleId"]
             if not inserted:

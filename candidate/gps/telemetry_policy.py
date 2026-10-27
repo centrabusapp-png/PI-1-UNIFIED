@@ -12,7 +12,7 @@ class TelemetryRates:
     live_stopped: float = 12.0
     history_moving: float = 10.0
     history_stopped: float = 45.0
-    history_distance_m: float = 30.0
+    history_distance_m: float = 30.0  # Legacy env compatibility; no longer a save trigger.
 
     def __post_init__(self):
         values = (self.live_moving, self.live_stopped, self.history_moving,
@@ -79,7 +79,8 @@ class TelemetryPolicy:
     """Commit only an actual attempt/live or a persisted history selection.
 
     Live cadence uses monotonic elapsed time; history uses original capture time.
-    No catch-up bursts; meaningful state changes are eligible immediately.
+    No catch-up bursts. Live state changes remain eligible immediately.
+    Saved history is time-based only, with at least 10s between new records.
     """
 
     def __init__(self, rates, history=False):
@@ -96,14 +97,11 @@ class TelemetryPolicy:
             captured < self.last_capture or (self.history and captured == self.last_capture)
         )):
             return False
-        if self.last_clock is None or event_state(payload) != self.last_event:
+        if self.last_clock is None or (not self.history and event_state(payload) != self.last_event):
             return True
         clock = captured if self.history else monotonic_now
         if self.history:
-            interval = self.rates.history_stopped if stopped(payload) else self.rates.history_moving
-            position = (payload["latitude"], payload["longitude"])
-            if not stopped(payload) and distance_m(self.last_position, position) >= self.rates.history_distance_m:
-                return True
+            interval = max(10.0, self.rates.history_stopped if stopped(payload) else self.rates.history_moving)
         else:
             interval = self.rates.live_stopped if stopped(payload) else self.rates.live_moving
         return clock - self.last_clock >= interval

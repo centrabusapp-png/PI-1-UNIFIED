@@ -238,10 +238,134 @@ class SenderRecoveryTests(unittest.TestCase):
         other.delete_ids([self.worker.queue.latest()['sampleId']])
         self.assertEqual(other.count(), 1)
 
+    def test_every_queue_connection_uses_full_sync_and_wal(self):
+        for _ in range(3):
+            with self.worker.queue._connection() as db:
+                self.assertEqual(db.execute('PRAGMA synchronous').fetchone()[0], 2)
+                self.assertEqual(db.execute('PRAGMA journal_mode').fetchone()[0], 'wal')
+                self.assertEqual(db.execute('PRAGMA quick_check(1)').fetchone()[0], 'ok')
+
+    def test_queue_reopen_preserves_capture_id_time_and_unacknowledged_rows(self):
+        now = datetime.now(timezone.utc)
+        for index in range(3):
+            self.worker.queue.enqueue(self.sample(sourceTimestamp=(now-timedelta(seconds=30+index)).isoformat()))
+        original = self.worker.queue.history_batch(10, 0)
+        reopened = sender.OfflineGpsQueue(str(self.worker.queue.path), 'FIXTURE-001')
+        self.assertEqual(reopened.history_batch(10, 0), original)
+        self.worker.history_session.reply = Response({'acceptedIds': [original[0]['sampleId'], 'not-submitted']})
+        accepted = self.worker._post_history_batch(original[:2])
+        self.assertEqual(accepted, [original[0]['sampleId']])
+        reopened.delete_ids(accepted)
+        self.assertEqual(reopened.history_batch(10, 0), original[1:])
+
+    def test_replay_cannot_override_five_rows_per_two_seconds(self):
+        with patch.dict(os.environ, {'CENTRABUS_GPS_HISTORY_BATCH_SIZE': '100',
+                                     'CENTRABUS_GPS_HISTORY_SYNC_INTERVAL_SECONDS': '.5'}):
+            worker = sender.GPSSender(self.worker.config, types.SimpleNamespace(close=lambda: None))
+        self.addCleanup(worker.close)
+        self.assertEqual(worker.history_batch_size, 5)
+        self.assertEqual(worker.history_sync_interval, 2)
+
+    def test_corrupt_queue_fails_closed_without_replacement(self):
+        path = Path(self.temp.name)/'corrupt.db'
+        original = b'not-a-sqlite-database'
+        path.write_bytes(original)
+        with self.assertRaises(sender.sqlite3.DatabaseError):
+            sender.OfflineGpsQueue(str(path), 'FIXTURE-001')
+        self.assertEqual(path.read_bytes(), original)
+
     def test_heartbeat_remains_independent_of_live_delivery(self):
         self.assertTrue(self.worker._post_heartbeat())
         self.assertTrue(self.worker.heartbeat_reachable)
         self.assertIsNone(self.worker.last_live_success_monotonic)
+
+
+
+    def _check_saved_history_only(self, online):
+        start = datetime.now(timezone.utc) - timedelta(seconds=21)
+        existing = self.sample(sourceTimestamp=(start - timedelta(seconds=20)).isoformat())
+        self.worker.queue.enqueue(existing)
+        existing_payload = self.worker.queue.prepare_payload(existing)
+        expected = [existing_payload]
+        with patch.object(self.worker, '_live_recently_successful', return_value=online):
+            for second in range(21):
+                sample = self.sample(
+                    latitude=14.0 + second * (100 / 3.6) / 111195,
+                    sourceTimestamp=(start + timedelta(seconds=second)).isoformat())
+                self.worker.source.read_sample = lambda sample=sample: sample
+                self.worker._process_gps_cycle()
+                current = self.worker.queue.prepare_payload(sample)
+                self.assertEqual(self.worker.current_live_sample, current)
+                self.assertTrue(self.worker.new_sample_event.is_set())
+                if second % 10 == 0:
+                    expected.append(current)
+        stored = self.worker.queue.history_batch(25, 0)
+        self.assertEqual([row['sampleId'] for row in stored], [row['sampleId'] for row in expected])
+        self.assertEqual([row['capturedAt'] for row in stored], [row['capturedAt'] for row in expected])
+        self.assertEqual(self.worker.pending_history_samples, [])
+
+    def test_history_ten_second_selection_preserves_every_online_live_observation(self):
+        self._check_saved_history_only(True)
+
+    def test_history_ten_second_selection_preserves_every_offline_live_observation(self):
+        self._check_saved_history_only(False)
+
+
+class SavedHistoryPolicyTests(unittest.TestCase):
+    def payload(self, seconds, **changes):
+        value = dict(capturedAt=(datetime(2026, 10, 25, tzinfo=timezone.utc)
+                                + timedelta(seconds=seconds)).isoformat(),
+                     latitude=14 + seconds * (100 / 3.6) / 111195,
+                     longitude=121, motionStatus='MOVING', routeStatus='ON ROUTE', gpsQuality='GOOD')
+        value.update(changes)
+        return value
+
+    def test_distance_and_state_changes_cannot_bypass_ten_second_history_interval(self):
+        policy = sender.TelemetryPolicy(sender.TelemetryRates(), history=True)
+        selected = []
+        for second in range(60):
+            payload = self.payload(second, routeStatus='ON ROUTE' if second % 2 else 'DEVIATION')
+            if policy.due(payload, second):
+                selected.append(second)
+                policy.commit(payload, second)
+        self.assertEqual(selected, [0, 10, 20, 30, 40, 50])
+
+    def test_stopped_history_keeps_45_second_interval(self):
+        policy = sender.TelemetryPolicy(sender.TelemetryRates(), history=True)
+        selected = []
+        for second in range(60):
+            payload = self.payload(second, motionStatus='STOPPED')
+            if policy.due(payload, second):
+                selected.append(second)
+                policy.commit(payload, second)
+        self.assertEqual(selected, [0, 45])
+
+    def test_old_lower_interval_cannot_reintroduce_per_second_saved_logs(self):
+        policy = sender.TelemetryPolicy(sender.TelemetryRates(history_moving=1), history=True)
+        first = self.payload(0)
+        policy.commit(first, 0)
+        for second in range(1, 10):
+            self.assertFalse(policy.due(self.payload(second), second))
+        self.assertTrue(policy.due(self.payload(10), 10))
+
+    def test_live_cadence_and_immediate_route_changes_remain_unchanged(self):
+        policy = sender.TelemetryPolicy(sender.TelemetryRates())
+        selected = []
+        for second in range(10):
+            payload = self.payload(second, routeStatus='ON ROUTE' if second < 2 else 'DEVIATION')
+            if policy.due(payload, second):
+                selected.append(second)
+                policy.commit(payload, second)
+        self.assertEqual(selected, [0, 2, 5, 8])
+
+    def test_duplicate_and_out_of_order_capture_times_stay_rejected(self):
+        policy = sender.TelemetryPolicy(sender.TelemetryRates(), history=True)
+        policy.commit(self.payload(20), 100)
+        self.assertFalse(policy.due(self.payload(20), 120))
+        self.assertFalse(policy.due(self.payload(19), 120))
+        self.assertFalse(policy.due(self.payload(29), 120))
+        self.assertTrue(policy.due(self.payload(30), 120))
+
 
 
 class OriginalSenderBugTests(unittest.TestCase):
