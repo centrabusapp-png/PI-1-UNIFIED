@@ -377,6 +377,38 @@ class Pi1CameraOutboxTests(unittest.TestCase):
         self.assertGreaterEqual(self.db.status(self.ctx)['pending'], 2)
         self.assertEqual(uploader.offer.call_count, self.db.status(self.ctx)['pending'])
 
+    def test_no_preview_mode_still_analyzes_and_queues_approved_numeric_observations(self):
+        spec = importlib.util.spec_from_file_location('pi1_no_preview_loop', ROOT / 'candidate/camera/live_memory_pi1.py')
+        live = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(live)
+
+        class Camera:
+            def capture(self, need_main):
+                return datetime.now(timezone.utc), b'ram-jpeg-only', object() if need_main else None
+            def close(self):
+                pass
+
+        def make_payload(_config, session, sequence, _jpeg, timestamp, _gauges):
+            return frame(session=session, sequence=sequence,
+                         captured_at=timestamp.isoformat(timespec='milliseconds').replace('+00:00', 'Z'))
+
+        transport = SimpleNamespace(make_payload=make_payload)
+        wrapper = SimpleNamespace(make_snapshot=lambda _transport, *args: make_payload(*args))
+        analyzer = SimpleNamespace(analyze=lambda sample: {'sample': sample, 'gauges': {}}, last_diagnostic=None)
+        publisher = Mock()
+        uploader = Mock()
+        result = live.run_session(Camera(), analyzer, publisher, transport, wrapper, {},
+            seconds=2.2, emit=lambda _text: None, outbox=self.db, boot_id=BOOT_ID,
+            live_delivery=uploader, publish_preview=False)
+
+        self.assertFalse(result['preview_enabled'])
+        self.assertEqual(result['preview_ack'], 0)
+        self.assertFalse(result['analysis_failure'])
+        self.assertGreaterEqual(result['analysis_completed'], 2)
+        self.assertGreaterEqual(self.db.status(self.ctx)['pending'], 2)
+        self.assertEqual(uploader.offer.call_count, self.db.status(self.ctx)['pending'])
+        publisher.send.assert_not_called()
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -55,17 +55,22 @@ def validate_pi1_identity(config, *, host=None, user=None, posix=None):
 
 def mode_error(*, check, approve_live_preview, preview_only, analysis_no_write,
                approve_camera_observation_writes, seconds, continuous,
-               full_system_backend=False, cloud_backend=False):
+               full_system_backend=False, cloud_backend=False,
+               disable_live_preview=False):
     """Return a safe CLI-mode error, or None for one explicit valid mode."""
     if type(seconds) is not int or not 1 <= seconds <= 90:
         return 'seconds must be 1..90'
     if check:
         if (approve_live_preview or preview_only or analysis_no_write or approve_camera_observation_writes
-                or continuous or full_system_backend or cloud_backend):
+                or continuous or full_system_backend or cloud_backend or disable_live_preview):
             return '--check cannot be combined with runtime approvals or modes'
         return None
-    if not approve_live_preview:
+    if disable_live_preview and approve_live_preview:
+        return 'choose --disable-live-preview or --approve-live-preview, not both'
+    if not approve_live_preview and not disable_live_preview:
         return 'runtime requires explicit --approve-live-preview'
+    if disable_live_preview and preview_only:
+        return '--preview-only cannot be used with --disable-live-preview'
     if cloud_backend and full_system_backend:
         return 'choose cloud-backend or the local full-system-backend, not both'
     if sum((bool(preview_only), bool(analysis_no_write), bool(approve_camera_observation_writes))) != 1:
@@ -461,7 +466,8 @@ def deliver_analysis(selected, transport, wrapper, config, *, publish_observatio
 
 def run_session(camera, analyzer, publisher, transport, wrapper, config, *, seconds=60, fps=8,
                 clock=time.monotonic, wall=time.time, emit=print, stop_event=None,
-                publish_observations=True, outbox=None, boot_id=None, live_delivery=None):
+                publish_observations=True, publish_preview=True, outbox=None, boot_id=None,
+                live_delivery=None):
     previews, analyses = LatestSlot(), LatestSlot()
     stop = stop_event if stop_event is not None else threading.Event()
     analysis_disabled = threading.Event()
@@ -474,7 +480,7 @@ def run_session(camera, analyzer, publisher, transport, wrapper, config, *, seco
                  preview_discarded=0, analysis_failure=False, analysis_started=0,
                  analysis_completed=0, analysis_stale=0, analysis_last_ms=0,
                  analysis_last=None, observation_unavailable=0, analysis_error_phase=None,
-                 recording_gaps=0, preview_held=False)
+                 recording_gaps=0, preview_held=False, preview_enabled=bool(publish_preview))
     analysis_started_at = [None]
     last_quality_message = [None]
     last_queue_report = [0.0]
@@ -504,8 +510,8 @@ def run_session(camera, analyzer, publisher, transport, wrapper, config, *, seco
                     stats['preview_discarded'] += 1
                     continue
                 except Exception:
-                    if outbox is None:
-                        raise
+                    # Preview is an independent, ephemeral branch. A rejected or
+                    # unavailable preview must never stop numeric analysis/history.
                     stats['preview_held'] = True
                     emit('RAM_PREVIEW=HELD_FOR_REVIEW; local detection and SQLite saving continue; no image uploaded')
                     continue
@@ -603,7 +609,11 @@ def run_session(camera, analyzer, publisher, transport, wrapper, config, *, seco
             emit('RAM_ANALYSIS=UNAVAILABLE; phase=' + phase + '; preview continues; details withheld')
             emit(startup_failure('ANALYSIS_' + phase.upper(), error).replace('RAM_CAMERA=STOP;', 'RAM_ANALYSIS_DIAGNOSTIC=BLOCKED;', 1))
 
-    workers = [threading.Thread(target=preview_worker, name='ram-preview', daemon=True)]
+    workers = []
+    if publish_preview:
+        workers.append(threading.Thread(target=preview_worker, name='ram-preview', daemon=True))
+    else:
+        emit('RAM_PREVIEW=DISABLED; numeric analysis and approved observations continue; no image uploaded')
     if analyzer is not None:
         workers.append(threading.Thread(target=analysis_worker, name='ram-gauges', daemon=True))
     for worker in workers:
@@ -619,10 +629,11 @@ def run_session(camera, analyzer, publisher, transport, wrapper, config, *, seco
             if not -2 <= wall() - stamp.timestamp() <= 2:
                 raise ValueError('Camera source timestamp is stale')
             sequence += 1
-            frame = transport.make_payload(config, session, sequence, jpeg, stamp, {})
-            frame['processor_version'] = PROCESSOR
             stats['captured'] += 1
-            previews.put(dict(payload=frame, epoch=stamp.timestamp()))
+            if publish_preview:
+                frame = transport.make_payload(config, session, sequence, jpeg, stamp, {})
+                frame['processor_version'] = PROCESSOR
+                previews.put(dict(payload=frame, epoch=stamp.timestamp()))
             if need_main:
                 if main_frame is None:
                     raise ValueError('Analysis source unavailable')
@@ -704,6 +715,8 @@ def main(args=None):
     parser.add_argument('--check', action='store_true', help='Verify files/config/dependencies only; no camera or network')
     parser.add_argument('--approve-live-preview', action='store_true',
                         help='Explicitly permit ephemeral signed frames to the configured backend')
+    parser.add_argument('--disable-live-preview', action='store_true',
+                        help='Run detector/readings without sending preview frames; observation writes still need their separate approval')
     parser.add_argument('--approve-camera-observation-writes', action='store_true',
                         help='Explicitly permit durable V6 camera observations; requires separate enrollment')
     parser.add_argument('--analysis-no-write', action='store_true',
@@ -724,7 +737,8 @@ def main(args=None):
         preview_only=parsed.preview_only, analysis_no_write=parsed.analysis_no_write,
         approve_camera_observation_writes=parsed.approve_camera_observation_writes,
         seconds=parsed.seconds, continuous=parsed.continuous,
-        full_system_backend=parsed.full_system_backend, cloud_backend=parsed.cloud_backend)
+        full_system_backend=parsed.full_system_backend, cloud_backend=parsed.cloud_backend,
+        disable_live_preview=parsed.disable_live_preview)
     if error:
         parser.error(error)
     phase = 'VERIFY_PACKAGE'
@@ -829,6 +843,7 @@ def main(args=None):
                 stats = run_session(camera, analyzer, publisher, transport, wrapper, config,
                     seconds=None if parsed.continuous else parsed.seconds, emit=lambda text: print(text, flush=True),
                     publish_observations=parsed.approve_camera_observation_writes,
+                    publish_preview=not parsed.disable_live_preview,
                     outbox=outbox, boot_id=boot_id, live_delivery=live_delivery)
             finally:
                 if live_delivery is not None and not live_delivery.close():
@@ -844,7 +859,8 @@ def main(args=None):
                              upload_failures=live_delivery.failures, upload_held=live_delivery.blocked)
         print('RAM_CAMERA_SESSION=' + json.dumps(stats, separators=(',', ':')), flush=True)
         analysis_ok = analyzer is None or not stats['analysis_failure']
-        return 0 if stats['preview_ack'] and not stats['failure'] and analysis_ok else 1
+        preview_ok = parsed.disable_live_preview or analyzer is not None or stats['preview_ack'] > 0
+        return 0 if preview_ok and not stats['failure'] and analysis_ok else 1
     except KeyboardInterrupt:
         print('RAM_CAMERA=STOPPED_BY_OPERATOR', flush=True)
         return 130

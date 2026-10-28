@@ -71,6 +71,13 @@ class Pi1SessionModeTests(unittest.TestCase):
         self.assertIn('approve-live-preview', self.mode(approve_live_preview=False))
         self.assertIn('exactly one', self.mode(preview_only=True))
 
+    def test_approved_readings_can_run_without_preview(self):
+        self.assertIsNone(self.mode(approve_live_preview=False, disable_live_preview=True,
+                                    analysis_no_write=False, approve_camera_observation_writes=True))
+        self.assertIn('preview-only', self.mode(approve_live_preview=False,
+            disable_live_preview=True, preview_only=True, analysis_no_write=False))
+        self.assertIn('not both', self.mode(disable_live_preview=True))
+
     def test_time_limit_is_bounded(self):
         self.assertIn('1..90', self.mode(seconds=0))
         self.assertIn('1..90', self.mode(seconds=91))
